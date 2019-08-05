@@ -3,8 +3,8 @@
 
 ### jeffshapes
 
-The jeffshapes package makes it easy to compute area and circumference
-of a circle.
+_jeffshapes package (below) makes it easy to compute area and circumference
+of a circle._
 
 * type Circle
   * func (c Circle) circleArea() float64
@@ -13,7 +13,6 @@ of a circle.
 Use,
 
 ```bash
-go get -u -v github.com/JeffDeCola/my-go-packages/jeffshapes
 import github.com/JeffDeCola/my-go-packages/jeffshapes
 ```
 
