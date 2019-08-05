@@ -8,8 +8,7 @@
 
 `my-go-packages` is a place for me to create and use go packages.
 
-* [MY GO PACKAGES](https://github.com/JeffDeCola/my-go-packages#my-go-packages)
-  * [jeffshapes](https://github.com/JeffDeCola/my-go-packages#jeffshapes)
+* [jeffshapes](https://github.com/JeffDeCola/my-go-packages#jeffshapes)
 
 [GitHub Webpage](https://jeffdecola.github.io/my-go-packages/)
 
@@ -17,16 +16,20 @@
 
 ### jeffshapes
 
-_jeffshapes package (below) makes it easy to compute area and circumference
+_jeffshapes package makes it easy to compute area and circumference
 of a circle._
 
-* type Circle
-  * func (c Circle) circleArea() float64
-  * func (c Circle) circleCircumference() float64
+[jeffshapes.go](https://github.com/JeffDeCola/my-go-packages/blob/master/jeffshapes/jeffshapes.go)
+contains,
 
-Use,
+* type **Circle**
+  * func (c Circle) **circleArea**() float64
+  * func (c Circle) **circleCircumference**() float64
+
+To use,
 
 ```bash
+go get -u -v github.com/JeffDeCola/my-go-packages/jeffshapes
 import github.com/JeffDeCola/my-go-packages/jeffshapes
 ```
 
