@@ -3,16 +3,20 @@
 
 ### jeffshapes
 
-_jeffshapes package (below) makes it easy to compute area and circumference
+_jeffshapes package makes it easy to compute area and circumference
 of a circle._
 
-* type Circle
-  * func (c Circle) circleArea() float64
-  * func (c Circle) circleCircumference() float64
+[jeffshapes.go](https://github.com/JeffDeCola/my-go-packages/blob/master/jeffshapes/jeffshapes.go)
+contains,
 
-Use,
+* type **Circle**
+  * func (c Circle) **circleArea**() float64
+  * func (c Circle) **circleCircumference**() float64
+
+To use,
 
 ```bash
+go get -u -v github.com/JeffDeCola/my-go-packages/jeffshapes
 import github.com/JeffDeCola/my-go-packages/jeffshapes
 ```
 
