@@ -33,6 +33,10 @@ go get -u -v github.com/JeffDeCola/my-go-packages/jeffshapes
 import github.com/JeffDeCola/my-go-packages/jeffshapes
 ```
 
+Refer to
+[test-jeffshapes](https://github.com/JeffDeCola/my-go-examples/tree/master/packages/test-jeffshapes)
+in my repo `my-go-examples` for an example of its use.
+
 ## UPDATE GITHUB WEBPAGE USING CONCOURSE (OPTIONAL)
 
 For fun, I use concourse to update
