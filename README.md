@@ -6,36 +6,27 @@
 [![Issue Count](https://codeclimate.com/github/JeffDeCola/my-go-packages/badges/issue_count.svg)](https://codeclimate.com/github/JeffDeCola/my-go-packages/issues)
 [![License](http://img.shields.io/:license-mit-blue.svg)](http://jeffdecola.mit-license.org)
 
-`my-go-packages` is a place for me to create and use go packages.
+_A place for me to create and use go packages._
 
-* [jeffshapes](https://github.com/JeffDeCola/my-go-packages#jeffshapes)
+Table of Contents,
+
+* TBD
+
+Documentation and reference,
+
+* [go-cheat-sheet](https://github.com/JeffDeCola/my-cheat-sheets/tree/master/software/development/languages/go-cheat-sheet)
+* [my-go-examples](https://github.com/JeffDeCola/my-go-examples)
+* [my-go-tools](https://github.com/JeffDeCola/my-go-tools)
 
 [GitHub Webpage](https://jeffdecola.github.io/my-go-packages/)
 
 ## MY GO PACKAGES
 
-### jeffshapes
+### GEOMETRY
+
 
 _jeffshapes package makes it easy to compute area and circumference
 of a circle._
-
-[jeffshapes.go](https://github.com/JeffDeCola/my-go-packages/blob/master/jeffshapes/jeffshapes.go)
-contains,
-
-* type **Circle**
-  * func (c Circle) **circleArea**() float64
-  * func (c Circle) **circleCircumference**() float64
-
-To use,
-
-```bash
-go get -u -v github.com/JeffDeCola/my-go-packages/jeffshapes
-import github.com/JeffDeCola/my-go-packages/jeffshapes
-```
-
-Refer to
-[test-jeffshapes](https://github.com/JeffDeCola/my-go-examples/tree/master/packages/test-jeffshapes)
-in my repo `my-go-examples` for an example of its use.
 
 ## UPDATE GITHUB WEBPAGE USING CONCOURSE (OPTIONAL)
 
