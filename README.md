@@ -10,7 +10,7 @@ _A place for me to create and use go packages._
 
 Table of Contents,
 
-* TBD
+* [GEOMETRY](https://github.com/JeffDeCola/my-go-packages#geometry)
 
 Documentation and reference,
 
@@ -22,11 +22,14 @@ Documentation and reference,
 
 ## MY GO PACKAGES
 
+_All sections in alphabetical order._
+
 ### GEOMETRY
 
+* [jeffshapes](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/jeffshapes)
 
-_jeffshapes package makes it easy to compute area and circumference
-of a circle._
+  _jeffshapes package makes it easy to compute area and circumference
+  of a circle._
 
 ## UPDATE GITHUB WEBPAGE USING CONCOURSE (OPTIONAL)
 
