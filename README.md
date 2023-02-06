@@ -26,10 +26,20 @@ _All sections in alphabetical order._
 
 ### GEOMETRY
 
-* [jeffshapes](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/jeffshapes)
+* [circle](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle)
 
-  _jeffshapes package makes it easy to compute area and circumference
-  of a circle._
+  _My circle package contains computations for area and circumference of a circle._
+
+* [shapes](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/shapes)
+
+  _My shapes package contains basic computations for geometric shapes;
+  such as a circle, triangle and rectangle._
+
+### MATH
+
+* [prime](https://github.com/JeffDeCola/my-go-packages/tree/master/math/prime)
+
+  _My prime package contains computations related to prime numbers._
 
 ## UPDATE GITHUB WEBPAGE USING CONCOURSE (OPTIONAL)
 

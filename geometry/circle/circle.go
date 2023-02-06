@@ -1,4 +1,4 @@
-package jeffshapes
+package circle
 
 import (
 	"math"
