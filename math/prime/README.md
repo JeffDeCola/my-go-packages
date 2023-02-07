@@ -4,6 +4,7 @@ _My prime package contains computations related to prime numbers._
 
 Documentation and reference,
 
+* Package at [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/geometry/???)
 * Refer to
   [???](https://github.com/JeffDeCola/my-go-examples/????)
   for an example of its use.

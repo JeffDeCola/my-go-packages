@@ -5,6 +5,7 @@ such as a circle, triangle and rectangle._
 
 Documentation and reference,
 
+* Package at [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/geometry/????)
 * Refer to
   [???](https://github.com/JeffDeCola/my-go-examples/????)
   for an example of its use.
