@@ -44,3 +44,35 @@ _All sections in alphabetical order._
 * [prime](https://github.com/JeffDeCola/my-go-packages/tree/master/math/prime)
 
   _My prime package contains computations related to prime numbers._
+
+## USE
+
+To add to you local go path,
+
+```bash
+go get -u -v github.com/JeffDeCola/my-go-packages
+go install -v github.com/JeffDeCola/my-go-packages@latest
+```
+
+## TAG A VERSION FOR THIS REPO
+
+You can tag a version number for this repo.
+Since I have multiple packages here, they will
+all have the same version number.
+
+```bash
+git tag v0.0.1
+git push --tags
+```
+
+To see previous versions,
+
+```bash
+git tag
+```
+
+## pkg.go.dev
+
+For example, to public the circle package, you head over to
+[https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle)
+and request it.

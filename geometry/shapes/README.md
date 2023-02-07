@@ -5,20 +5,20 @@ such as a circle, triangle and rectangle._
 
 Documentation and reference,
 
-* Package at [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/geometry/????)
-* Refer to
-  [???](https://github.com/JeffDeCola/my-go-examples/????)
-  for an example of its use.
+* Circle package at [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/tree/master/geometry/shapes)
+* Refer to my example
+  [geometry-package](https://github.com/JeffDeCola/my-go-examples/tree/master/functions-methods-interfaces/interfaces/geometry-package)
 
-## TYPE
+## TYPE & METHODS
 
-* type **Circle**
-  * func (c Circle) **circleArea**() float64
-  * func (c Circle) **circleCircumference**() float64
+Types,
 
-## RUN
+```go
 
-```bash
-go get -u -v github.com/JeffDeCola/my-go-packages/geometry/shapes
-import github.com/JeffDeCola/my-go-packages/geometry/shapes
+```
+
+Methods,
+
+```go
+
 ```

@@ -1,23 +1,26 @@
-# My prime package
+# My circle package
 
-_My prime package contains computations related to prime numbers._
+_My circle package contains computations for area and circumference of a circle._
 
 Documentation and reference,
 
-* Package at [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/geometry/???)
-* Refer to
-  [???](https://github.com/JeffDeCola/my-go-examples/????)
-  for an example of its use.
+* Circle package at [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle)
+* Refer to my example
+  [module-with-remote-package](https://github.com/JeffDeCola/my-go-examples/tree/master/modules-and-packages/module-with-remote-package)
 
-## TYPE
+## TYPE & METHODS
 
-* type **Circle**
-  * func (c Circle) **circleArea**() float64
-  * func (c Circle) **circleCircumference**() float64
+Types,
 
-## RUN
+```go
+type Circle struct {
+    R float64
+}
+```
 
-```bash
-go get -u -v github.com/JeffDeCola/my-go-packages/math/prime
-import github.com/JeffDeCola/my-go-packages/math/prime
+Methods,
+
+```go
+func (c Circle) **circleArea**() float64
+func (c Circle) **circleCircumference**() float64
 ```
