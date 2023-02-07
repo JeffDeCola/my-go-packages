@@ -44,7 +44,9 @@ To add a version to all these packages in this repo,
 you need to tag it before you commit and push using the tag switch.
 
 ```bash
+git add .
 git tag v0.0.1
+git commit -m "tagged v0.0.1"
 git push --tags
 ```
 
