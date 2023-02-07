@@ -10,8 +10,6 @@ Documentation and reference,
   [???](https://github.com/JeffDeCola/my-go-examples/????)
   for an example of its use.
 
-[GitHub Webpage](https://jeffdecola.github.io/my-go-packages/)
-
 ## TYPE
 
 * type **Circle**
