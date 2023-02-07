@@ -37,14 +37,22 @@ import github.com/JeffDeCola/my-go-packages/geometry/circle
 
 ## TAG A VERSION
 
-To add a version to your package, you need to tag it before you commit
-and push using the tag switch.
+Usually there is one package per repo and you give a version number to the repo.
+But since we have multiple packages, they will all have the same version.
+
+To add a version to all these packages in this repo,
+you need to tag it before you commit and push using the tag switch.
 
 ```bash
-git add .
 git tag v0.0.1
-git commit -m "update circle"
+git commit -m "version v0.0.1"
 git push --tags
+```
+
+To see a previous version,
+
+```bash
+git tag
 ```
 
 ## UPDATE pkg.go.dev
