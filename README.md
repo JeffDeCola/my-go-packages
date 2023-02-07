@@ -11,6 +11,7 @@ _A place for me to create and use go packages._
 Table of Contents,
 
 * [GEOMETRY](https://github.com/JeffDeCola/my-go-packages#geometry)
+* [MATH](https://github.com/JeffDeCola/my-go-packages#math)
 
 Documentation and reference,
 
