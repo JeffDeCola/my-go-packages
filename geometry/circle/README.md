@@ -17,11 +17,15 @@ Documentation and reference,
 
 ## TYPE & METHODS
 
+Types,
+
 ```go
 type Circle struct {
     R float64
 }
 ```
+
+Methods,
 
 ```go
 func (c Circle) **circleArea**() float64
@@ -31,8 +35,8 @@ func (c Circle) **circleCircumference**() float64
 ## USE
 
 ```bash
-go get -u -v github.com/JeffDeCola/my-go-packages/geometry/circle
-import github.com/JeffDeCola/my-go-packages/geometry/circle
+go get -u -v github.com/JeffDeCola/my-go-packages
+go install -v github.com/JeffDeCola/my-go-packages@latest
 ```
 
 ## TAG A VERSION
@@ -44,9 +48,7 @@ To add a version to all these packages in this repo,
 you need to tag it before you commit and push using the tag switch.
 
 ```bash
-git add .
 git tag v0.0.1
-git commit -m "tagged v0.0.1"
 git push --tags
 ```
 
