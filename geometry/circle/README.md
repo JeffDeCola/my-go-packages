@@ -11,7 +11,7 @@ Table of Contents,
 
 Documentation and reference,
 
-* Package at [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle)
+* Circle package at [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle)
 * Refer to my example
   [module-with-remote-package](https://github.com/JeffDeCola/my-go-examples/tree/master/modules-and-packages/module-with-remote-package)
 
@@ -52,7 +52,7 @@ git tag v0.0.1
 git push --tags
 ```
 
-To see a previous version,
+To see previous versions,
 
 ```bash
 git tag
