@@ -8,59 +8,49 @@ Documentation and reference,
 * Refer to my example
   [geometry-package](https://github.com/JeffDeCola/my-go-examples/tree/master/functions-methods-interfaces/interfaces/geometry-package)
 
-## INTERFACE
+## FUNCTIONS
 
-I'll just post the interface for a rectangle,
-
-```go
-TYPE
-
-Types,
+I'll just post the functions a user can use,
 
 ```go
-type Geometry interface {
-    Area(*float64)
-    Perimeter(*float64)
-    Size(float64)
-}
+func GetArea(t TwoDCalculations) float64
+func GetPerimeter(t TwoDCalculations) float64
+func GetVolume(t ThreeDCalculations) float64
+func GetSurfaceArea(t ThreeDCalculations) float64
+func ChangeSize(t ShapeManipulations, f float64)
 ```
 
-For example, a Rectangle type would be,
-
-```go
-type Rectangle struct {
-    Width  float64
-    Height float64
-}
-```
-
-Where it's Methods are,
-
-```go
-func (r Rectangle) Area(a *float64)
-func (r Rectangle) Perimeter(p *float64)
-func (r *Rectangle) Size(f float64)
-```
+## EXAMPLE
 
 ```go
 package main
 
 import (
     "fmt"
-    "github.com/JeffDeCola/my-go-packages/geometry/shapes"
+    "github.com/JeffDeCola/my-go-packages/geometry/shapoes"
 )
 
 func main() {
 
-    // Create a circle
-    c := circle.Circle{R: 5}
+    // Create a circle type
+    c := circle.Circle{Radius: 5}
 
-    // Calculate the area
-    a := c.CircleArea()
+    // Get the area
+    a := c.Area()
     fmt.Println("Area =", a)
 
-    // Calculate the circumference
-    p := c.CircleCircumference()
+    // Get the circumference
+    p := c.Circumference()
     fmt.Println("Circumference =", p)
 }
+```
+
+Where go.mod is,
+
+```text
+module module-with-remote-package
+
+go 1.19
+
+require github.com/JeffDeCola/my-go-packages v0.0.9
 ```
