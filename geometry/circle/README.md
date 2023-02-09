@@ -1,16 +1,16 @@
 # My circle package
 
-_My circle package contains computations for area and circumference of a circle._
+_A package to calculate the area and circumference of a circle._
 
 Documentation and reference,
 
-* Circle package at [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle)
+* Circle package at [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/geometry/circle)
 * Refer to my example
   [module-with-remote-package](https://github.com/JeffDeCola/my-go-examples/tree/master/modules-and-packages/module-with-remote-package)
 
-## TYPE & METHODS
+## TYPES
 
-Types,
+The Circle type is,
 
 ```go
 type Circle struct {
@@ -18,9 +18,34 @@ type Circle struct {
 }
 ```
 
-Methods,
+## METHODS
 
 ```go
-func (c Circle) **circleArea**() float64
-func (c Circle) **circleCircumference**() float64
+func (c Circle) circleArea() float64
+func (c Circle) circleCircumference() float64
+```
+
+## EXAMPLE
+
+```go
+package main
+
+import (
+    "fmt"
+    "github.com/JeffDeCola/my-go-packages/geometry/circle"
+)
+
+func main() {
+
+    // Create a circle
+    c := circle.Circle{R: 5}
+
+    // Calculate the area
+    a := c.CircleArea()
+    fmt.Println("Area =", a)
+
+    // Calculate the circumference
+    p := c.CircleCircumference()
+    fmt.Println("Circumference =", p)
+}
 ```

@@ -32,18 +32,17 @@ _All sections in alphabetical order._
 
 * [circle](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle)
 
-  _My circle package contains computations for area and circumference of a circle._
+  _A package to calculate the area and circumference of a circle._
 
 * [shapes](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/shapes)
 
-  _My shapes package contains basic computations for geometric shapes;
-  such as a circle, triangle and rectangle._
+  _A package to calculate and manipulate simple 2D and 3D geometric shapes._
 
 ### MATH
 
 * [prime](https://github.com/JeffDeCola/my-go-packages/tree/master/math/prime)
 
-  _My prime package contains computations related to prime numbers._
+  _A package containing computations related to prime numbers._
 
 ## USE
 
@@ -73,6 +72,11 @@ git tag
 
 ## pkg.go.dev
 
-For example, to public the circle package, you head over to
-[https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle)
+You only have to do this once.
+
+Head over to
+[https://pkg.go.dev/github.com/JeffDeCola/my-go-packages](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages)
 and request it.
+
+It should eventually update when you tag a new version.
+I'm not sure how to force it faster.
