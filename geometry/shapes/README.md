@@ -6,7 +6,7 @@ Documentation and reference,
 
 * Shapes package at [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/geometry/shapes)
 * Refer to my example
-  [geometry-package](https://github.com/JeffDeCola/my-go-examples/tree/master/functions-methods-interfaces/interfaces/geometry-package)
+  [shapes-package](https://github.com/JeffDeCola/my-go-examples/tree/master/functions-methods-interfaces/interfaces/shapes-package)
 
 ## FUNCTIONS
 
@@ -23,34 +23,15 @@ func ChangeSize(t ShapeManipulations, f float64)
 ## EXAMPLE
 
 ```go
-package main
-
-import (
-    "fmt"
-    "github.com/JeffDeCola/my-go-packages/geometry/shapoes"
-)
-
-func main() {
-
-    // Create a circle type
-    c := circle.Circle{Radius: 5}
-
-    // Get the area
-    a := c.Area()
-    fmt.Println("Area =", a)
-
-    // Get the circumference
-    p := c.Circumference()
-    fmt.Println("Circumference =", p)
-}
+?????????????????
 ```
 
 Where go.mod is,
 
 ```text
-module module-with-remote-package
+module shapes-package
 
 go 1.19
 
-require github.com/JeffDeCola/my-go-packages v0.0.9
+require github.com/JeffDeCola/my-go-packages v0.1.0
 ```
