@@ -1,6 +1,6 @@
-// A package to calculate and manipulate simple 2d and 3d geometric shapes
+// A package to calculate and manipulate simple 2D and 3D geometric shapes
 
-package main
+package shapes
 
 import (
 	"math"

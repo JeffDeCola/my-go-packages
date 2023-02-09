@@ -37,7 +37,7 @@ import (
 
 func main() {
 
-    // Create a circle
+    // Create a circle type
     c := circle.Circle{Radius: 5}
 
     // Get the area
@@ -57,5 +57,5 @@ module module-with-remote-package
 
 go 1.19
 
-require github.com/JeffDeCola/my-go-packages v0.0.8
+require github.com/JeffDeCola/my-go-packages v0.0.9
 ```
