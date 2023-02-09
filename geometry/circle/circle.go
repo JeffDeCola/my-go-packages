@@ -1,6 +1,6 @@
-// A package to calculate the area and circumference of a circle
-
 package circle
+
+// A package to calculate the area and circumference of a circle
 
 import (
 	"math"
