@@ -1,6 +1,6 @@
-// A package containing computations related to prime numbers
-
 package prime
+
+// A package containing computations related to prime numbers
 
 //---------------------------------------------------------------
 // Functions

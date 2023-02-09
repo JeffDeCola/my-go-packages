@@ -4,7 +4,8 @@ _A package to calculate the area and circumference of a circle._
 
 Documentation and reference,
 
-* Circle package at [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/geometry/circle)
+* Circle package at
+  [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/geometry/circle)
 * Refer to my example
   [module-with-remote-package](https://github.com/JeffDeCola/my-go-examples/tree/master/modules-and-packages/module-with-remote-package)
 
@@ -59,5 +60,5 @@ module module-with-remote-package
 
 go 1.19
 
-require github.com/JeffDeCola/my-go-packages v0.0.9
+require github.com/JeffDeCola/my-go-packages v0.2.0
 ```

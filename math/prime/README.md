@@ -1,26 +1,44 @@
-# My circle package
+# My prime package
 
 _A package containing computations related to prime numbers._
 
 Documentation and reference,
 
-* Circle package at [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle)
-* Refer to my example
-  [module-with-remote-package](https://github.com/JeffDeCola/my-go-examples/tree/master/modules-and-packages/module-with-remote-package)
+* Prime package at
+  [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/math/prime)
 
-## TYPE & METHODS
-
-Types,
+## FUNCTIONS
 
 ```go
-type Circle struct {
-    R float64
+func IsPrime(n int) bool
+```
+
+## EXAMPLE
+
+```go
+package main
+
+import (
+    "fmt"
+
+    "github.com/JeffDeCola/my-go-packages/math/prime"
+)
+
+func main() {
+
+    // Check if a number is prime
+    fmt.Println("Is 7 prime?", prime.IsPrime(7))
+    fmt.Println("Is 8 prime?", prime.IsPrime(8))
+
 }
 ```
 
-Methods,
+Where go.mod is,
 
-```go
-func (c Circle) **circleArea**() float64
-func (c Circle) **circleCircumference**() float64
+```text
+module your-module-name
+
+go 1.19
+
+require github.com/JeffDeCola/my-go-packages v0.2.0
 ```
