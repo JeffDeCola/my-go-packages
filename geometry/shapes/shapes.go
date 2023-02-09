@@ -86,7 +86,7 @@ func (r Rectangle) Perimeter() float64 {
 	return p
 }
 
-// Perimeter method to calculate the perimeter of a circle
+// Perimeter method to calculate the perimeter/circumference of a circle
 func (c Circle) Perimeter() float64 {
 	p := 2 * math.Pi * c.Radius
 	return p
@@ -158,7 +158,7 @@ func GetArea(t TwoDCalculations) float64 {
 	return t.Area()
 }
 
-// GetPerimeter function returns the perimeter of a shape
+// GetPerimeter function returns the perimeter/circumference of a shape
 func GetPerimeter(t TwoDCalculations) float64 {
 	return t.Perimeter()
 }

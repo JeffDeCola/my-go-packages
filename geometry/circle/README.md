@@ -14,15 +14,15 @@ The Circle type is,
 
 ```go
 type Circle struct {
-    R float64
+    Radius float64
 }
 ```
 
 ## METHODS
 
 ```go
-func (c Circle) circleArea() float64
-func (c Circle) circleCircumference() float64
+func (c Circle) Area() float64
+func (c Circle) Circumference() float64
 ```
 
 ## EXAMPLE
@@ -38,14 +38,24 @@ import (
 func main() {
 
     // Create a circle
-    c := circle.Circle{R: 5}
+    c := circle.Circle{Radius: 5}
 
-    // Calculate the area
-    a := c.CircleArea()
+    // Get the area
+    a := c.Area()
     fmt.Println("Area =", a)
 
-    // Calculate the circumference
-    p := c.CircleCircumference()
+    // Get the circumference
+    p := c.Circumference()
     fmt.Println("Circumference =", p)
 }
+```
+
+Where go.mod is,
+
+```text
+module module-with-remote-package
+
+go 1.19
+
+require github.com/JeffDeCola/my-go-packages v0.0.8
 ```
