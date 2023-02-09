@@ -11,18 +11,18 @@ import (
 
 // Circle struct defines a circle
 type Circle struct {
-	R float64
+	Radius float64
 }
 
 //---------------------------------------------------------------
 // Methods
 
-// CircleArea method to calculate the area of a circle
-func (c Circle) CircleArea() float64 {
-	return math.Pi * math.Pow(c.R, 2)
+// Area method to calculate the area of a circle
+func (c Circle) Area() float64 {
+	return math.Pi * math.Pow(c.Radius, 2)
 }
 
-// CircleCircumference method to calculate the circumference of a circle
-func (c Circle) CircleCircumference() float64 {
-	return 2 * math.Pi * c.R
+// Circumference method to calculate the circumference of a circle
+func (c Circle) Circumference() float64 {
+	return 2 * math.Pi * c.Radius
 }
