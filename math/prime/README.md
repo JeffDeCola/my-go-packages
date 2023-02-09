@@ -1,6 +1,6 @@
 # My circle package
 
-_My circle package contains computations for area and circumference of a circle._
+_A package containing computations related to prime numbers._
 
 Documentation and reference,
 
