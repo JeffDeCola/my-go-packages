@@ -1,12 +1,14 @@
 # my-go-packages
 
+[![Tag Latest](https://badgen.net/github/tag/JeffDeCola/my-go-packages)](https://github.com/JeffDeCola/my-go-packages)
+[![Go Reference](https://pkg.go.dev/badge/github.com/JeffDeCola/my-go-packages.svg)](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages)
 [![Go Report Card](https://goreportcard.com/badge/github.com/JeffDeCola/my-go-packages)](https://goreportcard.com/report/github.com/JeffDeCola/my-go-packages)
-[![GoDoc](https://godoc.org/github.com/JeffDeCola/my-go-packages?status.svg)](https://godoc.org/github.com/JeffDeCola/my-go-packages)
-[![Maintainability](https://api.codeclimate.com/v1/badges/429352c4ab8e00602452/maintainability)](https://codeclimate.com/github/JeffDeCola/my-go-packages/maintainability)
-[![Issue Count](https://codeclimate.com/github/JeffDeCola/my-go-packages/badges/issue_count.svg)](https://codeclimate.com/github/JeffDeCola/my-go-packages/issues)
-[![License](http://img.shields.io/:license-mit-blue.svg)](http://jeffdecola.mit-license.org)
+[![codeclimate Maintainability](https://api.codeclimate.com/v1/badges/429352c4ab8e00602452/maintainability)](https://codeclimate.com/github/JeffDeCola/my-go-packages/maintainability)
+[![codeclimate Issue Count](https://codeclimate.com/github/JeffDeCola/my-go-packages/badges/issue_count.svg)](https://codeclimate.com/github/JeffDeCola/my-go-packages/issues)
+[![MIT License](http://img.shields.io/:license-mit-blue.svg)](http://jeffdecola.mit-license.org)
+[![JeffDeCola.com](https://badgen.net/badge/website/JeffDeCola.com/blue?icon=website)](https://JeffDeCola.com/)
 
-_A place for me to create and use go packages._
+_A place to keep my go packages._
 
 Table of Contents
 
