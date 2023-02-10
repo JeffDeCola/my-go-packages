@@ -24,11 +24,7 @@ Documentation and reference,
   _built with
   [concourse](https://github.com/JeffDeCola/my-go-packages/blob/master/ci-README.md)_
 
-## MY GO PACKAGES
-
-_All sections in alphabetical order._
-
-### GEOMETRY
+## GEOMETRY
 
 * [circle](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle)
 
@@ -38,45 +34,8 @@ _All sections in alphabetical order._
 
   _A package to calculate and manipulate simple 2D and 3D geometric shapes._
 
-### MATH
+## MATH
 
 * [prime](https://github.com/JeffDeCola/my-go-packages/tree/master/math/prime)
 
   _A package containing computations related to prime numbers._
-
-## USE
-
-To add to you local go path,
-
-```bash
-go get -u -v github.com/JeffDeCola/my-go-packages
-go install -v github.com/JeffDeCola/my-go-packages@latest
-```
-
-## TAG A VERSION FOR THIS REPO
-
-You can tag a version number for this repo.
-Since I have multiple packages here, they will
-all have the same version number.
-
-```bash
-git tag v0.0.1
-git push --tags
-```
-
-To see previous versions,
-
-```bash
-git tag
-```
-
-## pkg.go.dev
-
-You only have to do this once.
-
-Head over to
-[https://pkg.go.dev/github.com/JeffDeCola/my-go-packages](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages)
-and request it.
-
-It should eventually update when you tag a new version.
-I'm not sure how to force it faster.
