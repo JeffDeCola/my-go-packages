@@ -8,12 +8,12 @@
 
 _A place for me to create and use go packages._
 
-Table of Contents,
+TABLE OF CONTENTS
 
 * [GEOMETRY](https://github.com/JeffDeCola/my-go-packages#geometry)
 * [MATH](https://github.com/JeffDeCola/my-go-packages#math)
 
-Documentation and reference,
+DOCUMENTATION AND REFERENCE
 
 * Packages at [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages)
 * My [go cheat sheet](https://github.com/JeffDeCola/my-cheat-sheets/tree/master/software/development/languages/go-cheat-sheet)
