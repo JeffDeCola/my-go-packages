@@ -1,8 +1,13 @@
-# My prime package
+# MY PRIME PACKAGE
 
 _A package containing computations related to prime numbers._
 
-Documentation and reference,
+Table of Contents
+
+* [FUNCTIONS](https://github.com/JeffDeCola/my-go-packages/tree/master/math/prime#functions)
+* [EXAMPLE](https://github.com/JeffDeCola/my-go-packages/tree/master/math/prime#example)
+
+Documentation and Reference
 
 * Prime package at
   [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/math/prime)

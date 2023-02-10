@@ -1,8 +1,14 @@
-# My circle package
+# MY CIRCLE PACKAGE
 
 _A package to calculate the area and circumference of a circle._
 
-Documentation and reference,
+Table of Contents
+
+* [TYPES](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle#types)
+* [METHODS](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle#methods)
+* [EXAMPLE](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle#example)
+
+Documentation and Reference
 
 * Circle package at
   [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/geometry/circle)
