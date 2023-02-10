@@ -1,8 +1,13 @@
-# My shapes package
+# MY SHAPES PACKAGE
 
 _A package to calculate and manipulate simple 2D and 3D geometric shapes._
 
-Documentation and reference,
+Table of Contents
+
+* [FUNCTIONS](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/shapes#functions)
+* [EXAMPLE](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/shapes#example)
+
+Documentation and Reference
 
 * Shapes package at
   [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/geometry/shapes)
