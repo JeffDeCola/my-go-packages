@@ -51,6 +51,7 @@ resources:
 
 - name: my-go-packages
   type: git
+  icon: github
   source:
     #uri: https://github.com/jeffdecola/my-go-packages
     uri: git@github.com:jeffdecola/my-go-packages.git

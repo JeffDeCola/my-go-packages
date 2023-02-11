@@ -1,4 +1,9 @@
 #!/bin/bash
 # my-go-packages destroy-pipeline.sh
 
-fly -t ci destroy-pipeline --pipeline my-go-packages
+echo " "
+echo "Destroy pipeline on target jeffs-ci-target which is team jeffs-ci-team"
+fly --target jeffs-ci-target \
+    destroy-pipeline \
+    --pipeline my-go-packages
+echo " "
