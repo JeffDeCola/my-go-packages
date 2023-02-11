@@ -6,6 +6,7 @@
 [![codeclimate Maintainability](https://api.codeclimate.com/v1/badges/429352c4ab8e00602452/maintainability)](https://codeclimate.com/github/JeffDeCola/my-go-packages/maintainability)
 [![codeclimate Issue Count](https://codeclimate.com/github/JeffDeCola/my-go-packages/badges/issue_count.svg)](https://codeclimate.com/github/JeffDeCola/my-go-packages/issues)
 [![MIT License](http://img.shields.io/:license-mit-blue.svg)](http://jeffdecola.mit-license.org)
+[![jeffdecola.com](https://img.shields.io/badge/website-jeffdecola.com-blue)](https://jeffdecola.com)
 
 _A place to keep my go packages._
 
@@ -20,9 +21,8 @@ Documentation and Reference
 * My [go cheat sheet](https://github.com/JeffDeCola/my-cheat-sheets/tree/master/software/development/languages/go-cheat-sheet)
 * [my-go-examples](https://github.com/JeffDeCola/my-go-examples)
 * [my-go-tools](https://github.com/JeffDeCola/my-go-tools)
-* [jeffdecola.com](https://jeffdecola.com)
 * This repos
-  [github webpage](https://jeffdecola.github.io/my-go-pacakages/)
+  [github webpage](https://jeffdecola.github.io/my-go-packages/)
   _built with
   [concourse](https://github.com/JeffDeCola/my-go-packages/blob/master/ci-README.md)_
 
