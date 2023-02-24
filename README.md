@@ -1,6 +1,6 @@
 # my-go-packages
 
-[![Tag Latest](https://badgen.net/github/tag/JeffDeCola/my-go-packages)](https://github.com/JeffDeCola/my-go-packages/tags)
+[![Tag Latest](https://img.shields.io/github/v/tag/jeffdecola/my-go-packages)](https://github.com/JeffDeCola/my-go-packages/tags)
 [![Go Reference](https://pkg.go.dev/badge/github.com/JeffDeCola/my-go-packages.svg)](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages)
 [![Go Report Card](https://goreportcard.com/badge/github.com/JeffDeCola/my-go-packages)](https://goreportcard.com/report/github.com/JeffDeCola/my-go-packages)
 [![codeclimate Maintainability](https://api.codeclimate.com/v1/badges/429352c4ab8e00602452/maintainability)](https://codeclimate.com/github/JeffDeCola/my-go-packages/maintainability)
