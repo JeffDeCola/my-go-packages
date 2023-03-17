@@ -1,4 +1,4 @@
-# my-go-packages
+# MY GO PACKAGES
 
 [![Tag Latest](https://img.shields.io/github/v/tag/jeffdecola/my-go-packages)](https://github.com/JeffDeCola/my-go-packages/tags)
 [![Go Reference](https://pkg.go.dev/badge/github.com/JeffDeCola/my-go-packages.svg)](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages)
