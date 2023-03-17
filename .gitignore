@@ -1,6 +1,9 @@
 # CONCOURSE
 .credentials.yml
 
+# VSCODE
+.vscode/
+
 # GO
 coverage.out
 
