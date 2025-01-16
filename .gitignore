@@ -1,14 +1,13 @@
-# CONCOURSE
+# golang-generic.gitignore
+
+# CONCOURSE SECRETS
 .credentials.yml
-
-# VSCODE
-.vscode/
-
-# GO
-coverage.out
 
 # macOS
 .DS_Store
 
 # WINDOWS
 *.jpg:Zone.Identifier
+
+# TEST
+**/test/test_coverage.txt
