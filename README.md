@@ -29,7 +29,7 @@ Documentation and Reference
 
 ## NEURAL NETWORKS
 
-* [mlp](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp)
+* [mlp](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp)
 
   _A package to implement a user scalable multi-layer
   perceptron (MLP) / feed-forward (FF) neural network using a
