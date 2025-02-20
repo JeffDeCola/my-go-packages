@@ -12,19 +12,28 @@ _A place to keep my go packages._
 
 Table of Contents
 
+* [NEURAL NETWORKS](https://github.com/JeffDeCola/my-go-packages#neural-networks)
 * [GEOMETRY](https://github.com/JeffDeCola/my-go-packages#geometry)
 * [MATH](https://github.com/JeffDeCola/my-go-packages#math)
 
 Documentation and Reference
 
-* Packages at [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages)
-* My [go cheat sheet](https://github.com/JeffDeCola/my-cheat-sheets/tree/master/software/development/languages/go-cheat-sheet)
+* These packages at [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages)
+* [go-cheat-sheet](https://github.com/JeffDeCola/my-cheat-sheets/tree/master/software/development/languages/go-cheat-sheet)
 * [my-go-examples](https://github.com/JeffDeCola/my-go-examples)
 * [my-go-tools](https://github.com/JeffDeCola/my-go-tools)
 * This repos
   [github webpage](https://jeffdecola.github.io/my-go-packages/)
   _built with
   [concourse](https://github.com/JeffDeCola/my-go-packages/blob/master/ci-README.md)_
+
+## NEURAL NETWORKS
+
+* [mlp](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp)
+
+  _A package to implement a user scalable multi-layer
+  perceptron (MLP) / feed-forward (FF) neural network using a
+  sigmoid non-linear function._
 
 ## GEOMETRY
 
