@@ -18,7 +18,8 @@ Table of Contents
 
 Documentation and Reference
 
-* These packages at [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages)
+* [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages)
+  shows these packages
 * [go-cheat-sheet](https://github.com/JeffDeCola/my-cheat-sheets/tree/master/software/development/languages/go-cheat-sheet)
 * [my-go-examples](https://github.com/JeffDeCola/my-go-examples)
 * [my-go-tools](https://github.com/JeffDeCola/my-go-tools)
