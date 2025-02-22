@@ -3,6 +3,7 @@ package mlp
 import (
 	"encoding/csv"
 	"fmt"
+	"math"
 	"math/rand"
 	"os"
 	"strconv"
@@ -260,23 +261,37 @@ func (nn *NeuralNetwork) TrainNeuralNetwork() {
 	}
 
 	// Setup the channel to read the CSV file line by line
-	ch, err := nn.readCSVFileLineByLine()
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
-	}
+	ch := nn.readCSVFileLineByLine()
 
 	// Train the neural network for the number of epochs
 	for epoch := 0; epoch < nn.epochs; epoch++ {
 
 		// print the epoch number
-		fmt.Println("Epoch:", epoch)
+		fmt.Println("Epoch", epoch)
 
-		// Read the data rows one by one
+		// Read the data rows one by one until EOF
+		for {
 
-		// Print the input and output data
-		for data = range ch {
-			fmt.Println("Input/output Data: ", data.i, data.z)
+			// STEP 6.1 Read the data from the channel
+			// Receive the data from the channel
+			data = <-ch // BLOCKING
+
+			if data.i == nil {
+				break
+			}
+
+			// STEP 6.2 Normalize the input data
+			x := nn.normalizeInputData(data.i)
+
+			// STEP 6.3 Forward Pass
+			yOutput, yHidden := nn.forwardPass(x)
+
+			// print the output to .2 decimal places
+			fmt.Printf("    yHidden: %.2f\n", yHidden)
+			fmt.Printf("    yOutput: %.2f\n", yOutput)
+
+			// STEP 6.4 Calculate the error
+
 		}
 
 	}
@@ -284,8 +299,10 @@ func (nn *NeuralNetwork) TrainNeuralNetwork() {
 }
 
 // ReadCSVFileLineByLine reads the CSV file line by line and
-// returns a channel to read the TrainingData struct
-func (nn *NeuralNetwork) readCSVFileLineByLine() (<-chan trainingData, error) {
+// returns a channel to read the TrainingData struct.
+// Instead of calling this function each time you want to open the file,
+// keep the file open and just loop from the start of the file.
+func (nn *NeuralNetwork) readCSVFileLineByLine() chan trainingData {
 
 	// Create a new TrainingData struct
 	data := trainingData{
@@ -299,66 +316,149 @@ func (nn *NeuralNetwork) readCSVFileLineByLine() (<-chan trainingData, error) {
 	// Open the CSV file
 	file, err := os.Open(nn.datasetCSVFile)
 	if err != nil {
-		return nil, err
+		return nil
 	}
 
-	// Create a new CSV reader
-	reader := csv.NewReader(file)
-
+	// Read the data rows in a separate goroutine until EOF
 	go func() {
 
 		defer file.Close()
 		defer close(ch)
 
-		// Read the header row
-		_, err = reader.Read()
-		if err != nil {
-			fmt.Println("Error:", err)
-			return
-		}
+		// We want to keep reading the file for the number of epochs
+		for epoch := 0; epoch < nn.epochs; epoch++ {
 
-		// Read the data rows one by one
-		for {
-
-			dataLine, err := reader.Read()
+			// Make sure we're at the beginning of the file
+			_, err := file.Seek(0, 0)
 			if err != nil {
-				break
+				fmt.Println("Error:", err)
+				return
 			}
 
-			// Read the input data
-			for i := 0; i < nn.inputNodes; i++ {
-				value, err := strconv.ParseFloat(dataLine[i], 64)
+			// Create a new CSV reader
+			reader := csv.NewReader(file)
+
+			// Read the header row
+			_, err = reader.Read()
+			if err != nil {
+				fmt.Println("Error:", err)
+				return
+			}
+
+			// Read the data rows one by one until EOF
+			// Send back data.i nil to alert EOF
+			for {
+
+				// Read the data row
+				dataLine, err := reader.Read()
+
+				// EOF
 				if err != nil {
-					fmt.Println("Error:", err)
-					return
+					data.i = nil
+					ch <- data // BLOCKING
+					data.i = make([]float64, nn.inputNodes)
+
+					break
+
+				} else {
+					// Read the input data
+					for i := 0; i < nn.inputNodes; i++ {
+						value, err := strconv.ParseFloat(dataLine[i], 64)
+						if err != nil {
+							fmt.Println("Error:", err)
+							return
+						}
+						data.i[i] = value
+
+					}
+
+					// Read the output data
+					for i := 0; i < nn.outputNodes; i++ {
+						value, err := strconv.ParseFloat(dataLine[nn.inputNodes+i], 64)
+						if err != nil {
+							fmt.Println("Error:", err)
+							return
+						}
+						data.z[i] = value
+					}
+
+					// Send the data to the channel
+					ch <- data                          // BLOCKING
+					time.Sleep(1000 * time.Microsecond) // wait
 				}
-				data.i[i] = value
 			}
 
-			// Read the output data
-			for i := 0; i < nn.outputNodes; i++ {
-				value, err := strconv.ParseFloat(dataLine[nn.inputNodes+i], 64)
-				if err != nil {
-					fmt.Println("Error:", err)
-					return
-				}
-				data.z[i] = value
-			}
-
-			fmt.Println("-----------Input/output Data: ", data.i, data.z)
-
-			ch <- data
 		}
-
-		// print EOF
-		fmt.Println("EOF")
-
-		// reset the file pointer
-		file.Seek(0, 0)
 
 	}()
 
-	fmt.Println("returning channelkjhagsdfkljhasdfljhasdf")
+	return ch
+}
 
-	return ch, nil
+// Normalize the input data
+func (nn *NeuralNetwork) normalizeInputData(i []float64) []float64 {
+	x := make([]float64, nn.inputNodes)
+	for j := 0; j < nn.inputNodes; j++ {
+		x[j] = (i[j] - nn.minInput[j]) / (nn.maxInput[j] - nn.minInput[j])
+	}
+	return x
+}
+
+// ForwardPass calculates the output of the neural network
+func (nn *NeuralNetwork) forwardPass(x []float64) (yOutput []float64, yHidden [][]float64) {
+
+	// Initialize the hidden outputs for each layer
+	yHidden = make([][]float64, nn.hiddenLayers)
+	for l := 0; l < nn.hiddenLayers; l++ {
+		yHidden[l] = make([]float64, nn.hiddenNodesPerLayer[l])
+	}
+
+	// Initialize the output outputs
+	yOutput = make([]float64, nn.outputNodes)
+
+	// Calculate the output of each hidden node for each layer
+	for l := 0; l < nn.hiddenLayers; l++ {
+		for hn := 0; hn < nn.hiddenNodesPerLayer[l]; hn++ {
+			yHidden[l][hn] = 0.0
+			s := 0.0
+			// SUMMATION FUNCTION
+			if l == 0 {
+				for in := 0; in < nn.inputNodes; in++ {
+					s += x[in] * nn.hiddenWeights[l][hn][in]
+				}
+				s += nn.hiddenBias[l][hn]
+			} else {
+				for in := 0; in < nn.hiddenNodesPerLayer[l-1]; in++ {
+					s += yHidden[l-1][in] * nn.hiddenWeights[l][hn][in]
+				}
+				s += nn.hiddenBias[l][hn]
+			}
+			// ACTIVATION FUNCTION
+			yHidden[l][hn] = sigmoid(s)
+		}
+	}
+
+	// Calculate the output of each output node
+	for o := 0; o < nn.outputNodes; o++ {
+		yOutput[o] = 0.0
+		s := 0.0
+		// SUMMATION FUNCTION
+		for hn := 0; hn < nn.hiddenNodesPerLayer[nn.hiddenLayers-1]; hn++ {
+			s += yHidden[nn.hiddenLayers-1][hn] * nn.outputWeights[o][hn]
+		}
+		s += nn.outputBias[o]
+		// ACTIVATION FUNCTION
+		yOutput[o] = sigmoid(s)
+	}
+
+	return yOutput, yHidden
+}
+
+// Activation functions
+func sigmoid(x float64) float64 {
+	return 1 / (1 + math.Exp(-x))
+}
+
+func sigmoidDerivative(x float64) float64 {
+	return x * (1 - x)
 }

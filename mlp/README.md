@@ -4,82 +4,175 @@
   perceptron (MLP) / feed-forward (FF) neural network using a
   sigmoid non-linear function._
 
+TL;DR,
+
+```go
+nn := nnp.CreateNeuralNetwork()
+nn.PrintNeuralNetwork()
+nn.InitializeWeightsAndBias()
+err := nn.GetInputMinMaxFromCSV()
+nn.PrintInputMinMax()
+err := nn.TrainNeuralNetwork()
+```
+
 Table of Contents
 
 * [OVERVIEW](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#overview)
-* [TRAINING DATA](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#training-data)
-* [TRAINING](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#training)
-  * [STEP 1 - NORMALIZE INPUT DATA](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-1---normalize-input-data)
-  * [STEP 2 - FORWARD PASS](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-2---forward-pass)
-  * [STEP 3 - BACKWARD PASS](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-3---backward-pass)
-  * [STEP 4 - UPDATE WEIGHTS & BIAS](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-4---update-weights--bias)
+* [STEP 1 - CONFIGURE YOUR NEURAL NETWORK](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-1---configure-your-neural-network)
+* [STEP 2 - CREATE NEURAL NETWORK](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-2---create-neural-network)
+* [STEP 3 - INITIALIZE WEIGHTS & BIAS](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-3---initialize-weights--bias)
+* [STEP 4 - CREATE YOUR DATASET](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-4---create-your-dataset)
+* [STEP 5 - GET INPUT MID MAX VALUES OF YOUR DATASET](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-5---get-input-mid-max-values-of-your-dataset)
+* [STEP 6 - TRAIN YOUR NEURAL NETWORK](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-6---train-your-neural-network)
+  * [STEP 6.1 - READING THE CVS FILE](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-61---reading-the-cvs-file)
+  * [STEP 6.2 - NORMALIZE INPUT DATA](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-62---normalize-input-data)
+  * [STEP 6.3 - FORWARD PASS](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-63---forward-pass)
+  * [STEP 6.4 - BACKWARD PASS](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-64---backward-pass)
+  * [STEP 6.5 - UPDATE WEIGHTS & BIAS](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-65---update-weights--bias)
 
 Documentation and Reference
 
 * [Artificial intelligence cheat sheet](https://github.com/JeffDeCola/my-cheat-sheets/tree/master/software/development/software-architectures/artificial-intelligence/artificial-intelligence-cheat-sheet)
 * [Neural networks cheat sheet](https://github.com/JeffDeCola/my-cheat-sheets/tree/master/software/development/software-architectures/artificial-intelligence/artificial-intelligence-cheat-sheet/neural-networks.md)
 * [My neural networks](https://github.com/JeffDeCola/my-neural-networks/tree/main)
-using this package
+uses this package
   * [mlp-classification-example](https://github.com/JeffDeCola/my-neural-networks/tree/main/mlp-classification-example)
   * [mlp-image-recognition-example](https://github.com/JeffDeCola/my-neural-networks/tree/main/mlp-regression-example)
   * [mlp-regression-example](https://github.com/JeffDeCola/my-neural-networks/tree/main/mlp-image-recognition-example)
 
 ## OVERVIEW
 
-This multi-layer perceptron (MLP) / feed-forward (FF)
-neural network will be used to classify data into two categories.
-
-This project implements a multi-layer perceptron (MLP) neural network designed
-to predict student performance based on three input features:
-
-* midterm grade
-* hours studied
-* last test grade
-
-The network consists of three hidden layers, each containing four nodes,
-and produces two outputs:
-
-* the percentage likelihood of passing the final test and
-* the predicted final grade.
-
-It will have the following structure,
-
-* Input Data:  $i_{[1]}$, $i_{[2]}$, $i_{[3]}$
-* Input Nodes: 3
-* Hidden Nodes: 4
-* Output Nodes: 2
-* Target Data: $z_{[0]}$, $z_{[1]}$
-* Activation Function: Sigmoid $f(s)$
+A  multi-layer perceptron (MLP) / feed-forward (FF)
+neural network has the following structure.
 
 ![IMAGE feed-forward-multi-layer-perceptron-neural-network IMAGE](../docs/pics/feed-forward-multi-layer-perceptron-neural-network.svg)
 
-## TRAINING DATA
+## STEP 1 - CONFIGURE YOUR NEURAL NETWORK
 
-We will be using the following training data to train our neural network,
+In this package you can configure your multi-layer
+perceptron (MLP) / feed-forward (FF)
+neural network by setting the following parameters,
 
-$$
-\begin{bmatrix}
-i_{[0]} & i_{[1]} & i_{[2]} & z_{[0]} & z_{[1]} \\
-4 & 4 & 3 & 4 & 4 \\
-3 & 48 & 63 & 66 & 34 \\
-42 & 22 & 32 & 42 & 41 \\
-. & . & . & . & . \\
-etc. & etc. & etc. & etc. & etc.
-\end{bmatrix}
-$$
+* The number of input nodes
+* The input node labels
+* The number of hidden layers
+* The number of nodes in each hidden layer
+* The number of output nodes
+* The output node labels
+* The learning rate $\alpha$
+* The number of epochs
+* The dataset CSV file
 
-## TRAINING
+As an example, you would do this by creating a
+`NeuralNetworkParameters` struct,
 
-A training data set for the neural
-network on a set of training data.
-This is were the neural network can _learn_
-(adjusting the weights) on training data
-in order to map the inputs to outputs.
-The training process is called backpropagation which is
-a supervised learning algorithm. This means,
-for some given inputs, we know the desired/expected target output.
+```go
+nnp := mlp.NeuralNetworkParameters{
+  InputNodes:          3,
+  InputNodeLabels:     []string{"midterm-grade", "hours-studied", "last-test-grade"},
+  HiddenLayers:        3,
+  HiddenNodesPerLayer: []int{4, 4, 4},
+  OutputNodes:         2,
+  OutputNodeLabels:    []string{"pred-perc-passing-final", "pred-final-grade"},
+  LearningRate:        0.1,
+  Epochs:              4,
+  DatasetCSVFile:      "dataset.csv",
+}
+```
 
-### STEP 1 - NORMALIZE INPUT DATA
+## STEP 2 - CREATE NEURAL NETWORK
+
+To create a neural network, you take your parameters and feed them
+into the `CreateNeuralNetwork` method,
+
+```go
+nn := nnp.CreateNeuralNetwork()
+```
+
+You can also print out the neural network structure if you want,
+
+```go
+nn.PrintNeuralNetwork()
+```
+
+## STEP 3 - INITIALIZE WEIGHTS & BIAS
+
+Now you need to initialize the weights and bias for the neural network.
+This will set the initial weights and bias to random values between -1 and 1.
+This is done by calling the `InitializeWeightsAndBias` method,
+
+```go
+nn.InitializeWeightsAndBias()
+```
+
+## STEP 4 - CREATE YOUR DATASET
+
+You will use a standard csv file with the first row being the labels
+and the rest of the rows being the input and target output data.
+It will look something like this,
+
+```csv
+midterm-grade,hours-studied,last-test-grade,pred-perc-passing-final,pred-final-grade
+89,48,79,80,82
+75,23,85,70,78
+etc...
+```
+
+## STEP 5 - GET INPUT MID MAX VALUES OF YOUR DATASET
+
+Before you start training, we need to find the min and max values
+of your dataset (your csv file). The min and max values will be
+used to normalize your dataset.
+This is done by calling the `GetInputMinMaxFromCSV` method,
+
+```go
+err := nn.GetInputMinMaxFromCSV()
+if err != nil {
+  fmt.Println("Error:", err)
+  return
+}
+```
+
+You can print out the min and max values if you want,
+
+```go
+nn.PrintInputMinMax()
+```
+
+## STEP 6 - TRAIN YOUR NEURAL NETWORK
+
+Now that out neural network is setup and we have our dataset,
+we can train our neural network.
+To put it simple, training a neural network is
+the process of adjusting the weights
+of the network in order to minimize the error in the output from
+the network.
+This is done by calling the `TrainNeuralNetwork` method,
+
+```go
+err := nn.TrainNeuralNetwork()
+if err != nil {
+  fmt.Println("Error:", err)
+  return
+}
+```
+
+This one method does a lot of heavy lifting so let's break it down.
+If you're not interested in these details, you can skip to step 7.
+
+### STEP 6.1 - READING THE CVS FILE
+
+We will not store the csv file in memory, but rather read it line by line.
+This is because the csv file could be very large.
+But it will take a little longer to train. This is the trade off.
+
+```go
+ch := nn.readCSVFileLineByLine()
+```
+
+The channel `ch` will contain each line of the csv file.
+
+### STEP 6.2 - NORMALIZE INPUT DATA
 
 Normalization, also called min-max scaling, changes the values of
 input data set to occupy a range of [0, 1] or [-1, 1],
@@ -109,27 +202,20 @@ $$
 \frac{85 - 69}{100 - 69} = \frac{16}{31} = 0.516129
 $$
 
-It can be easy to see that the min value 69 will be 0 and 
-the max value 100 will be 1.
+We will normalize using the `normalize` function,
 
-### STEP 2 - FORWARD PASS
+```go
+data = nn.normalizeInputData(data)
+```
 
-Giving our $x_{[0]}$, $x_{[1]}$ and $x_{[2]}$ input training data,
+### STEP 6.3 - FORWARD PASS
+
+Giving our normalized $x_{[0]}$, $x_{[1]}$ and $x_{[2]}$ input training data,
 **compute the output for each layer and
 propagate through layers to obtain the outputs
 $y_{[0]}$ and $y_{[1]}$**.
 
 ![IMAGE feed-forward-multi-layer-perceptron-neural-network-training-step-1 - IMAGE](../docs/pics/feed-forward-multi-layer-perceptron-neural-network-training-step-1.svg)
-
-Normalize the input data between 0 and 1,
-
-$$
-\begin{aligned}
-x_{[0]} &= normalize(i_{[0]}) \\
-x_{[1]} &= normalize(i_{[1]}) \\
-x_{[2]} &= normalize(i_{[2]})
-\end{aligned}
-$$
 
 Calculate the hidden layer outputs,
 
@@ -151,10 +237,19 @@ y_{[1]} &= f_{o[1]}(s) = f_{o[1]}\left(y_{h[0][0]} w_{o[1][0]} + y_{h[0][1]} w_{
 \end{aligned}
 $$
 
-I'm actually trying to simplify the above equations.
-It makes more sense to code it using slices.
+where $f(s)$ is the sigmoid function.
 
-### STEP 3 - BACKWARD PASS
+$$
+f(s) = \frac{1}{1 + e^{-s}}
+$$
+
+The method `forwardPass` does this,
+
+```go
+yOutput, yHidden := nn.forwardPass(x)
+```
+
+### STEP 6.4 - BACKWARD PASS
 
 Now  that we have the outputs $y$, calculate the error (delta **$\delta$**)
 between target data ($z$) and actual output ($y$)
@@ -182,7 +277,7 @@ $$
 \end{aligned}
 $$
 
-## STEP 4 - UPDATE WEIGHTS & BIAS
+## STEP 6.5 - UPDATE WEIGHTS & BIAS
 
 Update the weights using the error (delta $\delta$) and the learning rate $\alpha$.
 
