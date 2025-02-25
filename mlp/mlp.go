@@ -159,11 +159,11 @@ func (nn *NeuralNetwork) PrintNeuralNetwork() {
 
 		// Print weights for each nodes in this hidden layer
 		for hn := 0; hn < nn.hiddenNodesPerLayer[l]; hn++ {
-			fmt.Println("    weights node:", hn, nn.hiddenWeights[l][hn])
+			fmt.Printf("    weights node: %d %.3f\n", hn, nn.hiddenWeights[l][hn])
 		}
 		// Print bias for each node in this hidden layer
 		for hn := 0; hn < nn.hiddenNodesPerLayer[l]; hn++ {
-			fmt.Println("    bias node:   ", hn, nn.hiddenBias[l][hn])
+			fmt.Printf("    bias node:    %d %.3f\n", hn, nn.hiddenBias[l][hn])
 		}
 	}
 
@@ -171,11 +171,11 @@ func (nn *NeuralNetwork) PrintNeuralNetwork() {
 	fmt.Println("OUTPUT NODES:", nn.outputNodes)
 	// Print weights for each nodes in the output layer
 	for on := 0; on < nn.outputNodes; on++ {
-		fmt.Println("    weights node:", on, nn.outputWeights[on])
+		fmt.Printf("    weights node: %d %.3f\n", on, nn.outputWeights[on])
 	}
 	// Print bias for each node in the output layer
 	for on := 0; on < nn.outputNodes; on++ {
-		fmt.Println("    bias node:   ", on, nn.outputBias[on])
+		fmt.Printf("    bias node:    %d %.3f\n", on, nn.outputBias[on])
 	}
 
 	// Print the learning rate
@@ -246,19 +246,14 @@ func (nn *NeuralNetwork) GetInputMinMaxFromCSV() error {
 
 // Print the min and max input values for each input
 func (nn *NeuralNetwork) PrintInputMinMax() {
-	for i := 0; i < nn.inputNodes; i++ {
-		fmt.Println("Input Node", i, "Min:", nn.minInput[i], "Max:", nn.maxInput[i])
-	}
+
+	// Print the min and max input values
+	fmt.Println("Min Input Value: ", nn.minInput)
+	fmt.Println("Max Input Value: ", nn.maxInput)
 }
 
 // Train the neural network by reading the dataset from the CSV file
 func (nn *NeuralNetwork) TrainNeuralNetwork() {
-
-	// Create a new TrainingData struct
-	data := trainingData{
-		i: make([]float64, nn.inputNodes),
-		z: make([]float64, nn.outputNodes),
-	}
 
 	// Setup the channel to read the CSV file line by line
 	ch := nn.readCSVFileLineByLine()
@@ -274,24 +269,31 @@ func (nn *NeuralNetwork) TrainNeuralNetwork() {
 
 			// STEP 6.1 Read the data from the channel
 			// Receive the data from the channel
-			data = <-ch // BLOCKING
+			data := <-ch // BLOCKING
 
 			if data.i == nil {
 				break
 			}
 
+			// Print the input data
+			fmt.Println("    Input Data:     ", data.i)
+
 			// STEP 6.2 Normalize the input data
 			x := nn.normalizeInputData(data.i)
 
 			// STEP 6.3 Forward Pass
-			yOutput, yHidden := nn.forwardPass(x)
+			yHidden, yOutput := nn.forwardPass(x)
 
-			// print the output to .2 decimal places
-			fmt.Printf("    yHidden: %.2f\n", yHidden)
-			fmt.Printf("    yOutput: %.2f\n", yOutput)
+			// Print the outputs to .3 decimal places
+			fmt.Printf("        yHidden:     %.3f\n", yHidden)
+			fmt.Printf("        yOutput:     %.3f\n", yOutput)
 
-			// STEP 6.4 Calculate the error
+			// STEP 6.4 Backward Pass
+			deltaOutput, deltaHidden := nn.backwardPass(data.z, yOutput, yHidden)
 
+			// Print the deltas to .3 decimal places
+			fmt.Printf("        deltaOutput: %.3f\n", deltaOutput)
+			fmt.Printf("        deltaHidden: %.3f\n", deltaHidden)
 		}
 
 	}
@@ -405,7 +407,7 @@ func (nn *NeuralNetwork) normalizeInputData(i []float64) []float64 {
 }
 
 // ForwardPass calculates the output of the neural network
-func (nn *NeuralNetwork) forwardPass(x []float64) (yOutput []float64, yHidden [][]float64) {
+func (nn *NeuralNetwork) forwardPass(x []float64) (yHidden [][]float64, yOutput []float64) {
 
 	// Initialize the hidden outputs for each layer
 	yHidden = make([][]float64, nn.hiddenLayers)
@@ -451,7 +453,7 @@ func (nn *NeuralNetwork) forwardPass(x []float64) (yOutput []float64, yHidden []
 		yOutput[o] = sigmoid(s)
 	}
 
-	return yOutput, yHidden
+	return yHidden, yOutput
 }
 
 // Activation functions
@@ -461,4 +463,47 @@ func sigmoid(x float64) float64 {
 
 func sigmoidDerivative(x float64) float64 {
 	return x * (1 - x)
+}
+
+// BackwardPass calculates the deltas for the neural network
+func (nn *NeuralNetwork) backwardPass(z []float64, yOutput []float64, yHidden [][]float64) (deltaOutput []float64, deltaHidden [][]float64) {
+
+	// Initialize the delta for the output layer
+	deltaOutput = make([]float64, nn.outputNodes)
+
+	// Initialize the delta for the hidden layers
+	deltaHidden = make([][]float64, nn.hiddenLayers)
+	for l := 0; l < nn.hiddenLayers; l++ {
+		deltaHidden[l] = make([]float64, nn.hiddenNodesPerLayer[l])
+	}
+
+	// Calculate the delta for each output node
+	for o := 0; o < nn.outputNodes; o++ {
+		// ERROR FUNCTION
+		deltaOutput[o] = (z[o] - yOutput[o]) * sigmoidDerivative(yOutput[o])
+	}
+
+	// Calculate the delta for each hidden node for each layer
+	for l := nn.hiddenLayers - 1; l >= 0; l-- {
+		for hn := 0; hn < nn.hiddenNodesPerLayer[l]; hn++ {
+			// ERROR FUNCTION
+			// If this is the last hidden layer use the output weights
+			if l == nn.hiddenLayers-1 {
+				s := 0.0
+				for o := 0; o < nn.outputNodes; o++ {
+					s += deltaOutput[o] * nn.outputWeights[o][hn]
+				}
+				deltaHidden[l][hn] = s * sigmoidDerivative(yHidden[l][hn])
+				// Use the hidden weights
+			} else {
+				s := 0.0
+				for hn1 := 0; hn1 < nn.hiddenNodesPerLayer[l+1]; hn1++ {
+					s += deltaHidden[l+1][hn1] * nn.hiddenWeights[l+1][hn1][hn]
+				}
+				deltaHidden[l][hn] = s * sigmoidDerivative(yHidden[l][hn])
+			}
+		}
+	}
+
+	return deltaOutput, deltaHidden
 }

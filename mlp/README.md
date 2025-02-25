@@ -34,8 +34,8 @@ Documentation and Reference
 
 * [Artificial intelligence cheat sheet](https://github.com/JeffDeCola/my-cheat-sheets/tree/master/software/development/software-architectures/artificial-intelligence/artificial-intelligence-cheat-sheet)
 * [Neural networks cheat sheet](https://github.com/JeffDeCola/my-cheat-sheets/tree/master/software/development/software-architectures/artificial-intelligence/artificial-intelligence-cheat-sheet/neural-networks.md)
-* [My neural networks](https://github.com/JeffDeCola/my-neural-networks/tree/main)
-uses this package
+* [My neural network](https://github.com/JeffDeCola/my-neural-networks/tree/main)
+examples that use this package
   * [mlp-classification-example](https://github.com/JeffDeCola/my-neural-networks/tree/main/mlp-classification-example)
   * [mlp-image-recognition-example](https://github.com/JeffDeCola/my-neural-networks/tree/main/mlp-regression-example)
   * [mlp-regression-example](https://github.com/JeffDeCola/my-neural-networks/tree/main/mlp-image-recognition-example)
@@ -145,9 +145,14 @@ Now that out neural network is setup and we have our dataset,
 we can train our neural network.
 To put it simple, training a neural network is
 the process of adjusting the weights
-of the network in order to minimize the error in the output from
+of the network in order to minimize the loss in the output from
 the network.
-This is done by calling the `TrainNeuralNetwork` method,
+To achieve this we use a optimization technique called **Stochastic Gradient Descent**.
+We calculate loss using a loss function and calculate the derivate and we update
+the weights during backpropagation. The main goal is to minimize
+the difference(loss) between predicted output and actual output.
+MLP uses a supervised learning technique called **backpropagation** for training.
+In our case, we will call the `TrainNeuralNetwork` method,
 
 ```go
 err := nn.TrainNeuralNetwork()
@@ -276,6 +281,12 @@ $$
 \delta_{h[0][3]} &= \delta_{o[0]} w_{o[0][3]} + \delta_{o[1]} w_{o[1][3]}
 \end{aligned}
 $$
+
+The method `backwardPass` does this,
+
+```go
+deltaOutput, deltaHidden := nn.backwardPass(yOutput, yHidden, z)
+```
 
 ## STEP 6.5 - UPDATE WEIGHTS & BIAS
 
