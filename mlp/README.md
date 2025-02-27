@@ -242,10 +242,11 @@ y_{[1]} &= f_{o[1]}(s) = f_{o[1]}\left(y_{h[0][0]} w_{o[1][0]} + y_{h[0][1]} w_{
 \end{aligned}
 $$
 
-where $f(s)$ is the sigmoid function.
+where $f(s)$ is the
+[sigmoid function](https://github.com/JeffDeCola/my-cheat-sheets/tree/master/other/stem/math/pure/changes/calculus-cheat-sheet#the-sigmoid-function).
 
 $$
-f(s) = \frac{1}{1 + e^{-s}}
+f(s) = \sigma(s) = \frac{1}{1 + e^{-s}}
 $$
 
 The method `forwardPass` does this,
