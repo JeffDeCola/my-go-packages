@@ -32,18 +32,28 @@ Table of Contents
 
 Documentation and Reference
 
-* [Artificial intelligence cheat sheet](https://github.com/JeffDeCola/my-cheat-sheets/tree/master/software/development/software-architectures/artificial-intelligence/artificial-intelligence-cheat-sheet)
-* [Neural networks cheat sheet](https://github.com/JeffDeCola/my-cheat-sheets/tree/master/software/development/software-architectures/artificial-intelligence/artificial-intelligence-cheat-sheet/neural-networks.md)
-* [My neural network](https://github.com/JeffDeCola/my-neural-networks/tree/main)
-examples that use this package
+* [artificial intelligence](https://github.com/JeffDeCola/my-cheat-sheets/tree/master/software/development/software-architectures/artificial-intelligence/artificial-intelligence-cheat-sheet)
+cheat sheet
+* [neural networks](https://github.com/JeffDeCola/my-cheat-sheets/tree/master/software/development/software-architectures/artificial-intelligence/artificial-intelligence-cheat-sheet/neural-networks.md)
+cheat sheet
+* [my-neural-networks](https://github.com/JeffDeCola/my-neural-networks/tree/main)
+  * [perceptron-simple-example](https://github.com/JeffDeCola/my-neural-networks/tree/main/perceptron-simple-example)
   * [mlp-classification-example](https://github.com/JeffDeCola/my-neural-networks/tree/main/mlp-classification-example)
   * [mlp-image-recognition-example](https://github.com/JeffDeCola/my-neural-networks/tree/main/mlp-regression-example)
   * [mlp-regression-example](https://github.com/JeffDeCola/my-neural-networks/tree/main/mlp-image-recognition-example)
+* [the-math-behind-training-mlp-neural-networks](https://github.com/JeffDeCola/my-cheat-sheets/tree/master/software/development/software-architectures/artificial-intelligence/artificial-intelligence-cheat-sheet/neural-networks.md)
 
 ## OVERVIEW
 
 A  multi-layer perceptron (MLP) / feed-forward (FF)
-neural network has the following structure.
+neural network has the following structure,
+
+* The input layer
+* The hidden layer(s)
+* The output layer
+
+As an example, a neural network with 3 input nodes, 1 hidden layer
+with 4 nodes and 2 output nodes would look like,
 
 ![IMAGE feed-forward-multi-layer-perceptron-neural-network IMAGE](../docs/pics/feed-forward-multi-layer-perceptron-neural-network.svg)
 
@@ -59,8 +69,9 @@ neural network by setting the following parameters,
 * The number of nodes in each hidden layer
 * The number of output nodes
 * The output node labels
-* The learning rate $\alpha$
-* The number of epochs
+* The learning rate $\eta$
+* The number of epochs $E$
+* The loss function _MSE (Mean Squared Error) or CE (Cross Entropy)_
 * The dataset CSV file
 
 As an example, you would do this by creating a
@@ -76,6 +87,7 @@ nnp := mlp.NeuralNetworkParameters{
   OutputNodeLabels:    []string{"pred-perc-passing-final", "pred-final-grade"},
   LearningRate:        0.1,
   Epochs:              4,
+  LossFunction:        "MSE",
   DatasetCSVFile:      "dataset.csv",
 }
 ```
@@ -182,6 +194,8 @@ The channel `ch` will contain each line of the csv file.
 Normalization, also called min-max scaling, changes the values of
 input data set to occupy a range of [0, 1] or [-1, 1],
 reducing the influence of unusual values of out model.
+We will normalize the input data between 0 and 1.
+The formula is,
 
 $$
 normalized\ dataset = \frac{data - min(dataset)}{max(dataset) - min(dataset)}

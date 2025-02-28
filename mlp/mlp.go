@@ -20,6 +20,7 @@ type NeuralNetworkParameters struct {
 	OutputNodeLabels    []string
 	LearningRate        float64
 	Epochs              int
+	LossFunction        string
 	DatasetCSVFile      string
 }
 
@@ -37,6 +38,7 @@ type NeuralNetwork struct {
 	outputBias          []float64     // - bias per [outputNode]
 	learningRate        float64       // LEARNING RATE (USER ADDED)
 	epochs              int           // EPOCHS (USER ADDED)
+	LossFunction        string        // LOSS FUNCTION (USER ADDED)
 	minInput            []float64     // MIN INPUT VALUE
 	maxInput            []float64     // MAX INPUT VALUE
 	datasetCSVFile      string        // DATASET CSV FILE
@@ -101,6 +103,7 @@ func (nnp NeuralNetworkParameters) CreateNeuralNetwork() *NeuralNetwork {
 		outputBias:          outputBias,              // - created here
 		learningRate:        nnp.LearningRate,        // UER PROVIDED
 		epochs:              nnp.Epochs,              // USER PROVIDED
+		LossFunction:        nnp.LossFunction,        // USER PROVIDED
 		minInput:            minInput,                // - created here
 		maxInput:            maxInput,                // - created here
 		datasetCSVFile:      nnp.DatasetCSVFile,      // USER PROVIDED
@@ -397,7 +400,7 @@ func (nn *NeuralNetwork) readCSVFileLineByLine() chan trainingData {
 	return ch
 }
 
-// Normalize the input data
+// Normalize the input data between 0 and 1
 func (nn *NeuralNetwork) normalizeInputData(i []float64) []float64 {
 	x := make([]float64, nn.inputNodes)
 	for j := 0; j < nn.inputNodes; j++ {
