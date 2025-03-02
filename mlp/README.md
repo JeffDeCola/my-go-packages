@@ -17,18 +17,18 @@ err := nn.TrainNeuralNetwork()
 
 Table of Contents
 
-* [OVERVIEW](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#overview)
-* [STEP 1 - CONFIGURE YOUR NEURAL NETWORK](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-1---configure-your-neural-network)
-* [STEP 2 - CREATE NEURAL NETWORK](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-2---create-neural-network)
-* [STEP 3 - INITIALIZE WEIGHTS & BIAS](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-3---initialize-weights--bias)
-* [STEP 4 - CREATE YOUR DATASET](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-4---create-your-dataset)
-* [STEP 5 - GET INPUT MID MAX VALUES OF YOUR DATASET](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-5---get-input-mid-max-values-of-your-dataset)
-* [STEP 6 - TRAIN YOUR NEURAL NETWORK](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-6---train-your-neural-network)
-  * [STEP 6.1 - READING THE CVS FILE](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-61---reading-the-cvs-file)
-  * [STEP 6.2 - NORMALIZE INPUT DATA](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-62---normalize-input-data)
-  * [STEP 6.3 - FORWARD PASS](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-63---forward-pass)
-  * [STEP 6.4 - BACKWARD PASS](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-64---backward-pass)
-  * [STEP 6.5 - UPDATE WEIGHTS & BIAS](https://github.com/JeffDeCola/my-neural-networks/tree/main/multi-layer-perceptron-scalable#step-65---update-weights--bias)
+* [OVERVIEW](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#overview)
+* [STEP 1 - CONFIGURE YOUR NEURAL NETWORK](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-1---configure-your-neural-network)
+* [STEP 2 - CREATE NEURAL NETWORK](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-2---create-neural-network)
+* [STEP 3 - INITIALIZE WEIGHTS & BIAS](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-3---initialize-weights--bias)
+* [STEP 4 - CREATE YOUR DATASET](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-4---create-your-dataset)
+* [STEP 5 - GET INPUT MID MAX VALUES OF YOUR DATASET](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-5---get-input-mid-max-values-of-your-dataset)
+* [STEP 6 - TRAIN YOUR NEURAL NETWORK](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-6---train-your-neural-network)
+  * [STEP 6.1 - READING THE CVS FILE](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-61---reading-the-cvs-file)
+  * [STEP 6.2 - NORMALIZE INPUT DATA](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-62---normalize-input-data)
+  * [STEP 6.3 - FORWARD PASS](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-63---forward-pass)
+  * [STEP 6.4 - BACKWARD PASS](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-64---backward-pass)
+  * [STEP 6.5 - UPDATE WEIGHTS & BIAS](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-65---update-weights--bias)
 
 Documentation and Reference
 
@@ -41,7 +41,7 @@ cheat sheet
   * [mlp-classification-example](https://github.com/JeffDeCola/my-neural-networks/tree/main/mlp-classification-example)
   * [mlp-image-recognition-example](https://github.com/JeffDeCola/my-neural-networks/tree/main/mlp-regression-example)
   * [mlp-regression-example](https://github.com/JeffDeCola/my-neural-networks/tree/main/mlp-image-recognition-example)
-* [the-math-behind-training-mlp-neural-networks](https://github.com/JeffDeCola/my-cheat-sheets/tree/master/software/development/software-architectures/artificial-intelligence/artificial-intelligence-cheat-sheet/neural-networks.md)
+* [the-math-behind-training-mlp-neural-networks](https://github.com/JeffDeCola/my-cheat-sheets/tree/master/software/development/software-architectures/artificial-intelligence/artificial-intelligence-cheat-sheet/the-math-behind-training-mlp-neural-networks.md)
 
 ## OVERVIEW
 
