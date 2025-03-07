@@ -1,34 +1,34 @@
 # MULTI-LAYER PERCEPTRON (MLP) PACKAGE
 
-  _A package to implement a user scalable multi-layer
-  perceptron (MLP) / feed-forward (FF) neural network using a
-  sigmoid non-linear function._
+  _A package to implement a 'single example' scalable multi-layer
+  perceptron (MLP) neural network._
 
 TL;DR,
 
 ```go
 nn := nnp.CreateNeuralNetwork()
 nn.PrintNeuralNetwork()
-nn.InitializeWeightsAndBias()
 err := nn.GetInputMinMaxFromCSV()
 nn.PrintInputMinMax()
+err = nn.InitializeNeuralNetwork()
 err := nn.TrainNeuralNetwork()
 ```
 
 Table of Contents
 
 * [OVERVIEW](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#overview)
-* [STEP 1 - CONFIGURE YOUR NEURAL NETWORK](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-1---configure-your-neural-network)
-* [STEP 2 - CREATE NEURAL NETWORK](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-2---create-neural-network)
-* [STEP 3 - INITIALIZE WEIGHTS & BIAS](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-3---initialize-weights--bias)
-* [STEP 4 - CREATE YOUR DATASET](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-4---create-your-dataset)
-* [STEP 5 - GET INPUT MID MAX VALUES OF YOUR DATASET](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-5---get-input-mid-max-values-of-your-dataset)
-* [STEP 6 - TRAIN YOUR NEURAL NETWORK](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-6---train-your-neural-network)
-  * [STEP 6.1 - READING THE CVS FILE](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-61---reading-the-cvs-file)
-  * [STEP 6.2 - NORMALIZE INPUT DATA](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-62---normalize-input-data)
-  * [STEP 6.3 - FORWARD PASS](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-63---forward-pass)
-  * [STEP 6.4 - BACKWARD PASS](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-64---backward-pass)
-  * [STEP 6.5 - UPDATE WEIGHTS & BIAS](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-65---update-weights--bias)
+* [CONFIGURE YOUR NEURAL NETWORK](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#configure-your-neural-network)
+* [CREATE NEURAL NETWORK](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#create-neural-network)
+* [CREATE YOUR TRAINING DATASET FILE](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#create-your-training-dataset-file)
+* [GET INPUT MID MAX VALUES OF YOUR DATASET](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#get-input-mid-max-values-of-your-dataset)
+* [STEP 1 - INITIALIZATION](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-1---initialization)
+* [THE TRAINING LOOP](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#the-training-loop)
+  * [READING THE CVS DATASET FILE](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#reading-the-cvs-dataset-file)
+  * [STEP 2 - NORMALIZATION](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-2---normalization)
+  * [STEP 3 - FORWARD PASS](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-3---forward-pass)
+  * [STEP 4 - BACKWARD PASS](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-4---backward-pass)
+  * [STEP 5 - UPDATE WEIGHTS & BIASES](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-5---update-weights--biases)
+* [STEP 6 - SAVE WEIGHTS & BIASES](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-6---save-weights--biases)
 
 Documentation and Reference
 
@@ -45,8 +45,7 @@ cheat sheet
 
 ## OVERVIEW
 
-A  multi-layer perceptron (MLP) / feed-forward (FF)
-neural network has the following structure,
+A  multi-layer perceptron (MLP) neural network has the following structure,
 
 * The input layer
 * The hidden layer(s)
@@ -55,13 +54,17 @@ neural network has the following structure,
 As an example, a neural network with 3 input nodes, 1 hidden layer
 with 4 nodes and 2 output nodes would look like,
 
-![IMAGE feed-forward-multi-layer-perceptron-neural-network IMAGE](../docs/pics/feed-forward-multi-layer-perceptron-neural-network.svg)
+![IMAGE multi-layer-perceptron-neural-network-scalable IMAGE](../docs/pics/multi-layer-perceptron-neural-network-scalable.svg)
 
-## STEP 1 - CONFIGURE YOUR NEURAL NETWORK
+A 'single example' means you train the neural network with one row of data
+at a time. This is not the most efficient way to train a neural network,
+but it is a good way to understand the process, as opposed to training
+with a batch or mini-batch of data.
 
-In this package you can configure your multi-layer
-perceptron (MLP) / feed-forward (FF)
-neural network by setting the following parameters,
+## CONFIGURE YOUR NEURAL NETWORK
+
+In this package you may configure your multi-layer
+perceptron (MLP) neural network by setting the following parameters,
 
 * The number of input nodes
 * The input node labels
@@ -69,59 +72,60 @@ neural network by setting the following parameters,
 * The number of nodes in each hidden layer
 * The number of output nodes
 * The output node labels
-* The learning rate $\eta$
 * The number of epochs $E$
-* The loss function _MSE (Mean Squared Error) or CE (Cross Entropy)_
 * The dataset CSV file
+* How to Initialize the weights and biases _random or file_
+* The weights and biases CSV file
+* Normalize the input data _true or false_
+* Normalize the input data _zero-to-one or minus-one-to-one_
+* The activation function _sigmoid or tanh_
+* The loss function _mean-squared-error or cross-entropy_
+* The learning rate $\eta$
 
-As an example, you would do this by creating a
-`NeuralNetworkParameters` struct,
+You would do this by creating a
+`NeuralNetworkParameters` struct.  For example,
 
 ```go
 nnp := mlp.NeuralNetworkParameters{
-  InputNodes:          3,
-  InputNodeLabels:     []string{"midterm-grade", "hours-studied", "last-test-grade"},
-  HiddenLayers:        3,
-  HiddenNodesPerLayer: []int{4, 4, 4},
-  OutputNodes:         2,
-  OutputNodeLabels:    []string{"pred-perc-passing-final", "pred-final-grade"},
-  LearningRate:        0.1,
-  Epochs:              4,
-  LossFunction:        "MSE",
-  DatasetCSVFile:      "dataset.csv",
+  InputNodes:              2,
+  InputNodeLabels:         []string{"midterm-grade", "hours-studied", "last-test-grade"},
+  HiddenLayers:            1,
+  HiddenNodesPerLayer:     []int{3},
+  OutputNodes:             1,
+  OutputNodeLabels:        []string{"predicted-percentage-passing-final", "predicted-final-grade"},
+  Epochs:                  100,
+  DatasetCSVFile:          "dataset.csv",
+  Initialization:          "file",               // or "random"
+  WeightsAndBiasesCSVFile: "weights-and-biases.csv",
+  NormalizeInputData:      true,                 // or false
+  NormalizeMethod:         "zero-to-one",        // or "minus-one-to-one"
+  ActivationFunction:      "sigmoid",            // or "tanh"
+  LossFunction:            "mean-squared-error", // or "cross-entropy"
+  LearningRate:            0.1,
 }
 ```
 
-## STEP 2 - CREATE NEURAL NETWORK
+## CREATE NEURAL NETWORK
 
 To create a neural network, you take your parameters and feed them
-into the `CreateNeuralNetwork` method,
+into the `CreateNeuralNetwork` method which will return a
+`NeuralNetwork` struct.
 
 ```go
 nn := nnp.CreateNeuralNetwork()
 ```
 
-You can also print out the neural network structure if you want,
+You can also print out the neural network structure if you would like,
 
 ```go
 nn.PrintNeuralNetwork()
 ```
 
-## STEP 3 - INITIALIZE WEIGHTS & BIAS
-
-Now you need to initialize the weights and bias for the neural network.
-This will set the initial weights and bias to random values between -1 and 1.
-This is done by calling the `InitializeWeightsAndBias` method,
-
-```go
-nn.InitializeWeightsAndBias()
-```
-
-## STEP 4 - CREATE YOUR DATASET
+## CREATE YOUR TRAINING DATASET FILE
 
 You will use a standard csv file with the first row being the labels
 and the rest of the rows being the input and target output data.
-It will look something like this,
+For example, a dataset could look something like this,
 
 ```csv
 midterm-grade,hours-studied,last-test-grade,pred-perc-passing-final,pred-final-grade
@@ -130,7 +134,7 @@ midterm-grade,hours-studied,last-test-grade,pred-perc-passing-final,pred-final-g
 etc...
 ```
 
-## STEP 5 - GET INPUT MID MAX VALUES OF YOUR DATASET
+## GET INPUT MID MAX VALUES OF YOUR DATASET
 
 Before you start training, we need to find the min and max values
 of your dataset (your csv file). The min and max values will be
@@ -139,10 +143,6 @@ This is done by calling the `GetInputMinMaxFromCSV` method,
 
 ```go
 err := nn.GetInputMinMaxFromCSV()
-if err != nil {
-  fmt.Println("Error:", err)
-  return
-}
 ```
 
 You can print out the min and max values if you want,
@@ -151,9 +151,32 @@ You can print out the min and max values if you want,
 nn.PrintInputMinMax()
 ```
 
-## STEP 6 - TRAIN YOUR NEURAL NETWORK
+You chose what the filename is in the `NeuralNetworkParameters` struct,
 
-Now that out neural network is setup and we have our dataset,
+```go
+DatasetCSVFile: "filename.csv",
+```
+
+## STEP 1 - INITIALIZATION
+
+The first step in training a neural network is to initialize the weights
+and bias. You can read the weights and bias from a json file or initialize them
+randomly.
+
+```go
+err = nn.InitializeNeuralNetwork()
+```
+
+You chose how to initialize the weights and biases in the
+`NeuralNetworkParameters` struct,
+
+```go
+Initialization:          "file" |  "random"
+```
+
+## THE TRAINING LOOP
+
+Now that out neural network is configured and we have our dataset,
 we can train our neural network.
 To put it simple, training a neural network is
 the process of adjusting the weights
@@ -168,16 +191,33 @@ In our case, we will call the `TrainNeuralNetwork` method,
 
 ```go
 err := nn.TrainNeuralNetwork()
-if err != nil {
-  fmt.Println("Error:", err)
-  return
-}
 ```
 
 This one method does a lot of heavy lifting so let's break it down.
 If you're not interested in these details, you can skip to step 7.
 
-### STEP 6.1 - READING THE CVS FILE
+There are two loops in the `TrainNeuralNetwork` method,
+
+1. The outer loop is the number of epochs $E$.
+2. The inner loop is the number of rows in the dataset.
+
+```go
+nn.epochLoop()
+```
+
+which calls the datasetLoop method,
+
+```go
+nn.datasetLoop()
+```
+
+You can set the number of epochs in the `NeuralNetworkParameters` struct,
+
+```go
+Epochs:       #
+```
+
+### READING THE CVS DATASET FILE
 
 We will not store the csv file in memory, but rather read it line by line.
 This is because the csv file could be very large.
@@ -189,79 +229,38 @@ ch := nn.readCSVFileLineByLine()
 
 The channel `ch` will contain each line of the csv file.
 
-### STEP 6.2 - NORMALIZE INPUT DATA
+You chose what the filename is in the `NeuralNetworkParameters` struct,
+
+```go
+DatasetCSVFile: "filename.csv",
+```
+
+### STEP 2 - NORMALIZATION
 
 Normalization, also called min-max scaling, changes the values of
 input data set to occupy a range of [0, 1] or [-1, 1],
 reducing the influence of unusual values of out model.
 We will normalize the input data between 0 and 1.
-The formula is,
-
-$$
-normalized\ dataset = \frac{data - min(dataset)}{max(dataset) - min(dataset)}
-$$
-
-where
-
-* $data$ is the input data
-* $min(dataset)$ is the minimum value of the dataset
-* $max(dataset)$ is the maximum value of the dataset
-
-For example if our input data set is
-
-$$
-{85 100\ 69\ 72\ 99\ 95}
-$$
-
-where the min is 69 and the max is 100.
-
-Hence, for the first input of 85 would be normalized to,
-
-$$
-\frac{85 - 69}{100 - 69} = \frac{16}{31} = 0.516129
-$$
-
-We will normalize using the `normalize` function,
+This is done by the `normalizeInputData` method.
 
 ```go
 data = nn.normalizeInputData(data)
 ```
 
-### STEP 6.3 - FORWARD PASS
+You may turn normalization on/off and chose the method
+in the `NeuralNetworkParameters` struct,
+
+```go
+NormalizeInputData: true | false
+NormalizeMethod:    "zero-to-one" | "minus-one-to-one"
+```
+
+### STEP 3 - FORWARD PASS
 
 Giving our normalized $x_{[0]}$, $x_{[1]}$ and $x_{[2]}$ input training data,
 **compute the output for each layer and
 propagate through layers to obtain the outputs
 $y_{[0]}$ and $y_{[1]}$**.
-
-![IMAGE feed-forward-multi-layer-perceptron-neural-network-training-step-1 - IMAGE](../docs/pics/feed-forward-multi-layer-perceptron-neural-network-training-step-1.svg)
-
-Calculate the hidden layer outputs,
-
-$$
-\begin{aligned}
-y_{h[0][0]} &= f_{h[0][0]}(s) = f_{h[0][0]}\left(x_{[0]} w_{h[0][0][0]} + x_{[1]} w_{h[0][0][1]} + x_{[2]} w_{h[0][0][2]} + b_{h[0][0]}\right) \\
-y_{h[0][1]} &= f_{h[0][1]}(s) = f_{h[0][1]}\left(x_{[0]} w_{h[0][1][0]} + x_{[1]} w_{h[0][1][1]} + x_{[2]} w_{h[0][1][2]} + b_{h[0][1]}\right) \\
-y_{h[0][2]} &= f_{h[0][2]}(s) = f_{h[0][2]}\left(x_{[0]} w_{h[0][2][0]} + x_{[1]} w_{h[0][2][1]} + x_{[2]} w_{h[0][2][2]} + b_{h[0][2]}\right) \\
-y_{h[0][3]} &= f_{h[0][3]}(s) = f_{h[0][3]}\left(x_{[0]} w_{h[0][3][0]} + x_{[1]} w_{h[0][3][1]} + x_{[2]} w_{h[0][3][2]} + b_{h[0][3]}\right)
-\end{aligned}
-$$
-
-Finally, calculate the outputs,
-
-$$
-\begin{aligned}
-y_{[0]} &= f_{o[0]}(s) = f_{o[0]}\left(y_{h[0][0]} w_{o[0][0]} + y_{h[0][1]} w_{o[0][1]} + y_{h[0][2]} w_{o[0][2]} + y_{h[0][3]} w_{o[0][3]} + b_{o[0]}\right) \\
-y_{[1]} &= f_{o[1]}(s) = f_{o[1]}\left(y_{h[0][0]} w_{o[1][0]} + y_{h[0][1]} w_{o[1][1]} + y_{h[0][2]} w_{o[1][2]} + y_{h[0][3]} w_{o[1][3]} + b_{o[1]}\right) \\
-\end{aligned}
-$$
-
-where $f(s)$ is the
-[sigmoid function](https://github.com/JeffDeCola/my-cheat-sheets/tree/master/other/stem/math/pure/changes/calculus-cheat-sheet#the-sigmoid-function).
-
-$$
-f(s) = \sigma(s) = \frac{1}{1 + e^{-s}}
-$$
 
 The method `forwardPass` does this,
 
@@ -269,50 +268,18 @@ The method `forwardPass` does this,
 yOutput, yHidden := nn.forwardPass(x)
 ```
 
-### STEP 6.4 - BACKWARD PASS
+You may chose the activation function in the `NeuralNetworkParameters` struct,
+
+```go
+ActivationFunction: "sigmoid" | "tanh"
+```
+
+### STEP 4 - BACKWARD PASS
 
 Now  that we have the outputs $y$, calculate the error (delta **$\delta$**)
 between target data ($z$) and actual output ($y$)
 and propagate backwards.
 
-![IMAGE feed-forward-multi-layer-perceptron-neural-network-training-step-2 - IMAGE](../docs/pics/feed-forward-multi-layer-perceptron-neural-network-training-step-2.svg)
+### STEP 5 - UPDATE WEIGHTS & BIASES
 
-The output error,
-
-$$
-\begin{aligned}
-\delta_{[0]} &= z_{[0]} - y_{[0]} \\
-\delta_{[1]} &= z_{[1]} - y_{[1]}
-\end{aligned}
-$$
-
-The hidden layer error,
-
-$$
-\begin{aligned}
-\delta_{h[0][0]} &= \delta_{o[0]} w_{o[0][0]} + \delta_{o[1]} w_{o[1][0]} \\
-\delta_{h[0][1]} &= \delta_{o[0]} w_{o[0][1]} + \delta_{o[1]} w_{o[1][1]} \\
-\delta_{h[0][2]} &= \delta_{o[0]} w_{o[0][2]} + \delta_{o[1]} w_{o[1][2]} \\
-\delta_{h[0][3]} &= \delta_{o[0]} w_{o[0][3]} + \delta_{o[1]} w_{o[1][3]}
-\end{aligned}
-$$
-
-The method `backwardPass` does this,
-
-```go
-deltaOutput, deltaHidden := nn.backwardPass(yOutput, yHidden, z)
-```
-
-## STEP 6.5 - UPDATE WEIGHTS & BIAS
-
-Update the weights using the error (delta $\delta$) and the learning rate $\alpha$.
-
-![IMAGE feed-forward-multi-layer-perceptron-neural-network-training-step-3 - IMAGE](../docs/pics/feed-forward-multi-layer-perceptron-neural-network-training-step-3.svg)
-
-The new weights,
-
-$$
-\begin{aligned}
-w_{o[0][0]} &= w_{o[0][0]} + \alpha \delta_{o[0]} y_{h[0][0]} \\
-\end{aligned}
-$$
+## STEP 6 - SAVE WEIGHTS & BIASES
