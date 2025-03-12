@@ -451,7 +451,7 @@ func (nn *NeuralNetwork) epochLoop() error {
 // Train the neural network by reading the dataset from the CSV file
 func (nn *NeuralNetwork) datasetLoop() error {
 
-	x := make([]float64, nn.inputNodes)
+	var x []float64
 
 	// Setup the channel to read the CSV file line by line
 	ch := nn.readCSVFileLineByLine()
@@ -486,14 +486,14 @@ func (nn *NeuralNetwork) datasetLoop() error {
 
 		// STEP 3 - Forward Pass
 		// Compute the output of the neural network for the current input data
-		yHidden, yOutput := nn.forwardPass(x)
+		aHidden, yOutput := nn.forwardPass(x)
 
 		// Print the outputs to .3 decimal places
-		fmt.Printf("        yHidden:     %.3f\n", yHidden)
+		fmt.Printf("        aHidden:     %.3f\n", aHidden)
 		fmt.Printf("        yOutput:     %.3f\n", yOutput)
 
 		// STEP 6.4 Backward Pass
-		//deltaOutput, deltaHidden := nn.backwardPass(data.z, yOutput, yHidden)
+		//deltaOutput, deltaHidden := nn.backwardPass(data.z, yOutput, aHidden)
 
 		// Print the deltas to .3 decimal places
 		//fmt.Printf("        deltaOutput: %.3f\n", deltaOutput)
@@ -608,10 +608,14 @@ func (nn *NeuralNetwork) readCSVFileLineByLine() chan trainingData {
 // STEP 2 - NORMALIZATION
 // Normalize the input data between 0 and 1
 func (nn *NeuralNetwork) normalizeInputDataZeroToOne(i []float64) []float64 {
-
 	x := make([]float64, nn.inputNodes)
 	for j := 0; j < nn.inputNodes; j++ {
-		x[j] = (i[j] - nn.minInput[j]) / (nn.maxInput[j] - nn.minInput[j])
+		if nn.minInput[j] == nn.maxInput[j] {
+			// If min and max are the same, set normalized value to 0.5
+			x[j] = 0.5
+		} else {
+			x[j] = (i[j] - nn.minInput[j]) / (nn.maxInput[j] - nn.minInput[j])
+		}
 	}
 	return x
 }
@@ -621,20 +625,24 @@ func (nn *NeuralNetwork) normalizeInputDataZeroToOne(i []float64) []float64 {
 func (nn *NeuralNetwork) normalizeInputDataMinusOneToOne(i []float64) []float64 {
 	x := make([]float64, nn.inputNodes)
 	for j := 0; j < nn.inputNodes; j++ {
-		x[j] = 2*((i[j]-nn.minInput[j])/(nn.maxInput[j]-nn.minInput[j])) - 1
+		if nn.minInput[j] == nn.maxInput[j] {
+			// If min and max are the same, set normalized value to 0
+			x[j] = 0
+		} else {
+			x[j] = 2*((i[j]-nn.minInput[j])/(nn.maxInput[j]-nn.minInput[j])) - 1
+		}
 	}
 	return x
-
 }
 
 // STEP 3 - FORWARD PASS
 // ForwardPass calculates the output of the neural network
-func (nn *NeuralNetwork) forwardPass(x []float64) (yHidden [][]float64, yOutput []float64) {
+func (nn *NeuralNetwork) forwardPass(x []float64) (aHidden [][]float64, yOutput []float64) {
 
 	// Initialize the hidden outputs for each layer
-	yHidden = make([][]float64, nn.hiddenLayers)
+	aHidden = make([][]float64, nn.hiddenLayers)
 	for l := 0; l < nn.hiddenLayers; l++ {
-		yHidden[l] = make([]float64, nn.hiddenNodesPerLayer[l])
+		aHidden[l] = make([]float64, nn.hiddenNodesPerLayer[l])
 	}
 
 	// Initialize the output outputs
@@ -643,7 +651,7 @@ func (nn *NeuralNetwork) forwardPass(x []float64) (yHidden [][]float64, yOutput 
 	// Calculate the output of each hidden node for each layer
 	for l := 0; l < nn.hiddenLayers; l++ {
 		for hn := 0; hn < nn.hiddenNodesPerLayer[l]; hn++ {
-			yHidden[l][hn] = 0.0
+			aHidden[l][hn] = 0.0
 			s := 0.0
 
 			// SUMMATION FUNCTION
@@ -654,16 +662,16 @@ func (nn *NeuralNetwork) forwardPass(x []float64) (yHidden [][]float64, yOutput 
 				s += nn.hiddenBias[l][hn]
 			} else {
 				for in := 0; in < nn.hiddenNodesPerLayer[l-1]; in++ {
-					s += yHidden[l-1][in] * nn.hiddenWeights[l][hn][in]
+					s += aHidden[l-1][in] * nn.hiddenWeights[l][hn][in]
 				}
 				s += nn.hiddenBias[l][hn]
 			}
 
 			// ACTIVATION FUNCTION
 			if nn.activationFunction == "sigmoid" {
-				yHidden[l][hn] = sigmoid(s)
+				aHidden[l][hn] = sigmoid(s)
 			} else if nn.activationFunction == "tanh" {
-				yHidden[l][hn] = tanh(s)
+				aHidden[l][hn] = tanh(s)
 			} else {
 				return nil, nil
 			}
@@ -678,7 +686,7 @@ func (nn *NeuralNetwork) forwardPass(x []float64) (yHidden [][]float64, yOutput 
 
 		// SUMMATION FUNCTION
 		for hn := 0; hn < nn.hiddenNodesPerLayer[nn.hiddenLayers-1]; hn++ {
-			s += yHidden[nn.hiddenLayers-1][hn] * nn.outputWeights[o][hn]
+			s += aHidden[nn.hiddenLayers-1][hn] * nn.outputWeights[o][hn]
 		}
 		s += nn.outputBias[o]
 
@@ -693,7 +701,7 @@ func (nn *NeuralNetwork) forwardPass(x []float64) (yHidden [][]float64, yOutput 
 
 	}
 
-	return yHidden, yOutput
+	return aHidden, yOutput
 }
 
 // Activation function - Sigmoid
@@ -718,7 +726,7 @@ func tanhDerivative(x float64) float64 {
 
 // STEP 4 - BACKWARD PASS
 // BackwardPass calculates the deltas for the neural network
-func (nn *NeuralNetwork) backwardPass(z []float64, yOutput []float64, yHidden [][]float64) (deltaOutput []float64, deltaHidden [][]float64) {
+func (nn *NeuralNetwork) backwardPass(z []float64, yOutput []float64, aHidden [][]float64) (deltaOutput []float64, deltaHidden [][]float64) {
 
 	// Initialize the delta for the output layer
 	deltaOutput = make([]float64, nn.outputNodes)
@@ -745,14 +753,14 @@ func (nn *NeuralNetwork) backwardPass(z []float64, yOutput []float64, yHidden []
 				for o := 0; o < nn.outputNodes; o++ {
 					s += deltaOutput[o] * nn.outputWeights[o][hn]
 				}
-				deltaHidden[l][hn] = s * sigmoidDerivative(yHidden[l][hn])
+				deltaHidden[l][hn] = s * sigmoidDerivative(aHidden[l][hn])
 				// Use the hidden weights
 			} else {
 				s := 0.0
 				for hn1 := 0; hn1 < nn.hiddenNodesPerLayer[l+1]; hn1++ {
 					s += deltaHidden[l+1][hn1] * nn.hiddenWeights[l+1][hn1][hn]
 				}
-				deltaHidden[l][hn] = s * sigmoidDerivative(yHidden[l][hn])
+				deltaHidden[l][hn] = s * sigmoidDerivative(aHidden[l][hn])
 			}
 		}
 	}
