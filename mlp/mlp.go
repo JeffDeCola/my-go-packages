@@ -25,13 +25,18 @@ type NeuralNetworkParameters struct {
 	DatasetCSVFile          string
 	Initialization          string // "random" or "file"
 	WeightsAndBiasesCSVFile string
+	MinMaxInput             []float64
+	MinMaxOutput            []float64
+	UseMinMaxInput          bool
+	UseMinMaxOutput         bool
 	NormalizeInputData      bool
+	NormalizeOutputData     bool
 	NormalizeMethod         string // "zero-to-one" or "minus-one-to-one
 	ActivationFunction      string // "sigmoid" or "tanh"
 	LossFunction            string // "mean-squared-error" or "cross-entropy"
 }
 
-// Neural network structure with up to 4 hidden layers
+// Neural network architecture and parameters
 type NeuralNetwork struct {
 	inputNodes              int           // INPUT NODES (USER ADDED)
 	inputNodeLabels         []string      // INPUT NODE LABELS (USER ADDED)
@@ -47,9 +52,16 @@ type NeuralNetwork struct {
 	datasetCSVFile          string        // DATASET CSV FILE (USER ADDED)
 	minInput                []float64     // MIN INPUT VALUE
 	maxInput                []float64     // MAX INPUT VALUE
+	minOutput               []float64     // MIN OUTPUT VALUE
+	maxOutput               []float64     // MAX OUTPUT VALUE
 	initialization          string        // INITIALIZATION (USER ADDED)
 	weightsAndBiasesCSVFile string        // WEIGHTS AND BIAS CVS FILE (USER ADDED)
+	minMaxInput             []float64     // MIN MAX INPUT VALUES (USER ADDED)
+	minMaxOutput            []float64     // MIN MAX OUTPUT VALUES (USER ADDED)
+	useMinMaxInput          bool          // USE MIN MAX INPUT VALUES (USER ADDED)
+	useMinMaxOutput         bool          // USE MIN MAX OUTPUT VALUES (USER ADDED)
 	normalizeInputData      bool          // NORMALIZE INPUT DATA (USER ADDED)
+	normalizeOutputData     bool          // NORMALIZE OUTPUT DATA (USER ADDED)
 	normalizeMethod         string        // NORMALIZE METHOD (USER ADDED)
 	activationFunction      string        // ACTIVATION FUNCTION (USER ADDED)
 	lossFunction            string        // LOSS FUNCTION (USER ADDED)
@@ -100,6 +112,8 @@ func (nnp NeuralNetworkParameters) CreateNeuralNetwork() *NeuralNetwork {
 	//Initialize the min and max input values
 	minInput := make([]float64, nnp.InputNodes)
 	maxInput := make([]float64, nnp.InputNodes)
+	minOutput := make([]float64, nnp.OutputNodes)
+	maxOutput := make([]float64, nnp.OutputNodes)
 
 	// Create the neural network
 	nn := &NeuralNetwork{
@@ -107,19 +121,26 @@ func (nnp NeuralNetworkParameters) CreateNeuralNetwork() *NeuralNetwork {
 		inputNodeLabels:         nnp.InputNodeLabels,         // USER PROVIDED
 		hiddenLayers:            nnp.HiddenLayers,            // USER PROVIDED
 		hiddenNodesPerLayer:     nnp.HiddenNodesPerLayer,     // USER PROVIDED
-		hiddenWeights:           hiddenWeights,               // - created here
-		hiddenBias:              hiddenBias,                  // - created here
+		hiddenWeights:           hiddenWeights,               // -created here
+		hiddenBias:              hiddenBias,                  // -created here
 		outputNodes:             nnp.OutputNodes,             // USER PROVIDED
 		outputNodeLabels:        nnp.OutputNodeLabels,        // USER PROVIDED
-		outputWeights:           outputWeights,               // - created here
-		outputBias:              outputBias,                  // - created here
+		outputWeights:           outputWeights,               // -created here
+		outputBias:              outputBias,                  // -created here
 		epochs:                  nnp.Epochs,                  // USER PROVIDED
 		datasetCSVFile:          nnp.DatasetCSVFile,          // USER PROVIDED
-		minInput:                minInput,                    // - created here
-		maxInput:                maxInput,                    // - created here
+		minInput:                minInput,                    // -created here
+		maxInput:                maxInput,                    // -created here
+		minOutput:               minOutput,                   // -created here
+		maxOutput:               maxOutput,                   // -created here
 		initialization:          nnp.Initialization,          // USER PROVIDED
 		weightsAndBiasesCSVFile: nnp.WeightsAndBiasesCSVFile, // USER PROVIDED
+		minMaxInput:             nnp.MinMaxInput,             // USER PROVIDED
+		minMaxOutput:            nnp.MinMaxOutput,            // USER PROVIDED
+		useMinMaxInput:          nnp.UseMinMaxInput,          // USER PROVIDED
+		useMinMaxOutput:         nnp.UseMinMaxOutput,         // USER PROVIDED
 		normalizeInputData:      nnp.NormalizeInputData,      // USER PROVIDED
+		normalizeOutputData:     nnp.NormalizeOutputData,     // USER PROVIDED
 		normalizeMethod:         nnp.NormalizeMethod,         // USER PROVIDED
 		activationFunction:      nnp.ActivationFunction,      // USER PROVIDED
 		lossFunction:            nnp.LossFunction,            // USER PROVIDED
@@ -174,8 +195,14 @@ func (nn *NeuralNetwork) PrintNeuralNetwork() {
 	fmt.Println("    Dataset CSV          ", nn.datasetCSVFile)
 	fmt.Println("    Min Input Value:     ", nn.minInput)
 	fmt.Println("    Max Input Value:     ", nn.maxInput)
+	fmt.Println("    Min Output Value:    ", nn.minOutput)
+	fmt.Println("    Max Output Value:    ", nn.maxOutput)
 	fmt.Println("    Initialization       ", nn.initialization)
 	fmt.Println("    W & B CSV:           ", nn.weightsAndBiasesCSVFile)
+	fmt.Println("    Min Max Input:       ", nn.minMaxInput)
+	fmt.Println("    Min Max Output:      ", nn.minMaxOutput)
+	fmt.Println("    Use Min Max Input    ", nn.useMinMaxInput)
+	fmt.Println("    Use Min Max Output   ", nn.useMinMaxOutput)
 	fmt.Println("    Normalize Input Data ", nn.normalizeInputData)
 	fmt.Println("    Normalize Method     ", nn.normalizeMethod)
 	fmt.Println("    Activation Function  ", nn.activationFunction)
@@ -185,7 +212,8 @@ func (nn *NeuralNetwork) PrintNeuralNetwork() {
 }
 
 // STEP 1 - INITIALIZATION
-// Initialize the neural network (weights and biases) from values -1 to 1
+// Initialize the neural network (weights and biases)
+// Random or from file
 func (nn *NeuralNetwork) InitializeNeuralNetwork() error {
 
 	// RANDOM OR FROM FILE
@@ -246,7 +274,7 @@ func (nn *NeuralNetwork) initializeRandom() {
 // from file
 func (nn *NeuralNetwork) initializeFromFile() error {
 
-	err := nn.loadWeightsAndBiases()
+	err := nn.loadWeightsAndBiasesFromJSON()
 	if err != nil {
 		return err
 	}
@@ -256,7 +284,7 @@ func (nn *NeuralNetwork) initializeFromFile() error {
 }
 
 // Save weights and biases to a json file
-func (nn *NeuralNetwork) saveWeightsAndBiases() error {
+func (nn *NeuralNetwork) saveWeightsAndBiasesFromJSON() error {
 
 	// Create a struct to hold the weights and biases
 	weightsAndBiases := struct {
@@ -287,8 +315,9 @@ func (nn *NeuralNetwork) saveWeightsAndBiases() error {
 	return nil
 }
 
+// STEP 1 - INITIALIZATION
 // Load weights and biases from a json file
-func (nn *NeuralNetwork) loadWeightsAndBiases() error {
+func (nn *NeuralNetwork) loadWeightsAndBiasesFromJSON() error {
 
 	filename := nn.weightsAndBiasesCSVFile
 
@@ -341,8 +370,40 @@ func (nn *NeuralNetwork) loadWeightsAndBiases() error {
 	return nil
 }
 
+// STEP 2 - MIN & MAX INPUT VALUES
+// Set the min and max values for the input and output nodes
+func (nn *NeuralNetwork) SetMinMaxValues() error {
+
+	if nn.useMinMaxInput {
+		// Use the min and max values provided by the user
+		nn.minInput = nn.minMaxInput[:nn.inputNodes]
+		nn.maxInput = nn.minMaxInput[nn.inputNodes:]
+	} else {
+		// Use the min and max values from the dataset
+		err := nn.getMinMaxValuesFromCSV("input")
+		if err != nil {
+			return err
+		}
+	}
+
+	if nn.useMinMaxOutput {
+		// Use the min and max values provided by the user
+		nn.minOutput = nn.minMaxOutput[:nn.outputNodes]
+		nn.maxOutput = nn.minMaxOutput[nn.outputNodes:]
+	} else {
+		// Use the min and max values from the dataset
+		err := nn.getMinMaxValuesFromCSV("output")
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// STEP 2 -  MIN & MAX INPUT VALUES
 // Read csv file and Get the min and max values from the dataset - for normalization function
-func (nn *NeuralNetwork) GetInputMinMaxFromCSV() error {
+func (nn *NeuralNetwork) getMinMaxValuesFromCSV(inOut string) error {
 
 	// Open the CSV file
 	file, err := os.Open(nn.datasetCSVFile)
@@ -366,16 +427,32 @@ func (nn *NeuralNetwork) GetInputMinMaxFromCSV() error {
 		return err
 	}
 
-	// READ FIRST DATASET
-	for i := 0; i < nn.inputNodes; i++ {
-		// Trim whitespace from the CSV field before parsing
-		trimmedValue := strings.TrimSpace(record[i])
-		value, err := strconv.ParseFloat(trimmedValue, 64)
-		if err != nil {
-			return err
+	// READ FIRST DATASET - GET INPUT MIN MAX
+	if inOut == "input" {
+		for i := 0; i < nn.inputNodes; i++ {
+			// Trim whitespace from the CSV field before parsing
+			trimmedValue := strings.TrimSpace(record[i])
+			value, err := strconv.ParseFloat(trimmedValue, 64)
+			if err != nil {
+				return err
+			}
+			nn.minInput[i] = value
+			nn.maxInput[i] = value
 		}
-		nn.minInput[i] = value
-		nn.maxInput[i] = value
+	}
+
+	if inOut == "output" {
+		// READ FIRST DATASET - GET OUTPUT MIN MAX
+		for i := 0; i < nn.outputNodes; i++ {
+			// Trim whitespace from the CSV field before parsing
+			trimmedValue := strings.TrimSpace(record[nn.inputNodes+i])
+			value, err := strconv.ParseFloat(trimmedValue, 64)
+			if err != nil {
+				return err
+			}
+			nn.minOutput[i] = value
+			nn.maxOutput[i] = value
+		}
 	}
 
 	// Iterate over the rest of the records to find min and max values
@@ -384,31 +461,56 @@ func (nn *NeuralNetwork) GetInputMinMaxFromCSV() error {
 		if err != nil {
 			break
 		}
-		for i := 0; i < nn.inputNodes; i++ {
-			// Trim whitespace from the CSV field before parsing
-			trimmedValue := strings.TrimSpace(record[i])
-			value, err := strconv.ParseFloat(trimmedValue, 64)
-			if err != nil {
-				return err
-			}
-			if value < nn.minInput[i] {
-				nn.minInput[i] = value
-			}
-			if value > nn.maxInput[i] {
-				nn.maxInput[i] = value
+
+		if inOut == "input" {
+			// GET MIN MAX INPUT
+			for i := 0; i < nn.inputNodes; i++ {
+				// Trim whitespace from the CSV field before parsing
+				trimmedValue := strings.TrimSpace(record[i])
+				value, err := strconv.ParseFloat(trimmedValue, 64)
+				if err != nil {
+					return err
+				}
+				if value < nn.minInput[i] {
+					nn.minInput[i] = value
+				}
+				if value > nn.maxInput[i] {
+					nn.maxInput[i] = value
+				}
 			}
 		}
+
+		if inOut == "output" {
+			// GET MIN MAX OUTPUT
+			for i := 0; i < nn.outputNodes; i++ {
+				// Trim whitespace from the CSV field before parsing
+				trimmedValue := strings.TrimSpace(record[nn.inputNodes+i])
+				value, err := strconv.ParseFloat(trimmedValue, 64)
+				if err != nil {
+					return err
+				}
+				if value < nn.minOutput[i] {
+					nn.minOutput[i] = value
+				}
+				if value > nn.maxOutput[i] {
+					nn.maxOutput[i] = value
+				}
+			}
+		}
+
 	}
 
 	return nil
 }
 
 // Print the min and max input values for each input
-func (nn *NeuralNetwork) PrintInputMinMax() {
+func (nn *NeuralNetwork) PrintDatasetMinMax() {
 
 	// Print the min and max input values
-	fmt.Println("Min Input Value: ", nn.minInput)
-	fmt.Println("Max Input Value: ", nn.maxInput)
+	fmt.Println("Min Input Value:  ", nn.minInput)
+	fmt.Println("Max Input Value:  ", nn.maxInput)
+	fmt.Println("Min Output Value: ", nn.minOutput)
+	fmt.Println("Max Output Value: ", nn.maxOutput)
 }
 
 // TRAINING LOOP
@@ -448,10 +550,11 @@ func (nn *NeuralNetwork) epochLoop() error {
 }
 
 // TRAINING LOOP - DATASET LOOP
+// STEP 3 - NORMALIZATION
+// STEP 4 - FORWARD PASS
+// STEP 5 - BACKWARD PASS
 // Train the neural network by reading the dataset from the CSV file
 func (nn *NeuralNetwork) datasetLoop() error {
-
-	var x []float64
 
 	// Setup the channel to read the CSV file line by line
 	ch := nn.readCSVFileLineByLine()
@@ -466,38 +569,39 @@ func (nn *NeuralNetwork) datasetLoop() error {
 			break
 		}
 
-		// Print the input data
-		fmt.Println("    Input Data:     ", data.i)
-
-		// STEP 2 -  Normalize the input data
-		if nn.normalizeInputData {
-			if nn.normalizeMethod == "zero-to-one" {
-				x = nn.normalizeInputDataZeroToOne(data.i)
-			} else if nn.normalizeMethod == "minus-one-to-one" {
-				x = nn.normalizeInputDataMinusOneToOne(data.i)
-			} else {
-				return fmt.Errorf("invalid normalization method: %s", nn.normalizeMethod)
-			}
-		} else {
-			x = data.i
+		// STEP 3 - NORMALIZATION
+		x, z, err := nn.normalization(data)
+		if err != nil {
+			return err
 		}
 
-		fmt.Printf("    Normalized Data: %.3f\n", x)
+		fmt.Println("    Input Data:     ", data.i)
+		fmt.Println("    Output Data:    ", data.z)
+		fmt.Printf("        Normalized:  %.5f\n", x)
+		fmt.Printf("        Normalized:  %.5f\n", z)
 
-		// STEP 3 - Forward Pass
+		// STEP 4 - FORWARD PASS
 		// Compute the output of the neural network for the current input data
 		aHidden, yOutput := nn.forwardPass(x)
 
 		// Print the outputs to .3 decimal places
-		fmt.Printf("        aHidden:     %.3f\n", aHidden)
-		fmt.Printf("        yOutput:     %.3f\n", yOutput)
+		fmt.Printf("        aHidden:     %.5f\n", aHidden)
+		fmt.Printf("        yOutput:     %.5f\n", yOutput)
 
-		// STEP 6.4 Backward Pass
-		//deltaOutput, deltaHidden := nn.backwardPass(data.z, yOutput, aHidden)
+		// STEP 5 BACKWARD PASS
+		iWNew, IBNew, oWNew, oBNew := nn.backwardPass(x, z, yOutput, aHidden)
 
-		// Print the deltas to .3 decimal places
-		//fmt.Printf("        deltaOutput: %.3f\n", deltaOutput)
-		//fmt.Printf("        deltaHidden: %.3f\n", deltaHidden)
+		// Print the weights and biases to .3 decimal places
+		fmt.Printf("        iWeightsNew: %.5f\n", iWNew)
+		fmt.Printf("        IBiasesNew:  %.5f\n", IBNew)
+		fmt.Printf("        oWeightsNew: %.5f\n", oWNew)
+		fmt.Printf("        oBiasesNew:  %.5f\n", oBNew)
+
+		// Calculate the loss for every output node
+		for i := 0; i < nn.outputNodes; i++ {
+			loss := 1.0 / 2.0 * math.Pow(yOutput[i]-z[i], 2)
+			fmt.Printf("        Loss:         %.5f\n", loss)
+		}
 
 	}
 
@@ -605,37 +709,108 @@ func (nn *NeuralNetwork) readCSVFileLineByLine() chan trainingData {
 	return ch
 }
 
-// STEP 2 - NORMALIZATION
+// STEP 3 - NORMALIZATION
+func (nn *NeuralNetwork) normalization(data trainingData) ([]float64, []float64, error) {
+
+	var x, z []float64
+
+	// STEP 3.1 - NORMALIZE INPUT
+	if nn.normalizeInputData {
+		if nn.normalizeMethod == "zero-to-one" {
+			x = nn.minMaxScalingFunctionZeroToOne("input", data.i)
+		} else if nn.normalizeMethod == "minus-one-to-one" {
+			x = nn.minMaxScalingFunctionMinusOneToOne("input", data.i)
+		} else {
+			return nil, nil, fmt.Errorf("invalid normalization method: %s", nn.normalizeMethod)
+		}
+	} else {
+		x = data.i
+	}
+
+	// STEP 3.2 - NORMALIZE OUTPUT
+	if nn.normalizeOutputData {
+		if nn.normalizeMethod == "zero-to-one" {
+			z = nn.minMaxScalingFunctionZeroToOne("output", data.z)
+		} else if nn.normalizeMethod == "minus-one-to-one" {
+			z = nn.minMaxScalingFunctionMinusOneToOne("output", data.z)
+		} else {
+			return nil, nil, fmt.Errorf("invalid normalization method: %s", nn.normalizeMethod)
+		}
+	} else {
+		z = data.z
+	}
+
+	return x, z, nil
+}
+
+// STEP 3 - NORMALIZATION
 // Normalize the input data between 0 and 1
-func (nn *NeuralNetwork) normalizeInputDataZeroToOne(i []float64) []float64 {
-	x := make([]float64, nn.inputNodes)
-	for j := 0; j < nn.inputNodes; j++ {
-		if nn.minInput[j] == nn.maxInput[j] {
-			// If min and max are the same, set normalized value to 0.5
-			x[j] = 0.5
-		} else {
-			x[j] = (i[j] - nn.minInput[j]) / (nn.maxInput[j] - nn.minInput[j])
+func (nn *NeuralNetwork) minMaxScalingFunctionZeroToOne(inOut string, i []float64) []float64 {
+
+	if inOut == "input" {
+		// NORMALIZE INPUTS
+		x := make([]float64, nn.inputNodes)
+		for j := 0; j < nn.inputNodes; j++ {
+			if nn.minInput[j] == nn.maxInput[j] {
+				// If min and max are the same, set normalized value to 0.5
+				x[j] = 0.5
+			} else {
+				x[j] = (i[j] - nn.minInput[j]) / (nn.maxInput[j] - nn.minInput[j])
+			}
 		}
+
+		return x
+
+	} else {
+		// NORMALIZE OUTPUTS
+		z := make([]float64, nn.outputNodes)
+		for j := 0; j < nn.outputNodes; j++ {
+			if nn.minOutput[j] == nn.maxOutput[j] {
+				// If min and max are the same, set normalized value to 0.5
+				z[j] = 0.5
+			} else {
+				z[j] = (i[j] - nn.minOutput[j]) / (nn.maxOutput[j] - nn.minOutput[j])
+			}
+		}
+
+		return z
 	}
-	return x
 }
 
-// STEP 2 - NORMALIZATION
+// STEP 3 - NORMALIZATION
 // Normalize the input data between -1 and 1
-func (nn *NeuralNetwork) normalizeInputDataMinusOneToOne(i []float64) []float64 {
-	x := make([]float64, nn.inputNodes)
-	for j := 0; j < nn.inputNodes; j++ {
-		if nn.minInput[j] == nn.maxInput[j] {
-			// If min and max are the same, set normalized value to 0
-			x[j] = 0
-		} else {
-			x[j] = 2*((i[j]-nn.minInput[j])/(nn.maxInput[j]-nn.minInput[j])) - 1
+func (nn *NeuralNetwork) minMaxScalingFunctionMinusOneToOne(inOut string, i []float64) []float64 {
+
+	if inOut == "input" {
+		// NORMALIZE INPUTS
+		x := make([]float64, nn.inputNodes)
+		for j := 0; j < nn.inputNodes; j++ {
+			if nn.minInput[j] == nn.maxInput[j] {
+				// If min and max are the same, set normalized value to 0
+				x[j] = 0
+			} else {
+				x[j] = 2*((i[j]-nn.minInput[j])/(nn.maxInput[j]-nn.minInput[j])) - 1
+			}
 		}
+
+		return x
+
+	} else {
+		// NORMALIZE OUTPUTS
+		z := make([]float64, nn.outputNodes)
+		for j := 0; j < nn.outputNodes; j++ {
+			if nn.minOutput[j] == nn.maxOutput[j] {
+				// If min and max are the same, set normalized value to 0
+				z[j] = 0
+			} else {
+				z[j] = 2*((i[j]-nn.minOutput[j])/(nn.maxOutput[j]-nn.minOutput[j])) - 1
+			}
+		}
+		return z
 	}
-	return x
 }
 
-// STEP 3 - FORWARD PASS
+// STEP 4 - FORWARD PASS
 // ForwardPass calculates the output of the neural network
 func (nn *NeuralNetwork) forwardPass(x []float64) (aHidden [][]float64, yOutput []float64) {
 
@@ -654,7 +829,7 @@ func (nn *NeuralNetwork) forwardPass(x []float64) (aHidden [][]float64, yOutput 
 			aHidden[l][hn] = 0.0
 			s := 0.0
 
-			// SUMMATION FUNCTION
+			// STEP 4.1 - THE SUMMATION FUNCTION FOR THE HIDDEN LAYERS
 			if l == 0 {
 				for in := 0; in < nn.inputNodes; in++ {
 					s += x[in] * nn.hiddenWeights[l][hn][in]
@@ -667,7 +842,7 @@ func (nn *NeuralNetwork) forwardPass(x []float64) (aHidden [][]float64, yOutput 
 				s += nn.hiddenBias[l][hn]
 			}
 
-			// ACTIVATION FUNCTION
+			// STEP 4.2 - THE ACTIVATION FUNCTION FOR THE HIDDEN LAYERS
 			if nn.activationFunction == "sigmoid" {
 				aHidden[l][hn] = sigmoid(s)
 			} else if nn.activationFunction == "tanh" {
@@ -684,13 +859,13 @@ func (nn *NeuralNetwork) forwardPass(x []float64) (aHidden [][]float64, yOutput 
 		yOutput[o] = 0.0
 		s := 0.0
 
-		// SUMMATION FUNCTION
+		// STEP 4.3 - THE SUMMATION FUNCTION FOR THE OUTPUT LAYER
 		for hn := 0; hn < nn.hiddenNodesPerLayer[nn.hiddenLayers-1]; hn++ {
 			s += aHidden[nn.hiddenLayers-1][hn] * nn.outputWeights[o][hn]
 		}
 		s += nn.outputBias[o]
 
-		// ACTIVATION FUNCTION
+		// STEP 4.4 - THE ACTIVATION FUNCTION FOR THE OUTPUT LAYER
 		if nn.activationFunction == "sigmoid" {
 			yOutput[o] = sigmoid(s)
 		} else if nn.activationFunction == "tanh" {
@@ -704,66 +879,126 @@ func (nn *NeuralNetwork) forwardPass(x []float64) (aHidden [][]float64, yOutput 
 	return aHidden, yOutput
 }
 
+// STEP 4 - FORWARD PASS
 // Activation function - Sigmoid
 func sigmoid(x float64) float64 {
 	return 1 / (1 + math.Exp(-x))
 }
 
-// Derivative of the sigmoid function
+// STEP 4 - FORWARD PASS
+// Activation function - Sigmoid Derivative
 func sigmoidDerivative(x float64) float64 {
 	return x * (1 - x)
 }
 
+// STEP 4 - FORWARD PASS
 // Activation function - Tanh
 func tanh(x float64) float64 {
 	return math.Tanh(x)
 }
 
-// Derivative of the tanh function
+// STEP 4 - FORWARD PASS
+// Activation function - Tanh Derivative
 func tanhDerivative(x float64) float64 {
 	return 1 - x*x
 }
 
-// STEP 4 - BACKWARD PASS
+// STEP 5 - BACKWARD PASS
 // BackwardPass calculates the deltas for the neural network
-func (nn *NeuralNetwork) backwardPass(z []float64, yOutput []float64, aHidden [][]float64) (deltaOutput []float64, deltaHidden [][]float64) {
+func (nn *NeuralNetwork) backwardPass(x []float64, z []float64, yOutput []float64, aHidden [][]float64) ([][][]float64, [][]float64, [][]float64, []float64) {
 
-	// Initialize the delta for the output layer
-	deltaOutput = make([]float64, nn.outputNodes)
-
-	// Initialize the delta for the hidden layers
-	deltaHidden = make([][]float64, nn.hiddenLayers)
-	for l := 0; l < nn.hiddenLayers; l++ {
-		deltaHidden[l] = make([]float64, nn.hiddenNodesPerLayer[l])
-	}
-
-	// Calculate the delta for each output node
+	// STEP 5.1 - THE ERROR SIGNAL FOR THE OUTPUT LAYER
+	deltaOutput := make([]float64, nn.outputNodes)
 	for o := 0; o < nn.outputNodes; o++ {
-		// ERROR FUNCTION
-		deltaOutput[o] = (z[o] - yOutput[o]) * sigmoidDerivative(yOutput[o])
+
+		if nn.activationFunction == "sigmoid" {
+			deltaOutput[o] = sigmoidDerivative(yOutput[o]) * (yOutput[o] - z[o])
+		}
+		if nn.activationFunction == "tanh" {
+			deltaOutput[o] = tanhDerivative(yOutput[o]) * (yOutput[o] - z[o])
+		}
 	}
 
-	// Calculate the delta for each hidden node for each layer
+	fmt.Printf("        Delta O:     %.5f\n", deltaOutput)
+
+	// STEP 5.2 - THE ERROR SIGNAL FOR THE HIDDEN LAYERS
+	deltaHidden := make([][]float64, nn.hiddenLayers)
+	// Start from last hidden layer first to get deltas for hidden layers
 	for l := nn.hiddenLayers - 1; l >= 0; l-- {
+		deltaHidden[l] = make([]float64, nn.hiddenNodesPerLayer[l])
 		for hn := 0; hn < nn.hiddenNodesPerLayer[l]; hn++ {
-			// ERROR FUNCTION
-			// If this is the last hidden layer use the output weights
 			if l == nn.hiddenLayers-1 {
-				s := 0.0
+				sum := 0.0
 				for o := 0; o < nn.outputNodes; o++ {
-					s += deltaOutput[o] * nn.outputWeights[o][hn]
+					sum += nn.outputWeights[o][hn] * deltaOutput[o]
 				}
-				deltaHidden[l][hn] = s * sigmoidDerivative(aHidden[l][hn])
-				// Use the hidden weights
+				if nn.activationFunction == "sigmoid" {
+					deltaHidden[l][hn] = sigmoidDerivative(aHidden[l][hn]) * sum
+				}
+				if nn.activationFunction == "tanh" {
+					deltaHidden[l][hn] = tanhDerivative(aHidden[l][hn]) * sum
+				}
 			} else {
-				s := 0.0
-				for hn1 := 0; hn1 < nn.hiddenNodesPerLayer[l+1]; hn1++ {
-					s += deltaHidden[l+1][hn1] * nn.hiddenWeights[l+1][hn1][hn]
+				sum := 0.0
+				for hnNext := 0; hnNext < nn.hiddenNodesPerLayer[l+1]; hnNext++ {
+					sum += nn.hiddenWeights[l+1][hnNext][hn] * deltaHidden[l+1][hnNext]
 				}
-				deltaHidden[l][hn] = s * sigmoidDerivative(aHidden[l][hn])
+				if nn.activationFunction == "sigmoid" {
+					deltaHidden[l][hn] = sigmoidDerivative(aHidden[l][hn]) * sum
+				}
+				if nn.activationFunction == "tanh" {
+					deltaHidden[l][hn] = tanhDerivative(aHidden[l][hn]) * sum
+				}
 			}
 		}
 	}
 
-	return deltaOutput, deltaHidden
+	fmt.Printf("        Delta H:     %.5f\n", deltaHidden)
+
+	// STEP 5.3 - THE NEW WEIGHTS & BIASES FOR THE OUTPUT LAYER
+	newOutputWeights := make([][]float64, nn.outputNodes)
+	for i := range newOutputWeights {
+		newOutputWeights[i] = make([]float64, nn.hiddenNodesPerLayer[nn.hiddenLayers-1])
+	}
+	newOutputBiases := make([]float64, nn.outputNodes)
+
+	for o := 0; o < nn.outputNodes; o++ {
+		for hn := 0; hn < nn.hiddenNodesPerLayer[nn.hiddenLayers-1]; hn++ {
+			newOutputWeights[o][hn] = nn.outputWeights[o][hn] - (nn.learningRate * deltaOutput[o] * aHidden[nn.hiddenLayers-1][hn])
+		}
+		newOutputBiases[o] = nn.outputBias[o] - (nn.learningRate * deltaOutput[o])
+	}
+
+	// STEP 5.4 - THE NEW WEIGHTS & BIASES FOR THE HIDDEN LAYERS
+	newHiddenWeights := make([][][]float64, nn.hiddenLayers)
+	for i := range newHiddenWeights {
+		newHiddenWeights[i] = make([][]float64, nn.hiddenNodesPerLayer[i])
+		for j := range newHiddenWeights[i] {
+			if i == 0 {
+				newHiddenWeights[i][j] = make([]float64, nn.inputNodes)
+			} else {
+				newHiddenWeights[i][j] = make([]float64, nn.hiddenNodesPerLayer[i-1])
+			}
+		}
+	}
+	newHiddenBiases := make([][]float64, nn.hiddenLayers)
+	for i := range newHiddenBiases {
+		newHiddenBiases[i] = make([]float64, nn.hiddenNodesPerLayer[i])
+	}
+
+	for l := 0; l < nn.hiddenLayers; l++ {
+		for hn := 0; hn < nn.hiddenNodesPerLayer[l]; hn++ {
+			for in := 0; in < nn.inputNodes; in++ {
+				if l == 0 {
+					newHiddenWeights[l][hn][in] = nn.hiddenWeights[l][hn][in] - (nn.learningRate * deltaHidden[l][hn] * x[in])
+				} else {
+					newHiddenWeights[l][hn][in] = nn.hiddenWeights[l][hn][in] - (nn.learningRate * deltaHidden[l][hn] * x[in])
+				}
+			}
+			newHiddenBiases[l][hn] = nn.hiddenBias[l][hn] - (nn.learningRate * deltaHidden[l][hn])
+		}
+	}
+
+	return newHiddenWeights, newHiddenBiases, newOutputWeights, newOutputBiases
+
 }
