@@ -14,58 +14,64 @@ import (
 
 // Neural Network Parameters
 type NeuralNetworkParameters struct {
-	InputNodes              int
-	InputNodeLabels         []string
-	HiddenLayers            int
-	HiddenNodesPerLayer     []int
-	OutputNodes             int
-	OutputNodeLabels        []string
-	LearningRate            float64
-	Epochs                  int
-	DatasetCSVFile          string
-	Initialization          string // "random" or "file"
-	WeightsAndBiasesCSVFile string
-	MinMaxInput             []float64
-	MinMaxOutput            []float64
-	UseMinMaxInput          bool
-	UseMinMaxOutput         bool
-	NormalizeInputData      bool
-	NormalizeOutputData     bool
-	NormalizeMethod         string // "zero-to-one" or "minus-one-to-one
-	ActivationFunction      string // "sigmoid" or "tanh"
-	LossFunction            string // "mean-squared-error" or "cross-entropy"
+	Mode                         string // "training", "testing" or "predicting"
+	InputNodes                   int
+	InputNodeLabels              []string
+	HiddenLayers                 int // Also update HiddenNodesPerLayer
+	HiddenNodesPerLayer          []int
+	OutputNodes                  int
+	OutputNodeLabels             []string
+	Epochs                       int
+	LearningRate                 float64
+	ActivationFunction           string // "sigmoid" or "tanh"
+	LossFunction                 string // "mean-squared-error"
+	InitWeightsBiasesMethod      string // "file" or "random"
+	InitWeightsBiasesJSONFile    string
+	MinMaxInputMethod            string // "file" or "calculate" Calculate from TrainingDatasetCSVFile
+	MinMaxOutputMethod           string // "file" or "calculate" Calculate from TrainingDatasetCSVFile
+	MinMaxJSONFile               string
+	TrainingDatasetCSVFile       string
+	NormalizeInputData           bool
+	NormalizeOutputData          bool
+	NormalizeMethod              string // "zero-to-one" or "minus-one-to-one
+	TrainedWeightsBiasesJSONFile string
+	TestingDatasetCSVFile        string
 }
 
 // Neural network architecture and parameters
-type NeuralNetwork struct {
-	inputNodes              int           // INPUT NODES (USER ADDED)
-	inputNodeLabels         []string      // INPUT NODE LABELS (USER ADDED)
-	hiddenLayers            int           // HIDDEN LAYERS (USER ADDED)
-	hiddenNodesPerLayer     []int         // HIDDEN NODES per [hiddenLayer] (USER ADDED)
-	hiddenWeights           [][][]float64 // - weights per [hiddenLayer][hiddenNode][inputNode]
-	hiddenBias              [][]float64   // - bias per [hiddenLayer][hiddenNode]
-	outputNodes             int           // OUTPUT NODES (USER ADDED)
-	outputNodeLabels        []string      // OUTPUT NODE LABELS (USER ADDED)
-	outputWeights           [][]float64   // - weights per [outputNode][hiddenNode]
-	outputBias              []float64     // - bias per [outputNode]
-	epochs                  int           // EPOCHS (USER ADDED)
-	datasetCSVFile          string        // DATASET CSV FILE (USER ADDED)
-	minInput                []float64     // MIN INPUT VALUE
-	maxInput                []float64     // MAX INPUT VALUE
-	minOutput               []float64     // MIN OUTPUT VALUE
-	maxOutput               []float64     // MAX OUTPUT VALUE
-	initialization          string        // INITIALIZATION (USER ADDED)
-	weightsAndBiasesCSVFile string        // WEIGHTS AND BIAS CVS FILE (USER ADDED)
-	minMaxInput             []float64     // MIN MAX INPUT VALUES (USER ADDED)
-	minMaxOutput            []float64     // MIN MAX OUTPUT VALUES (USER ADDED)
-	useMinMaxInput          bool          // USE MIN MAX INPUT VALUES (USER ADDED)
-	useMinMaxOutput         bool          // USE MIN MAX OUTPUT VALUES (USER ADDED)
-	normalizeInputData      bool          // NORMALIZE INPUT DATA (USER ADDED)
-	normalizeOutputData     bool          // NORMALIZE OUTPUT DATA (USER ADDED)
-	normalizeMethod         string        // NORMALIZE METHOD (USER ADDED)
-	activationFunction      string        // ACTIVATION FUNCTION (USER ADDED)
-	lossFunction            string        // LOSS FUNCTION (USER ADDED)
-	learningRate            float64       // LEARNING RATE (USER ADDED)
+type neuralNetwork struct {
+	mode                         string        // OPERATION MODE - "training", "testing" or "predicting" (USER ADDED)
+	inputNodes                   int           // INPUT NODES (USER ADDED)
+	inputNodeLabels              []string      // INPUT NODE LABELS (USER ADDED)
+	hiddenLayers                 int           // HIDDEN LAYERS (USER ADDED)
+	hiddenNodesPerLayer          []int         // HIDDEN NODES per [hiddenLayer] (USER ADDED)
+	hiddenWeights                [][][]float64 // - weights per [hiddenLayer][hiddenNode][inputNode]
+	hiddenBias                   [][]float64   // - bias per [hiddenLayer][hiddenNode]
+	outputNodes                  int           // OUTPUT NODES (USER ADDED)
+	outputNodeLabels             []string      // OUTPUT NODE LABELS (USER ADDED)
+	outputWeights                [][]float64   // - weights per [outputNode][hiddenNode]
+	outputBias                   []float64     // - bias per [outputNode]
+	epochs                       int           // EPOCHS (USER ADDED)
+	learningRate                 float64       // LEARNING RATE (USER ADDED)
+	activationFunction           string        // ACTIVATION FUNCTION (USER ADDED)
+	lossFunction                 string        // LOSS FUNCTION (USER ADDED)
+	initWeightsBiasesMethod      string        // INITIALIZATION (USER ADDED)
+	initWeightsBiasesJSONFile    string        // INIT WEIGHTS AND BIAS CVS FILE (USER ADDED)
+	MinMaxInputMethod            string        // INPUT MIN MAX - "file" or "calculate" (USER ADDED)
+	MinMaxOutputMethod           string        // OUTPUT MIN MAX - "file" or "calculate" (USER ADDED)
+	MinMaxJSONFile               string        // MIN MAX JSON FILE (USER ADDED)
+	minInput                     []float64     // - min input value
+	maxInput                     []float64     // - max input value
+	minOutput                    []float64     // - min output value
+	maxOutput                    []float64     // - max output value
+	trainingDatasetCSVFile       string        // TRAINING DATASET CSV FILE (USER ADDED)
+	normalizeInputData           bool          // NORMALIZE INPUT DATA (USER ADDED)
+	normalizeOutputData          bool          // NORMALIZE OUTPUT DATA (USER ADDED)
+	normalizeMethod              string        // NORMALIZE METHOD (USER ADDED)
+	statStartLoss                []float64     // - start Loss
+	statEndLoss                  []float64     // - end Loss
+	trainedWeightsBiasesJSONFile string        // TRAINED WEIGHTS AND BIAS CVS FILE (USER ADDED)
+	testingDatasetCSVFile        string        // TESTING DATASET CSV FILE (USER ADDED)
 }
 
 // Data structure for training data IO
@@ -75,7 +81,7 @@ type trainingData struct {
 }
 
 // Create the MLP neural network
-func (nnp NeuralNetworkParameters) CreateNeuralNetwork() *NeuralNetwork {
+func (nnp NeuralNetworkParameters) CreateNeuralNetwork() *neuralNetwork {
 
 	// Initialize hiddenWeights slice
 	// hiddenWeights[hiddenLayers#][hiddenNodesPerLayer#][inputNodesNumber or hiddenNodesPerLayerNumber]
@@ -115,118 +121,136 @@ func (nnp NeuralNetworkParameters) CreateNeuralNetwork() *NeuralNetwork {
 	minOutput := make([]float64, nnp.OutputNodes)
 	maxOutput := make([]float64, nnp.OutputNodes)
 
+	// Initialize the start and end loss
+	statStartLoss := make([]float64, nnp.OutputNodes)
+	statEndLoss := make([]float64, nnp.OutputNodes)
+
 	// Create the neural network
-	nn := &NeuralNetwork{
-		inputNodes:              nnp.InputNodes,              // USER PROVIDED
-		inputNodeLabels:         nnp.InputNodeLabels,         // USER PROVIDED
-		hiddenLayers:            nnp.HiddenLayers,            // USER PROVIDED
-		hiddenNodesPerLayer:     nnp.HiddenNodesPerLayer,     // USER PROVIDED
-		hiddenWeights:           hiddenWeights,               // -created here
-		hiddenBias:              hiddenBias,                  // -created here
-		outputNodes:             nnp.OutputNodes,             // USER PROVIDED
-		outputNodeLabels:        nnp.OutputNodeLabels,        // USER PROVIDED
-		outputWeights:           outputWeights,               // -created here
-		outputBias:              outputBias,                  // -created here
-		epochs:                  nnp.Epochs,                  // USER PROVIDED
-		datasetCSVFile:          nnp.DatasetCSVFile,          // USER PROVIDED
-		minInput:                minInput,                    // -created here
-		maxInput:                maxInput,                    // -created here
-		minOutput:               minOutput,                   // -created here
-		maxOutput:               maxOutput,                   // -created here
-		initialization:          nnp.Initialization,          // USER PROVIDED
-		weightsAndBiasesCSVFile: nnp.WeightsAndBiasesCSVFile, // USER PROVIDED
-		minMaxInput:             nnp.MinMaxInput,             // USER PROVIDED
-		minMaxOutput:            nnp.MinMaxOutput,            // USER PROVIDED
-		useMinMaxInput:          nnp.UseMinMaxInput,          // USER PROVIDED
-		useMinMaxOutput:         nnp.UseMinMaxOutput,         // USER PROVIDED
-		normalizeInputData:      nnp.NormalizeInputData,      // USER PROVIDED
-		normalizeOutputData:     nnp.NormalizeOutputData,     // USER PROVIDED
-		normalizeMethod:         nnp.NormalizeMethod,         // USER PROVIDED
-		activationFunction:      nnp.ActivationFunction,      // USER PROVIDED
-		lossFunction:            nnp.LossFunction,            // USER PROVIDED
-		learningRate:            nnp.LearningRate,            // USER PROVIDED
+	nn := &neuralNetwork{
+		mode:                         nnp.Mode,                         // USER PROVIDED
+		inputNodes:                   nnp.InputNodes,                   // USER PROVIDED
+		inputNodeLabels:              nnp.InputNodeLabels,              // USER PROVIDED
+		hiddenLayers:                 nnp.HiddenLayers,                 // USER PROVIDED
+		hiddenNodesPerLayer:          nnp.HiddenNodesPerLayer,          // USER PROVIDED
+		hiddenWeights:                hiddenWeights,                    // -created here
+		hiddenBias:                   hiddenBias,                       // -created here
+		outputNodes:                  nnp.OutputNodes,                  // USER PROVIDED
+		outputNodeLabels:             nnp.OutputNodeLabels,             // USER PROVIDED
+		outputWeights:                outputWeights,                    // -created here
+		outputBias:                   outputBias,                       // -created here
+		epochs:                       nnp.Epochs,                       // USER PROVIDED
+		learningRate:                 nnp.LearningRate,                 // USER PROVIDED
+		activationFunction:           nnp.ActivationFunction,           // USER PROVIDED
+		lossFunction:                 nnp.LossFunction,                 // USER PROVIDED
+		initWeightsBiasesMethod:      nnp.InitWeightsBiasesMethod,      // USER PROVIDED
+		initWeightsBiasesJSONFile:    nnp.InitWeightsBiasesJSONFile,    // USER PROVIDED
+		MinMaxInputMethod:            nnp.MinMaxInputMethod,            // USER PROVIDED
+		MinMaxOutputMethod:           nnp.MinMaxOutputMethod,           // USER PROVIDED
+		MinMaxJSONFile:               nnp.MinMaxJSONFile,               // USER PROVIDED
+		minInput:                     minInput,                         // -created here
+		maxInput:                     maxInput,                         // -created here
+		minOutput:                    minOutput,                        // -created here
+		maxOutput:                    maxOutput,                        // -created here
+		trainingDatasetCSVFile:       nnp.TrainingDatasetCSVFile,       // USER PROVIDED
+		normalizeInputData:           nnp.NormalizeInputData,           // USER PROVIDED
+		normalizeOutputData:          nnp.NormalizeOutputData,          // USER PROVIDED
+		normalizeMethod:              nnp.NormalizeMethod,              // USER PROVIDED
+		statStartLoss:                statStartLoss,                    // -created here
+		statEndLoss:                  statEndLoss,                      // -created here
+		trainedWeightsBiasesJSONFile: nnp.TrainedWeightsBiasesJSONFile, // USER PROVIDED
+		testingDatasetCSVFile:        nnp.TestingDatasetCSVFile,        // USER PROVIDED
 	}
 
 	return nn
 }
 
 // Print the neural network
-func (nn *NeuralNetwork) PrintNeuralNetwork() {
+func (nn *neuralNetwork) PrintNeuralNetwork() {
+
+	// OPERATION MODE
+	fmt.Println("OPERATION MODE")
+	fmt.Println("    Mode:                    ", nn.mode)
 
 	// INPUT LAYER ******************************************
 	fmt.Println("INPUT LAYER")
-	fmt.Println("    Nodes:               ", nn.inputNodes)
-	fmt.Println("    Labels:              ", nn.inputNodeLabels)
+	fmt.Println("    Nodes:                   ", nn.inputNodes)
+	fmt.Println("    Labels:                  ", nn.inputNodeLabels)
 
 	// HIDDEN LAYER ******************************************
 	fmt.Println("HIDDEN LAYER")
-	fmt.Println("    Layers:              ", nn.hiddenLayers)
+	fmt.Println("    Layers:                  ", nn.hiddenLayers)
 	// Print weights and bias for each hidden layer
 	for l := 0; l < nn.hiddenLayers; l++ {
 		fmt.Println("    Layer", l, "has", nn.hiddenNodesPerLayer[l], "Nodes")
 
 		// Print weights for each nodes in this hidden layer
 		for hn := 0; hn < nn.hiddenNodesPerLayer[l]; hn++ {
-			fmt.Printf("        weights node: %d   %.3f\n", hn, nn.hiddenWeights[l][hn])
+			fmt.Printf("        weights node: %d       %.3f\n", hn, nn.hiddenWeights[l][hn])
 		}
 		// Print bias for each node in this hidden layer
 		for hn := 0; hn < nn.hiddenNodesPerLayer[l]; hn++ {
-			fmt.Printf("        bias node:    %d   %.3f\n", hn, nn.hiddenBias[l][hn])
+			fmt.Printf("        bias node:    %d       %.3f\n", hn, nn.hiddenBias[l][hn])
 		}
 	}
 
 	// OUTPUT LAYER ******************************************
 	fmt.Println("OUTPUT LAYER")
 	// Print the output layer
-	fmt.Println("    Nodes:               ", nn.outputNodes)
-	fmt.Println("    Labels:              ", nn.outputNodeLabels)
+	fmt.Println("    Nodes:                   ", nn.outputNodes)
+	fmt.Println("    Labels:                  ", nn.outputNodeLabels)
 	// Print weights for each nodes in the output layer
 	for on := 0; on < nn.outputNodes; on++ {
-		fmt.Printf("    weights node:     %d   %.3f\n", on, nn.outputWeights[on])
+		fmt.Printf("    weights node:     %d       %.3f\n", on, nn.outputWeights[on])
 	}
 	// Print bias for each node in the output layer
 	for on := 0; on < nn.outputNodes; on++ {
-		fmt.Printf("    bias node:        %d   %.3f\n", on, nn.outputBias[on])
+		fmt.Printf("    bias node:        %d       %.3f\n", on, nn.outputBias[on])
 	}
 
 	// OTHER INFO
 	fmt.Println("OTHER INFO")
-	fmt.Println("    Epochs               ", nn.epochs)
-	fmt.Println("    Dataset CSV          ", nn.datasetCSVFile)
-	fmt.Println("    Min Input Value:     ", nn.minInput)
-	fmt.Println("    Max Input Value:     ", nn.maxInput)
-	fmt.Println("    Min Output Value:    ", nn.minOutput)
-	fmt.Println("    Max Output Value:    ", nn.maxOutput)
-	fmt.Println("    Initialization       ", nn.initialization)
-	fmt.Println("    W & B CSV:           ", nn.weightsAndBiasesCSVFile)
-	fmt.Println("    Min Max Input:       ", nn.minMaxInput)
-	fmt.Println("    Min Max Output:      ", nn.minMaxOutput)
-	fmt.Println("    Use Min Max Input    ", nn.useMinMaxInput)
-	fmt.Println("    Use Min Max Output   ", nn.useMinMaxOutput)
-	fmt.Println("    Normalize Input Data ", nn.normalizeInputData)
-	fmt.Println("    Normalize Method     ", nn.normalizeMethod)
-	fmt.Println("    Activation Function  ", nn.activationFunction)
-	fmt.Println("    Loss Function        ", nn.lossFunction)
-	fmt.Println("    Learning rate        ", nn.learningRate)
+	fmt.Println("    Epochs                   ", nn.epochs)
+	fmt.Println("    Learning Rate            ", nn.learningRate)
+	fmt.Println("    Activation Function      ", nn.activationFunction)
+	fmt.Println("    Loss Function            ", nn.lossFunction)
+	fmt.Println("    Init Weights Biases      ", nn.initWeightsBiasesMethod)
+	fmt.Println("    Init Weights Biases JSON ", nn.initWeightsBiasesJSONFile)
+	fmt.Println("    Min Max Input Method     ", nn.MinMaxInputMethod)
+	fmt.Println("    Min Max Output Method    ", nn.MinMaxOutputMethod)
+	fmt.Println("    Min Max JSON File        ", nn.MinMaxJSONFile)
+	fmt.Println("    Min Input Value          ", nn.minInput)
+	fmt.Println("    Max Input Value          ", nn.maxInput)
+	fmt.Println("    Min Output Value         ", nn.minOutput)
+	fmt.Println("    Max Output Value         ", nn.maxOutput)
+	fmt.Println("    Training Dataset CSV     ", nn.trainingDatasetCSVFile)
+	fmt.Println("    Normalize Input Data     ", nn.normalizeInputData)
+	fmt.Println("    Normalize Output Data    ", nn.normalizeOutputData)
+	fmt.Println("    Normalize Method         ", nn.normalizeMethod)
+	fmt.Println("    Start Loss               ", nn.statStartLoss)
+	fmt.Println("    End Loss                 ", nn.statEndLoss)
+	fmt.Println("    Trained W & B JSON       ", nn.trainedWeightsBiasesJSONFile)
+	fmt.Println("    Testing Dataset CSV      ", nn.testingDatasetCSVFile)
 
 }
 
 // STEP 1 - INITIALIZATION
 // Initialize the neural network (weights and biases)
 // Random or from file
-func (nn *NeuralNetwork) InitializeNeuralNetwork() error {
+func (nn *neuralNetwork) InitializeNeuralNetwork() error {
+
+	fmt.Println("\nSTEP 1 - INITIALIZATION ------------------------------------")
 
 	// RANDOM OR FROM FILE
 
-	if nn.initialization == "random" {
+	if nn.initWeightsBiasesMethod == "random" {
 		nn.initializeRandom()
-	} else if nn.initialization == "file" {
+	} else if nn.initWeightsBiasesMethod == "file" {
 		err := nn.initializeFromFile()
 		if err != nil {
 			return err
 		}
 	} else {
-		return fmt.Errorf("invalid initialization method: %s", nn.initialization)
+		return fmt.Errorf("invalid initialization method: %s", nn.initWeightsBiasesMethod)
 	}
 
 	return nil
@@ -234,7 +258,7 @@ func (nn *NeuralNetwork) InitializeNeuralNetwork() error {
 
 // STEP 1 - INITIALIZATION
 // random
-func (nn *NeuralNetwork) initializeRandom() {
+func (nn *neuralNetwork) initializeRandom() {
 
 	// Random number generator from 0-1
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
@@ -272,9 +296,9 @@ func (nn *NeuralNetwork) initializeRandom() {
 
 // STEP 1 - INITIALIZATION
 // from file
-func (nn *NeuralNetwork) initializeFromFile() error {
+func (nn *neuralNetwork) initializeFromFile() error {
 
-	err := nn.loadWeightsAndBiasesFromJSON()
+	err := nn.loadWeightsBiasesFromJSON(nn.initWeightsBiasesJSONFile)
 	if err != nil {
 		return err
 	}
@@ -283,11 +307,69 @@ func (nn *NeuralNetwork) initializeFromFile() error {
 
 }
 
-// Save weights and biases to a json file
-func (nn *NeuralNetwork) saveWeightsAndBiasesFromJSON() error {
+// STEP 1 - INITIALIZATION
+// Load weights and biases from a json file
+func (nn *neuralNetwork) loadWeightsBiasesFromJSON(filename string) error {
+
+	// Read the JSON data from the file
+	jsonData, err := os.ReadFile(filename)
+	if err != nil {
+		return fmt.Errorf("error reading weights and biases from file: %v", err)
+	}
 
 	// Create a struct to hold the weights and biases
-	weightsAndBiases := struct {
+	var weightsBiasesMinMax struct {
+		HiddenWeights [][][]float64 `json:"hiddenWeights"`
+		HiddenBias    [][]float64   `json:"hiddenBias"`
+		OutputWeights [][]float64   `json:"outputWeights"`
+		OutputBias    []float64     `json:"outputBias"`
+	}
+
+	// Unmarshal the JSON data
+	err = json.Unmarshal(jsonData, &weightsBiasesMinMax)
+	if err != nil {
+		return fmt.Errorf("error unmarshaling weights and biases: %v", err)
+	}
+
+	// CHECK NUMBER HIDDEN LAYERS MATCH
+	if len(weightsBiasesMinMax.HiddenWeights) != nn.hiddenLayers {
+		return fmt.Errorf("mismatch in number of hidden layers: expected %d, got %d",
+			nn.hiddenLayers, len(weightsBiasesMinMax.HiddenWeights))
+	}
+
+	// CHECK NUMBER NODES PER HIDDEN LAYER MATCH
+	for l := 0; l < nn.hiddenLayers; l++ {
+		if len(weightsBiasesMinMax.HiddenWeights[l]) != nn.hiddenNodesPerLayer[l] {
+			return fmt.Errorf("mismatch in number of hidden nodes in layer %d: expected %d, got %d",
+				l, nn.hiddenNodesPerLayer[l], len(weightsBiasesMinMax.HiddenWeights[l]))
+		}
+	}
+
+	// CHECK OUTPUT NODES MATCH
+	if len(weightsBiasesMinMax.OutputWeights) != nn.outputNodes {
+		return fmt.Errorf("mismatch in number of output nodes: expected %d, got %d",
+			nn.outputNodes, len(weightsBiasesMinMax.OutputWeights))
+	}
+
+	// Load the weights and biases
+	nn.hiddenWeights = weightsBiasesMinMax.HiddenWeights
+	nn.hiddenBias = weightsBiasesMinMax.HiddenBias
+	nn.outputWeights = weightsBiasesMinMax.OutputWeights
+	nn.outputBias = weightsBiasesMinMax.OutputBias
+
+	return nil
+}
+
+// STEP 7 - SAVE WEIGHTS & BIASES TO A FILE
+// Save weights and biases to a json file
+func (nn *neuralNetwork) SaveWeightsBiasesToJSON() error {
+
+	fmt.Println("\nSTEP 7 - SAVE WEIGHTS & BIASES TO A FILE -------------------")
+
+	filename := nn.trainedWeightsBiasesJSONFile
+
+	// Create a struct to hold the weights and biases amd min/max inputs and outputs
+	stuff := struct {
 		HiddenWeights [][][]float64 `json:"hiddenWeights"`
 		HiddenBias    [][]float64   `json:"hiddenBias"`
 		OutputWeights [][]float64   `json:"outputWeights"`
@@ -299,13 +381,12 @@ func (nn *NeuralNetwork) saveWeightsAndBiasesFromJSON() error {
 		OutputBias:    nn.outputBias,
 	}
 
-	// Marshal the weights and biases to JSON
-	jsonData, err := json.MarshalIndent(weightsAndBiases, "", "  ")
+	// Marshal the weights and biases min/max to JSON
+	jsonData, err := json.MarshalIndent(stuff, "", "  ")
 	if err != nil {
 		return fmt.Errorf("error marshaling weights and biases: %v", err)
 	}
 
-	filename := nn.weightsAndBiasesCSVFile
 	// Write the JSON data to a file
 	err = os.WriteFile(filename, jsonData, 0644)
 	if err != nil {
@@ -315,98 +396,152 @@ func (nn *NeuralNetwork) saveWeightsAndBiasesFromJSON() error {
 	return nil
 }
 
-// STEP 1 - INITIALIZATION
-// Load weights and biases from a json file
-func (nn *NeuralNetwork) loadWeightsAndBiasesFromJSON() error {
-
-	filename := nn.weightsAndBiasesCSVFile
-
-	// Read the JSON data from the file
-	jsonData, err := os.ReadFile(filename)
-	if err != nil {
-		return fmt.Errorf("error reading weights and biases from file: %v", err)
-	}
-
-	// Create a struct to hold the weights and biases
-	var weightsAndBiases struct {
-		HiddenWeights [][][]float64 `json:"hiddenWeights"`
-		HiddenBias    [][]float64   `json:"hiddenBias"`
-		OutputWeights [][]float64   `json:"outputWeights"`
-		OutputBias    []float64     `json:"outputBias"`
-	}
-
-	// Unmarshal the JSON data
-	err = json.Unmarshal(jsonData, &weightsAndBiases)
-	if err != nil {
-		return fmt.Errorf("error unmarshaling weights and biases: %v", err)
-	}
-
-	// CHECK NUMBER HIDDEN LAYERS MATCH
-	if len(weightsAndBiases.HiddenWeights) != nn.hiddenLayers {
-		return fmt.Errorf("mismatch in number of hidden layers: expected %d, got %d",
-			nn.hiddenLayers, len(weightsAndBiases.HiddenWeights))
-	}
-
-	// CHECK NUMBER NODES PER HIDDEN LAYER MATCH
-	for l := 0; l < nn.hiddenLayers; l++ {
-		if len(weightsAndBiases.HiddenWeights[l]) != nn.hiddenNodesPerLayer[l] {
-			return fmt.Errorf("mismatch in number of hidden nodes in layer %d: expected %d, got %d",
-				l, nn.hiddenNodesPerLayer[l], len(weightsAndBiases.HiddenWeights[l]))
-		}
-	}
-
-	// CHECK OUTPUT NODES MATCH
-	if len(weightsAndBiases.OutputWeights) != nn.outputNodes {
-		return fmt.Errorf("mismatch in number of output nodes: expected %d, got %d",
-			nn.outputNodes, len(weightsAndBiases.OutputWeights))
-	}
-
-	// Load the weights and biases
-	nn.hiddenWeights = weightsAndBiases.HiddenWeights
-	nn.hiddenBias = weightsAndBiases.HiddenBias
-	nn.outputWeights = weightsAndBiases.OutputWeights
-	nn.outputBias = weightsAndBiases.OutputBias
-
-	return nil
-}
-
 // STEP 2 - MIN & MAX INPUT VALUES
 // Set the min and max values for the input and output nodes
-func (nn *NeuralNetwork) SetMinMaxValues() error {
+func (nn *neuralNetwork) SetMinMaxValues() error {
 
-	if nn.useMinMaxInput {
-		// Use the min and max values provided by the user
-		nn.minInput = nn.minMaxInput[:nn.inputNodes]
-		nn.maxInput = nn.minMaxInput[nn.inputNodes:]
-	} else {
+	fmt.Println("\nSTEP 2 - MIN & MAX INPUT VALUES ----------------------------")
+
+	if nn.MinMaxInputMethod == "file" {
+		// Load min and max values from a json file
+		err := nn.loadMinMaxValuesFromJSON("input")
+		if err != nil {
+			return err
+		}
+	} else if nn.MinMaxInputMethod == "calculate" {
 		// Use the min and max values from the dataset
 		err := nn.getMinMaxValuesFromCSV("input")
 		if err != nil {
 			return err
 		}
+	} else {
+		return fmt.Errorf("invalid min max input method: %s", nn.MinMaxInputMethod)
 	}
 
-	if nn.useMinMaxOutput {
-		// Use the min and max values provided by the user
-		nn.minOutput = nn.minMaxOutput[:nn.outputNodes]
-		nn.maxOutput = nn.minMaxOutput[nn.outputNodes:]
-	} else {
+	if nn.MinMaxOutputMethod == "file" {
+		// Load min and max values from a json file
+		err := nn.loadMinMaxValuesFromJSON("output")
+		if err != nil {
+			return err
+		}
+	} else if nn.MinMaxOutputMethod == "calculate" {
 		// Use the min and max values from the dataset
 		err := nn.getMinMaxValuesFromCSV("output")
 		if err != nil {
 			return err
 		}
+	} else {
+		return fmt.Errorf("invalid min max output method: %s", nn.MinMaxOutputMethod)
 	}
 
 	return nil
 }
 
+// STEP -  MIN & MAX INPUT VALUES
+// Load min and max values from a json file
+func (nn *neuralNetwork) loadMinMaxValuesFromJSON(inout string) error {
+
+	// Read the JSON data from the file
+	jsonData, err := os.ReadFile(nn.MinMaxJSONFile)
+	if err != nil {
+		return fmt.Errorf("error reading min max values from file: %v", err)
+	}
+
+	// Create a struct to hold the min and max values
+	var minMax struct {
+		MinInput  []float64 `json:"minInput"`
+		MaxInput  []float64 `json:"maxInput"`
+		MinOutput []float64 `json:"minOutput"`
+		MaxOutput []float64 `json:"maxOutput"`
+	}
+
+	// Unmarshal the JSON data
+	err = json.Unmarshal(jsonData, &minMax)
+	if err != nil {
+		return fmt.Errorf("error unmarshaling min max values: %v", err)
+	}
+
+	// CHECK MIN INPUT VALUES MATCH
+	if len(minMax.MinInput) != nn.inputNodes {
+		return fmt.Errorf("mismatch in number of input nodes: expected %d, got %d",
+			nn.inputNodes, len(minMax.MinInput))
+	}
+
+	// CHECK MAX INPUT VALUES MATCH
+	if len(minMax.MaxInput) != nn.inputNodes {
+		return fmt.Errorf("mismatch in number of input nodes: expected %d, got %d",
+			nn.inputNodes, len(minMax.MaxInput))
+	}
+
+	// CHECK MIN OUTPUT VALUES MATCH
+	if len(minMax.MinOutput) != nn.outputNodes {
+		return fmt.Errorf("mismatch in number of output nodes: expected %d, got %d",
+			nn.outputNodes, len(minMax.MinOutput))
+	}
+
+	// CHECK MAX OUTPUT VALUES MATCH
+	if len(minMax.MaxOutput) != nn.outputNodes {
+		return fmt.Errorf("mismatch in number of output nodes: expected %d, got %d",
+			nn.outputNodes, len(minMax.MaxOutput))
+	}
+
+	// Load the min and max values
+	if inout == "input" {
+		copy(nn.minInput, minMax.MinInput)
+		copy(nn.maxInput, minMax.MaxInput)
+	}
+
+	if inout == "output" {
+		copy(nn.minOutput, minMax.MinOutput)
+		copy(nn.maxOutput, minMax.MaxOutput)
+	}
+
+	return nil
+
+}
+
+// Save min and max values to a json file
+func (nn *neuralNetwork) SaveMinMaxToJSON() error {
+
+	fmt.Println("\nSTEP 7 - SAVE MIN AND MAX VALUES TO A FILE -------------------")
+
+	filename := nn.MinMaxJSONFile
+
+	// Create a struct to hold the min and max values
+	stuff := struct {
+		MinInput  []float64 `json:"minInput"`
+		MaxInput  []float64 `json:"maxInput"`
+		MinOutput []float64 `json:"minOutput"`
+		MaxOutput []float64 `json:"maxOutput"`
+	}{
+		MinInput:  nn.minInput,
+		MaxInput:  nn.maxInput,
+		MinOutput: nn.minOutput,
+		MaxOutput: nn.maxOutput,
+	}
+
+	// Marshal the min and max values to JSON
+	jsonData, err := json.MarshalIndent(stuff, "", "  ")
+	if err != nil {
+		return fmt.Errorf("error marshaling min and max values: %v", err)
+	}
+
+	// Write the JSON data to a file
+	err = os.WriteFile(filename, jsonData, 0644)
+	if err != nil {
+		return fmt.Errorf("error writing min and max values to file: %v", err)
+	}
+
+	return nil
+
+}
+
 // STEP 2 -  MIN & MAX INPUT VALUES
 // Read csv file and Get the min and max values from the dataset - for normalization function
-func (nn *NeuralNetwork) getMinMaxValuesFromCSV(inOut string) error {
+func (nn *neuralNetwork) getMinMaxValuesFromCSV(inOut string) error {
 
 	// Open the CSV file
-	file, err := os.Open(nn.datasetCSVFile)
+	file, err := os.Open(nn.trainingDatasetCSVFile)
 	if err != nil {
 		return err
 	}
@@ -500,11 +635,16 @@ func (nn *NeuralNetwork) getMinMaxValuesFromCSV(inOut string) error {
 
 	}
 
+	fmt.Println("---------------------------------Min Input Value:  ", nn.minInput)
+	fmt.Println("---------------------------------Max Input Value:  ", nn.maxInput)
+	fmt.Println("---------------------------------Min Output Value: ", nn.minOutput)
+	fmt.Println("---------------------------------Max Output Value: ", nn.maxOutput)
+
 	return nil
 }
 
 // Print the min and max input values for each input
-func (nn *NeuralNetwork) PrintDatasetMinMax() {
+func (nn *neuralNetwork) PrintDatasetMinMax() {
 
 	// Print the min and max input values
 	fmt.Println("Min Input Value:  ", nn.minInput)
@@ -515,7 +655,9 @@ func (nn *NeuralNetwork) PrintDatasetMinMax() {
 
 // TRAINING LOOP
 // Train the neural network by reading the dataset from the CSV file
-func (nn *NeuralNetwork) TrainNeuralNetwork() error {
+func (nn *neuralNetwork) TrainNeuralNetwork() error {
+
+	fmt.Println("\nTHE TRAINING LOOP ------------------------------------------")
 
 	// TRAINING LOOP - EPOCH LOOP
 	// Train the neural network by reading the dataset from the CSV file
@@ -530,7 +672,9 @@ func (nn *NeuralNetwork) TrainNeuralNetwork() error {
 
 // TRAINING LOOP - EPOCH LOOP
 // Train the neural network by reading the dataset from the CSV file
-func (nn *NeuralNetwork) epochLoop() error {
+func (nn *neuralNetwork) epochLoop() error {
+
+	startToken := true
 
 	// Train the neural network for the number of epochs
 	for epoch := 0; epoch < nn.epochs; epoch++ {
@@ -538,11 +682,24 @@ func (nn *NeuralNetwork) epochLoop() error {
 		// print the epoch number
 		fmt.Println("Epoch", epoch)
 
-		err := nn.datasetLoop()
+		err := nn.datasetLoop(startToken)
 		if err != nil {
 			return err
 		}
 
+		startToken = false
+
+	}
+
+	// Print Summary of start and end loss for each output node
+	fmt.Println("SUMMARY:")
+	for i := 0; i < nn.outputNodes; i++ {
+		fmt.Println("    Node", i)
+		fmt.Println("        Start Loss: ", nn.statStartLoss[i])
+		fmt.Println("        End Loss:   ", nn.statEndLoss[i])
+		// get percentage change and make it positive
+		change := 100 * math.Abs((nn.statEndLoss[i]-nn.statStartLoss[i])/nn.statStartLoss[i])
+		fmt.Printf("        Change:      %.2f%%\n", change)
 	}
 
 	return nil
@@ -553,8 +710,11 @@ func (nn *NeuralNetwork) epochLoop() error {
 // STEP 3 - NORMALIZATION
 // STEP 4 - FORWARD PASS
 // STEP 5 - BACKWARD PASS
+// STEP 6 - UPDATE WEIGHTS AND BIASES
 // Train the neural network by reading the dataset from the CSV file
-func (nn *NeuralNetwork) datasetLoop() error {
+func (nn *neuralNetwork) datasetLoop(startToken bool) (err error) {
+
+	loss := make([]float64, nn.outputNodes)
 
 	// Setup the channel to read the CSV file line by line
 	ch := nn.readCSVFileLineByLine()
@@ -575,35 +735,46 @@ func (nn *NeuralNetwork) datasetLoop() error {
 			return err
 		}
 
-		fmt.Println("    Input Data:     ", data.i)
-		fmt.Println("    Output Data:    ", data.z)
-		fmt.Printf("        Normalized:  %.5f\n", x)
-		fmt.Printf("        Normalized:  %.5f\n", z)
-
 		// STEP 4 - FORWARD PASS
 		// Compute the output of the neural network for the current input data
 		aHidden, yOutput := nn.forwardPass(x)
 
-		// Print the outputs to .3 decimal places
-		fmt.Printf("        aHidden:     %.5f\n", aHidden)
-		fmt.Printf("        yOutput:     %.5f\n", yOutput)
-
 		// STEP 5 BACKWARD PASS
-		iWNew, IBNew, oWNew, oBNew := nn.backwardPass(x, z, yOutput, aHidden)
+		hWNew, hBNew, oWNew, oBNew := nn.backwardPass(x, z, yOutput, aHidden)
 
-		// Print the weights and biases to .3 decimal places
-		fmt.Printf("        iWeightsNew: %.5f\n", iWNew)
-		fmt.Printf("        IBiasesNew:  %.5f\n", IBNew)
-		fmt.Printf("        oWeightsNew: %.5f\n", oWNew)
-		fmt.Printf("        oBiasesNew:  %.5f\n", oBNew)
+		// STEP 6 UPDATE WEIGHTS AND BIASES
+		// Copy slice into another slice
+		fmt.Println("\n    STEP 6 - UPDATE WEIGHTS AND BIASES ---------------------")
+		copy(nn.hiddenWeights, hWNew)
+		copy(nn.hiddenBias, hBNew)
+		copy(nn.outputWeights, oWNew)
+		copy(nn.outputBias, oBNew)
 
 		// Calculate the loss for every output node
+		// yOutput can be from normalized input data
+		// z can be from normalized output data
+		fmt.Println("        Loss")
 		for i := 0; i < nn.outputNodes; i++ {
-			loss := 1.0 / 2.0 * math.Pow(yOutput[i]-z[i], 2)
-			fmt.Printf("        Loss:         %.5f\n", loss)
+			if nn.lossFunction == "mean-squared-error" {
+				loss[i] = 1.0 / 2.0 * math.Pow(yOutput[i]-z[i], 2)
+
+			} else {
+				return fmt.Errorf("invalid loss function: %s", nn.lossFunction)
+			}
+
+			fmt.Printf("            Node %d:  %.5f\n", i, loss[i])
+		}
+
+		// Save the startLoss if startToken is true
+		if startToken {
+			copy(nn.statStartLoss, loss)
+			startToken = false
 		}
 
 	}
+
+	// Copy end loss for each output node
+	copy(nn.statEndLoss, loss)
 
 	return nil
 }
@@ -612,7 +783,7 @@ func (nn *NeuralNetwork) datasetLoop() error {
 // returns a channel to read the TrainingData struct.
 // Instead of calling this function each time you want to open the file,
 // keep the file open and just loop from the start of the file.
-func (nn *NeuralNetwork) readCSVFileLineByLine() chan trainingData {
+func (nn *neuralNetwork) readCSVFileLineByLine() chan trainingData {
 
 	// Create a new TrainingData struct
 	data := trainingData{
@@ -624,7 +795,7 @@ func (nn *NeuralNetwork) readCSVFileLineByLine() chan trainingData {
 	ch := make(chan trainingData)
 
 	// Open the CSV file
-	file, err := os.Open(nn.datasetCSVFile)
+	file, err := os.Open(nn.trainingDatasetCSVFile)
 	if err != nil {
 		return nil
 	}
@@ -710,16 +881,28 @@ func (nn *NeuralNetwork) readCSVFileLineByLine() chan trainingData {
 }
 
 // STEP 3 - NORMALIZATION
-func (nn *NeuralNetwork) normalization(data trainingData) ([]float64, []float64, error) {
+func (nn *neuralNetwork) normalization(data trainingData) ([]float64, []float64, error) {
+
+	fmt.Println("\n    STEP 3 - NORMALIZATION ------------------------------------")
 
 	var x, z []float64
+	err := error(nil)
 
 	// STEP 3.1 - NORMALIZE INPUT
+
+	fmt.Println("\n        STEP 3.1 - NORMALIZE INPUT")
 	if nn.normalizeInputData {
 		if nn.normalizeMethod == "zero-to-one" {
-			x = nn.minMaxScalingFunctionZeroToOne("input", data.i)
+			x, err = nn.normalizeZeroToOne("input", data.i)
+			if err != nil {
+				return nil, nil, err
+			}
+
 		} else if nn.normalizeMethod == "minus-one-to-one" {
-			x = nn.minMaxScalingFunctionMinusOneToOne("input", data.i)
+			x, err = nn.normalizeMinusOneToOne("input", data.i)
+			if err != nil {
+				return nil, nil, err
+			}
 		} else {
 			return nil, nil, fmt.Errorf("invalid normalization method: %s", nn.normalizeMethod)
 		}
@@ -727,12 +910,22 @@ func (nn *NeuralNetwork) normalization(data trainingData) ([]float64, []float64,
 		x = data.i
 	}
 
+	fmt.Printf("        Original:    %.5f\n", data.i)
+	fmt.Printf("        Normalized:  %.5f\n", x)
+
 	// STEP 3.2 - NORMALIZE OUTPUT
+	fmt.Println("\n        STEP 3.2 - NORMALIZE OUTPUT")
 	if nn.normalizeOutputData {
 		if nn.normalizeMethod == "zero-to-one" {
-			z = nn.minMaxScalingFunctionZeroToOne("output", data.z)
+			z, err = nn.normalizeZeroToOne("output", data.z)
+			if err != nil {
+				return nil, nil, err
+			}
 		} else if nn.normalizeMethod == "minus-one-to-one" {
-			z = nn.minMaxScalingFunctionMinusOneToOne("output", data.z)
+			z, err = nn.normalizeMinusOneToOne("output", data.z)
+			if err != nil {
+				return nil, nil, err
+			}
 		} else {
 			return nil, nil, fmt.Errorf("invalid normalization method: %s", nn.normalizeMethod)
 		}
@@ -740,12 +933,15 @@ func (nn *NeuralNetwork) normalization(data trainingData) ([]float64, []float64,
 		z = data.z
 	}
 
+	fmt.Printf("        Original:    %.5f\n", data.z)
+	fmt.Printf("        Normalized:  %.5f\n", z)
+
 	return x, z, nil
 }
 
 // STEP 3 - NORMALIZATION
 // Normalize the input data between 0 and 1
-func (nn *NeuralNetwork) minMaxScalingFunctionZeroToOne(inOut string, i []float64) []float64 {
+func (nn *neuralNetwork) normalizeZeroToOne(inOut string, i []float64) ([]float64, error) {
 
 	if inOut == "input" {
 		// NORMALIZE INPUTS
@@ -759,9 +955,9 @@ func (nn *NeuralNetwork) minMaxScalingFunctionZeroToOne(inOut string, i []float6
 			}
 		}
 
-		return x
+		return x, nil
 
-	} else {
+	} else if inOut == "output" {
 		// NORMALIZE OUTPUTS
 		z := make([]float64, nn.outputNodes)
 		for j := 0; j < nn.outputNodes; j++ {
@@ -773,13 +969,32 @@ func (nn *NeuralNetwork) minMaxScalingFunctionZeroToOne(inOut string, i []float6
 			}
 		}
 
+		return z, nil
+
+	} else {
+		return nil, fmt.Errorf("invalid input/output: %s", inOut)
+	}
+
+}
+
+// Denormalize the output data between 0 and 1
+func (nn *neuralNetwork) denormalizeZeroToOne(inOut string, i []float64) []float64 {
+	if inOut == "output" {
+		// DENORMALIZE OUTPUTS
+		z := make([]float64, nn.outputNodes)
+		for j := 0; j < nn.outputNodes; j++ {
+			z[j] = i[j]*(nn.maxOutput[j]-nn.minOutput[j]) + nn.minOutput[j]
+		}
+
 		return z
 	}
+
+	return nil
 }
 
 // STEP 3 - NORMALIZATION
 // Normalize the input data between -1 and 1
-func (nn *NeuralNetwork) minMaxScalingFunctionMinusOneToOne(inOut string, i []float64) []float64 {
+func (nn *neuralNetwork) normalizeMinusOneToOne(inOut string, i []float64) ([]float64, error) {
 
 	if inOut == "input" {
 		// NORMALIZE INPUTS
@@ -793,9 +1008,9 @@ func (nn *NeuralNetwork) minMaxScalingFunctionMinusOneToOne(inOut string, i []fl
 			}
 		}
 
-		return x
+		return x, nil
 
-	} else {
+	} else if inOut == "output" {
 		// NORMALIZE OUTPUTS
 		z := make([]float64, nn.outputNodes)
 		for j := 0; j < nn.outputNodes; j++ {
@@ -806,13 +1021,35 @@ func (nn *NeuralNetwork) minMaxScalingFunctionMinusOneToOne(inOut string, i []fl
 				z[j] = 2*((i[j]-nn.minOutput[j])/(nn.maxOutput[j]-nn.minOutput[j])) - 1
 			}
 		}
+		return z, nil
+
+	} else {
+		return nil, fmt.Errorf("invalid input/output: %s", inOut)
+	}
+
+}
+
+// Denormalize the output data between -1 and 1
+func (nn *neuralNetwork) denormalizeMinusOneToOne(inOut string, i []float64) []float64 {
+
+	if inOut == "output" {
+		// DENORMALIZE OUTPUTS
+		z := make([]float64, nn.outputNodes)
+		for j := 0; j < nn.outputNodes; j++ {
+			z[j] = (i[j]+1)*(nn.maxOutput[j]-nn.minOutput[j])/2 + nn.minOutput[j]
+		}
+
 		return z
 	}
+
+	return nil
 }
 
 // STEP 4 - FORWARD PASS
 // ForwardPass calculates the output of the neural network
-func (nn *NeuralNetwork) forwardPass(x []float64) (aHidden [][]float64, yOutput []float64) {
+func (nn *neuralNetwork) forwardPass(x []float64) (aHidden [][]float64, yOutput []float64) {
+
+	fmt.Println("\n    STEP 4 - FORWARD PASS ----------------------------------")
 
 	// Initialize the hidden outputs for each layer
 	aHidden = make([][]float64, nn.hiddenLayers)
@@ -876,6 +1113,10 @@ func (nn *NeuralNetwork) forwardPass(x []float64) (aHidden [][]float64, yOutput 
 
 	}
 
+	// Print the outputs
+	fmt.Printf("        aHidden:     %.5f\n", aHidden)
+	fmt.Printf("        yOutput:     %.5f\n", yOutput)
+
 	return aHidden, yOutput
 }
 
@@ -905,9 +1146,12 @@ func tanhDerivative(x float64) float64 {
 
 // STEP 5 - BACKWARD PASS
 // BackwardPass calculates the deltas for the neural network
-func (nn *NeuralNetwork) backwardPass(x []float64, z []float64, yOutput []float64, aHidden [][]float64) ([][][]float64, [][]float64, [][]float64, []float64) {
+func (nn *neuralNetwork) backwardPass(x []float64, z []float64, yOutput []float64, aHidden [][]float64) ([][][]float64, [][]float64, [][]float64, []float64) {
+
+	fmt.Println("\n    STEP 5 - BACKWARD PASS ---------------------------------")
 
 	// STEP 5.1 - THE ERROR SIGNAL FOR THE OUTPUT LAYER
+	fmt.Println("\n        STEP 5.1 - THE ERROR SIGNAL FOR THE OUTPUT LAYER")
 	deltaOutput := make([]float64, nn.outputNodes)
 	for o := 0; o < nn.outputNodes; o++ {
 
@@ -919,14 +1163,16 @@ func (nn *NeuralNetwork) backwardPass(x []float64, z []float64, yOutput []float6
 		}
 	}
 
-	fmt.Printf("        Delta O:     %.5f\n", deltaOutput)
+	fmt.Printf("        delta O:     %.5f\n", deltaOutput)
 
 	// STEP 5.2 - THE ERROR SIGNAL FOR THE HIDDEN LAYERS
+	fmt.Println("\n        STEP 5.2 - THE ERROR SIGNAL FOR THE HIDDEN LAYERS")
 	deltaHidden := make([][]float64, nn.hiddenLayers)
-	// Start from last hidden layer first to get deltas for hidden layers
+	// START LAST HIDDEN LAYER FIRST
 	for l := nn.hiddenLayers - 1; l >= 0; l-- {
 		deltaHidden[l] = make([]float64, nn.hiddenNodesPerLayer[l])
 		for hn := 0; hn < nn.hiddenNodesPerLayer[l]; hn++ {
+			// Last layer first - Use deltaOutput
 			if l == nn.hiddenLayers-1 {
 				sum := 0.0
 				for o := 0; o < nn.outputNodes; o++ {
@@ -938,6 +1184,7 @@ func (nn *NeuralNetwork) backwardPass(x []float64, z []float64, yOutput []float6
 				if nn.activationFunction == "tanh" {
 					deltaHidden[l][hn] = tanhDerivative(aHidden[l][hn]) * sum
 				}
+				// All other layers - User deltaHidden
 			} else {
 				sum := 0.0
 				for hnNext := 0; hnNext < nn.hiddenNodesPerLayer[l+1]; hnNext++ {
@@ -953,9 +1200,10 @@ func (nn *NeuralNetwork) backwardPass(x []float64, z []float64, yOutput []float6
 		}
 	}
 
-	fmt.Printf("        Delta H:     %.5f\n", deltaHidden)
+	fmt.Printf("        delta H:     %.5f\n", deltaHidden)
 
 	// STEP 5.3 - THE NEW WEIGHTS & BIASES FOR THE OUTPUT LAYER
+	fmt.Println("\n        STEP 5.3 - THE NEW WEIGHTS & BIASES FOR THE OUTPUT LAYER")
 	newOutputWeights := make([][]float64, nn.outputNodes)
 	for i := range newOutputWeights {
 		newOutputWeights[i] = make([]float64, nn.hiddenNodesPerLayer[nn.hiddenLayers-1])
@@ -969,7 +1217,11 @@ func (nn *NeuralNetwork) backwardPass(x []float64, z []float64, yOutput []float6
 		newOutputBiases[o] = nn.outputBias[o] - (nn.learningRate * deltaOutput[o])
 	}
 
+	fmt.Printf("        newOWeights: %.5f\n", newOutputWeights)
+	fmt.Printf("        newOBiases:  %.5f\n", newOutputBiases)
+
 	// STEP 5.4 - THE NEW WEIGHTS & BIASES FOR THE HIDDEN LAYERS
+	fmt.Println("\n        STEP 5.4 - THE NEW WEIGHTS & BIASES FOR THE HIDDEN LAYERS")
 	newHiddenWeights := make([][][]float64, nn.hiddenLayers)
 	for i := range newHiddenWeights {
 		newHiddenWeights[i] = make([][]float64, nn.hiddenNodesPerLayer[i])
@@ -986,19 +1238,76 @@ func (nn *NeuralNetwork) backwardPass(x []float64, z []float64, yOutput []float6
 		newHiddenBiases[i] = make([]float64, nn.hiddenNodesPerLayer[i])
 	}
 
-	for l := 0; l < nn.hiddenLayers; l++ {
+	// START FROM THE LAST HIDDEN LAYER
+	for l := nn.hiddenLayers - 1; l >= 0; l-- {
 		for hn := 0; hn < nn.hiddenNodesPerLayer[l]; hn++ {
-			for in := 0; in < nn.inputNodes; in++ {
-				if l == 0 {
+			if l == 0 {
+				// First layer - User X
+				for in := 0; in < nn.inputNodes; in++ {
 					newHiddenWeights[l][hn][in] = nn.hiddenWeights[l][hn][in] - (nn.learningRate * deltaHidden[l][hn] * x[in])
-				} else {
-					newHiddenWeights[l][hn][in] = nn.hiddenWeights[l][hn][in] - (nn.learningRate * deltaHidden[l][hn] * x[in])
+				}
+			} else {
+				// Not first layer - Use aHidden Previous Layer
+				for in := 0; in < nn.hiddenNodesPerLayer[l-1]; in++ {
+					newHiddenWeights[l][hn][in] = nn.hiddenWeights[l][hn][in] - (nn.learningRate * deltaHidden[l][hn] * aHidden[l-1][in])
 				}
 			}
 			newHiddenBiases[l][hn] = nn.hiddenBias[l][hn] - (nn.learningRate * deltaHidden[l][hn])
 		}
 	}
 
+	fmt.Printf("        newHWeights: %.5f\n", newHiddenWeights)
+	fmt.Printf("        newHBiases:  %.5f\n", newHiddenBiases)
+
 	return newHiddenWeights, newHiddenBiases, newOutputWeights, newOutputBiases
+
+}
+
+// RUN NEURAL NETWORK
+// Provide inputs and get outputs
+func (nn *neuralNetwork) TestingNeuralNetwork(data []float64) error {
+
+	// Provide inputs
+	// data := []float64{70, 98, 87}
+
+	fmt.Println("\nLoad weights and biases from file")
+	err := nn.loadWeightsBiasesFromJSON(nn.trainedWeightsBiasesJSONFile)
+	if err != nil {
+		return err
+	}
+
+	// Normalize inputs
+	x, err := nn.normalizeZeroToOne("input", data)
+	if err != nil {
+		return err
+	}
+
+	// Print input and normalized input and min max inputs
+	fmt.Println("\nPrint the inputs")
+	fmt.Printf("    Input:  %.2f\n", data)
+	fmt.Printf("    Normalized Input:  %.2f\n", x)
+	fmt.Printf("    Min Input:  %.2f\n", nn.minInput)
+	fmt.Printf("    Max Input:  %.2f\n", nn.maxInput)
+
+	// Forward pass
+	_, yOutput := nn.forwardPass(x)
+
+	// Denormalize the output yOutput
+	y := make([]float64, nn.outputNodes)
+	if nn.normalizeOutputData {
+		if nn.normalizeMethod == "zero-to-one" {
+			y = nn.denormalizeZeroToOne("output", yOutput)
+		} else if nn.normalizeMethod == "minus-one-to-one" {
+			y = nn.denormalizeMinusOneToOne("output", yOutput)
+		} else {
+			return fmt.Errorf("invalid normalization method: %s", nn.normalizeMethod)
+		}
+	}
+
+	// Print the outputs to .2 decimal places
+	fmt.Println("\nPrint the outputs")
+	fmt.Printf("    Output: Expected %.2f, Got %.2f\n", data[2], y)
+
+	return nil
 
 }
