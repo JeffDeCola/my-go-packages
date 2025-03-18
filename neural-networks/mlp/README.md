@@ -1,7 +1,7 @@
 # MULTI-LAYER PERCEPTRON (MLP) PACKAGE
 
-  _A package to implement a 'single example' scalable multi-layer
-  perceptron (MLP) neural network._
+_A package to implement a scalable multi-layer
+perceptron (MLP) neural network._
 
 TL;DR,
 

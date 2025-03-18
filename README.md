@@ -12,9 +12,10 @@ _A place to keep my go packages._
 
 Table of Contents
 
-* [NEURAL NETWORKS](https://github.com/JeffDeCola/my-go-packages#neural-networks)
+* [GOLANG](https://github.com/JeffDeCola/my-go-packages#golang)
 * [GEOMETRY](https://github.com/JeffDeCola/my-go-packages#geometry)
 * [MATH](https://github.com/JeffDeCola/my-go-packages#math)
+* [NEURAL NETWORKS](https://github.com/JeffDeCola/my-go-packages#neural-networks)
 
 Documentation and Reference
 
@@ -38,6 +39,15 @@ Documentation and Reference
 
   _A package to calculate and manipulate simple 2D and 3D geometric shapes._
 
+## GOLANG
+
+* [logger](https://github.com/JeffDeCola/my-go-packages/tree/master/golang/logger)
+
+  _ A package that uses the standard library
+    [slog](https://pkg.go.dev/log/slog)
+    and enhances it for my liking.
+
+
 ## MATH
 
 * [prime](https://github.com/JeffDeCola/my-go-packages/tree/master/math/prime)
@@ -48,6 +58,5 @@ Documentation and Reference
 
 * [mlp](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp)
 
-  _A package to implement a user scalable multi-layer
-  perceptron (MLP) / feed-forward (FF) neural network using a
-  sigmoid non-linear function._
+  _A package to implement a scalable multi-layer
+  perceptron (MLP) neural network._
