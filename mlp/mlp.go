@@ -13,7 +13,7 @@ import (
 )
 
 // Neural Network Parameters
-type NeuralNetworkParameters struct {
+type NeuralNetworkConfiguration struct {
 	Mode                         string // "training", "testing" or "predicting"
 	InputNodes                   int
 	InputNodeLabels              []string
@@ -27,14 +27,14 @@ type NeuralNetworkParameters struct {
 	LossFunction                 string // "mean-squared-error"
 	InitWeightsBiasesMethod      string // "file" or "random"
 	InitWeightsBiasesJSONFile    string
-	MinMaxInputMethod            string // "file" or "calculate" Calculate from TrainingDatasetCSVFile
-	MinMaxOutputMethod           string // "file" or "calculate" Calculate from TrainingDatasetCSVFile
-	MinMaxJSONFile               string
+	MinMaxInputMethod            string // "file" or "calculate" from TrainingDatasetCSVFile
+	MinMaxOutputMethod           string // "file" or "calculate" from TrainingDatasetCSVFile
+	MinMaxJSONFile               string //from SaveMinMaxValuesToJSON()
 	TrainingDatasetCSVFile       string
 	NormalizeInputData           bool
 	NormalizeOutputData          bool
 	NormalizeMethod              string // "zero-to-one" or "minus-one-to-one
-	TrainedWeightsBiasesJSONFile string
+	TrainedWeightsBiasesJSONFile string // from SaveWeightsBiasesToJSON()
 	TestingDatasetCSVFile        string
 }
 
@@ -81,7 +81,7 @@ type trainingData struct {
 }
 
 // Create the MLP neural network
-func (nnp NeuralNetworkParameters) CreateNeuralNetwork() *neuralNetwork {
+func (nnp NeuralNetworkConfiguration) CreateNeuralNetwork() *neuralNetwork {
 
 	// Initialize hiddenWeights slice
 	// hiddenWeights[hiddenLayers#][hiddenNodesPerLayer#][inputNodesNumber or hiddenNodesPerLayerNumber]
@@ -360,11 +360,11 @@ func (nn *neuralNetwork) loadWeightsBiasesFromJSON(filename string) error {
 	return nil
 }
 
-// STEP 7 - SAVE WEIGHTS & BIASES TO A FILE
+// STEP 8 - SAVE WEIGHTS & BIASES TO A FILE
 // Save weights and biases to a json file
 func (nn *neuralNetwork) SaveWeightsBiasesToJSON() error {
 
-	fmt.Println("\nSTEP 7 - SAVE WEIGHTS & BIASES TO A FILE -------------------")
+	fmt.Println("\nSTEP 8 - SAVE WEIGHTS & BIASES TO A FILE -------------------")
 
 	filename := nn.trainedWeightsBiasesJSONFile
 
@@ -500,8 +500,8 @@ func (nn *neuralNetwork) loadMinMaxValuesFromJSON(inout string) error {
 
 }
 
-// Save min and max values to a json file
-func (nn *neuralNetwork) SaveMinMaxToJSON() error {
+// STEP 7 - SAVE MIN & MAX VALUES TO A FILE
+func (nn *neuralNetwork) SaveMinMaxValuesToJSON() error {
 
 	fmt.Println("\nSTEP 7 - SAVE MIN AND MAX VALUES TO A FILE -------------------")
 

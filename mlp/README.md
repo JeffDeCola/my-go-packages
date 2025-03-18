@@ -8,6 +8,15 @@ TL;DR,
 ```go
 nn := nnp.CreateNeuralNetwork()
 nn.PrintNeuralNetwork()
+
+
+// FOR TRAINING
+
+
+// FOR TESTING
+
+//FOR PREDICTING
+
 err := nn.GetInputMinMaxFromCSV()
 nn.PrintInputMinMax()
 err = nn.InitializeNeuralNetwork()
@@ -15,20 +24,6 @@ err := nn.TrainNeuralNetwork()
 ```
 
 Table of Contents
-
-* [OVERVIEW](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#overview)
-* [CONFIGURE YOUR NEURAL NETWORK](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#configure-your-neural-network)
-* [CREATE NEURAL NETWORK](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#create-neural-network)
-* [CREATE YOUR TRAINING DATASET FILE](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#create-your-training-dataset-file)
-* [GET INPUT MID MAX VALUES OF YOUR DATASET](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#get-input-mid-max-values-of-your-dataset)
-* [STEP 1 - INITIALIZATION](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-1---initialization)
-* [THE TRAINING LOOP](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#the-training-loop)
-  * [READING THE CVS DATASET FILE](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#reading-the-cvs-dataset-file)
-  * [STEP 2 - NORMALIZATION](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-2---normalization)
-  * [STEP 3 - FORWARD PASS](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-3---forward-pass)
-  * [STEP 4 - BACKWARD PASS](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-4---backward-pass)
-  * [STEP 5 - UPDATE WEIGHTS & BIASES](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-5---update-weights--biases)
-* [STEP 6 - SAVE WEIGHTS & BIASES](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp#step-6---save-weights--biases)
 
 Documentation and Reference
 
@@ -53,42 +48,89 @@ A  multi-layer perceptron (MLP) neural network has the following structure,
 * The hidden layer(s)
 * The output layer
 
-As an example, a neural network with 3 input nodes, 1 hidden layer
-with 4 nodes and 2 output nodes would look like,
-
 ![IMAGE multi-layer-perceptron-neural-network-scalable IMAGE](../docs/pics/multi-layer-perceptron-neural-network-scalable.svg)
 
-A 'single example' means you train the neural network with one row of data
-at a time. This is not the most efficient way to train a neural network,
-but it is a good way to understand the process, as opposed to training
-with a batch or mini-batch of data.
+There are 3 modes of operating
 
-## CONFIGURE YOUR NEURAL NETWORK
+* Training
+* Testing
+* Predicting
 
-In this package you may configure your multi-layer
-perceptron (MLP) neural network by setting the following parameters,
+## CONFIGURATION STRUCT
 
-* The number of input nodes
-* The input node labels
-* The number of hidden layers
-* The number of nodes in each hidden layer
-* The number of output nodes
-* The output node labels
-* The number of epochs $E$
-* The dataset CSV file
-* How to Initialize the weights and biases _random or file_
-* The weights and biases CSV file
-* Normalize the input data _true or false_
-* Normalize the input data _zero-to-one or minus-one-to-one_
-* The activation function _sigmoid or tanh_
-* The loss function _mean-squared-error or cross-entropy_
-* The learning rate $\eta$
-
-You would do this by creating a
-`NeuralNetworkParameters` struct.  For example,
+To create you neural network, you will need to create a configuration struct
+that contains all the parameters that defines your neural network.
 
 ```go
-nnp := mlp.NeuralNetworkParameters{
+// Neural Network Parameters
+type NeuralNetworkConfiguration struct {
+  Mode                         string // "training", "testing" or "predicting"
+  InputNodes                   int
+	InputNodeLabels              []string
+	HiddenLayers                 int // Also update HiddenNodesPerLayer
+	HiddenNodesPerLayer          []int
+	OutputNodes                  int
+	OutputNodeLabels             []string
+	Epochs                       int
+	LearningRate                 float64
+	ActivationFunction           string // "sigmoid" or "tanh"
+	LossFunction                 string // "mean-squared-error"
+	InitWeightsBiasesMethod      string // "file" or "random"
+	InitWeightsBiasesJSONFile    string
+	MinMaxInputMethod            string // "file" or "calculate" from TrainingDatasetCSVFile
+	MinMaxOutputMethod           string // "file" or "calculate" from TrainingDatasetCSVFile
+	MinMaxJSONFile               string //from SaveMinMaxValuesToJSON()
+	TrainingDatasetCSVFile       string
+	NormalizeInputData           bool
+	NormalizeOutputData          bool
+	NormalizeMethod              string // "zero-to-one" or "minus-one-to-one
+	TrainedWeightsBiasesJSONFile string // from SaveWeightsBiasesToJSON()
+	TestingDatasetCSVFile        string
+}
+```
+
+## CREATE YOUR NEURAL NETWORK
+
+To create a neural network, you setup a
+configuration struct and feed them into the `CreateNeuralNetwork`
+method which will return a
+`NeuralNetwork` struct.
+
+```go
+nn := nnp.CreateNeuralNetwork()
+```
+
+
+
+
+## INITIALIZE YOUR NEURAL NETWORK
+
+To initialize your neural network, you call the `InitializeNeuralNetwork` method,
+
+```go
+err := nn.InitializeNeuralNetwork()
+```
+
+This will initialize the weights and biases of the network.
+It will either load them from a file or initialize them randomly.
+
+You can also print out the neural network structure if you would like,
+
+```go
+nn.PrintNeuralNetwork()
+```
+
+## TRAINING
+
+The goal of training is to adjust the weights and biases of the network
+in order to minimize the loss in the output from the network.
+
+### CONFIGURE FOR TRAINING
+
+As an example you may want to use the following parameters,
+
+```go
+nnp := mlp.NeuralNetworkConfiguration{
   InputNodes:              2,
   InputNodeLabels:         []string{"midterm-grade", "hours-studied", "last-test-grade"},
   HiddenLayers:            1,
@@ -107,34 +149,79 @@ nnp := mlp.NeuralNetworkParameters{
 }
 ```
 
-## CREATE NEURAL NETWORK
-
-To create a neural network, you take your parameters and feed them
-into the `CreateNeuralNetwork` method which will return a
-`NeuralNetwork` struct.
-
-```go
-nn := nnp.CreateNeuralNetwork()
-```
-
-You can also print out the neural network structure if you would like,
-
-```go
-nn.PrintNeuralNetwork()
-```
-
-## CREATE YOUR TRAINING DATASET FILE
+### CREATE YOUR TRAINING DATASET FILE
 
 You will use a standard csv file with the first row being the labels
 and the rest of the rows being the input and target output data.
 For example, a dataset could look something like this,
 
 ```csv
-midterm-grade,hours-studied,last-test-grade,pred-perc-passing-final,pred-final-grade
+X1, x2, x3, y1, y2
 89,48,79,80,82
 75,23,85,70,78
-etc...
+...
 ```
+
+## TESTING
+
+The goal of testing is to evaluate the performance of the network by
+using a separate dataset that was not used during training.
+
+### CONFIGURE FOR TESTING
+
+As an example you may want to use the following parameters,
+
+```go
+nnp := mlp.NeuralNetworkConfiguration{
+  InputNodes:              2,
+  InputNodeLabels:         []string{"midterm-grade", "hours-studied", "last-test-grade"},
+  HiddenLayers:            1,
+  HiddenNodesPerLayer:     []int{3},
+  OutputNodes:             1,
+  OutputNodeLabels:        []string{"predicted-percentage-passing-final", "predicted-final-grade"},
+  Epochs:                  100,
+  DatasetCSVFile:          "dataset.csv",
+  Initialization:          "file",               // or "random"
+  WeightsAndBiasesCSVFile: "weights-and-biases.csv",
+  NormalizeInputData:      true,                 // or false
+  NormalizeMethod:         "zero-to-one",        // or "minus-one-to-one"
+  ActivationFunction:      "sigmoid",            // or "tanh"
+  LossFunction:            "mean-squared-error", // or "cross-entropy"
+  LearningRate:            0.1,
+}
+```
+
+## PREDICTING
+
+The goal of predicting is to use the trained network to predict the output
+for new input data.
+
+### CONFIGURE FOR PREDICTING
+
+As an example you may want to use the following parameters,
+
+```go
+nnp := mlp.NeuralNetworkConfiguration{
+  InputNodes:              2,
+  InputNodeLabels:         []string{"midterm-grade", "hours-studied", "last-test-grade"},
+  HiddenLayers:            1,
+  HiddenNodesPerLayer:     []int{3},
+  OutputNodes:             1,
+  OutputNodeLabels:        []string{"predicted-percentage-passing-final", "predicted-final-grade"},
+  Epochs:                  100,
+  DatasetCSVFile:          "dataset.csv",
+  Initialization:          "file",               // or "random"
+  WeightsAndBiasesCSVFile: "weights-and-biases.csv",
+  NormalizeInputData:      true,                 // or false
+  NormalizeMethod:         "zero-to-one",        // or "minus-one-to-one"
+  ActivationFunction:      "sigmoid",            // or "tanh"
+  LossFunction:            "mean-squared-error", // or "cross-entropy"
+  LearningRate:            0.1,
+}
+```
+
+
+
 
 ## GET INPUT MID MAX VALUES OF YOUR DATASET
 
