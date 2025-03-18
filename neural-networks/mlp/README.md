@@ -42,52 +42,67 @@ cheat sheet
 
 ## OVERVIEW
 
-A  multi-layer perceptron (MLP) neural network has the following structure,
+This go package can create a multi-layer perceptron (MLP) neural
+network which has the following structure,
 
-* The input layer
-* The hidden layer(s)
-* The output layer
+* An Input Layer
+* Multiple Hidden Layers
+* An Output Layer
 
 ![IMAGE multi-layer-perceptron-neural-network-scalable IMAGE](../docs/pics/multi-layer-perceptron-neural-network-scalable.svg)
 
-There are 3 modes of operating
+There are 3 modes of operation,
 
 * Training
 * Testing
 * Predicting
 
+All the math used in the go package is explained in my cheat sheet
+[the-math-behind-training-mlp-neural-networks](https://github.com/JeffDeCola/my-cheat-sheets/tree/master/software/development/software-architectures/artificial-intelligence/artificial-intelligence-cheat-sheet/).
+
 ## CONFIGURATION STRUCT
 
-To create you neural network, you will need to create a configuration struct
-that contains all the parameters that defines your neural network.
+To create your neural network for any mode of operation,
+you first create a configuration struct
+which contains all the parameters that defines your neural network.
 
 ```go
-// Neural Network Parameters
+// Neural Network Configuration Parameters
 type NeuralNetworkConfiguration struct {
-  Mode                         string // "training", "testing" or "predicting"
-  InputNodes                   int
-	InputNodeLabels              []string
-	HiddenLayers                 int // Also update HiddenNodesPerLayer
-	HiddenNodesPerLayer          []int
-	OutputNodes                  int
-	OutputNodeLabels             []string
-	Epochs                       int
-	LearningRate                 float64
-	ActivationFunction           string // "sigmoid" or "tanh"
-	LossFunction                 string // "mean-squared-error"
-	InitWeightsBiasesMethod      string // "file" or "random"
-	InitWeightsBiasesJSONFile    string
-	MinMaxInputMethod            string // "file" or "calculate" from TrainingDatasetCSVFile
-	MinMaxOutputMethod           string // "file" or "calculate" from TrainingDatasetCSVFile
-	MinMaxJSONFile               string //from SaveMinMaxValuesToJSON()
-	TrainingDatasetCSVFile       string
-	NormalizeInputData           bool
-	NormalizeOutputData          bool
-	NormalizeMethod              string // "zero-to-one" or "minus-one-to-one
-	TrainedWeightsBiasesJSONFile string // from SaveWeightsBiasesToJSON()
-	TestingDatasetCSVFile        string
+    Mode                         string // "training", "testing" or "predicting"
+    InputNodes                   int
+    InputNodeLabels              []string
+    HiddenLayers                 int // Also update HiddenNodesPerLayer
+    HiddenNodesPerLayer          []int
+    OutputNodes                  int
+    OutputNodeLabels             []string
+    Epochs                       int
+    LearningRate                 float64
+    ActivationFunction           string // "sigmoid" or "tanh"
+    LossFunction                 string // "mean-squared-error"
+    InitWeightsBiasesMethod      string // "file" or "random"
+    InitWeightsBiasesJSONFile    string
+    MinMaxInputMethod            string // "file" or "calculate" from TrainingDatasetCSVFile
+    MinMaxOutputMethod           string // "file" or "calculate" from TrainingDatasetCSVFile
+    MinMaxJSONFile               string // from SaveMinMaxValuesToJSON()
+    TrainingDatasetCSVFile       string
+    NormalizeInputData           bool
+    NormalizeOutputData          bool
+    NormalizeMethod              string // "zero-to-one" or "minus-one-to-one
+    TrainedWeightsBiasesJSONFile string // from SaveWeightsBiasesToJSON()
+    TestingDatasetCSVFile        string
 }
 ```
+
+The structure of the neural network is defined by the following parameters,
+
+* `InputNodes` - The number of input nodes
+* `InputNodeLabels` - The labels of the input nodes
+* `HiddenLayers` - The number of hidden layers
+* `HiddenNodesPerLayer` - The number of nodes in each hidden layer
+* `OutputNodes` - The number of output nodes
+* `OutputNodeLabels` - The labels of the output nodes
+
 
 ## CREATE YOUR NEURAL NETWORK
 

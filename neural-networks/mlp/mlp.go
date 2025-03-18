@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-// Neural Network Parameters
+// Neural Network Configuration Parameters
 type NeuralNetworkConfiguration struct {
 	Mode                         string // "training", "testing" or "predicting"
 	InputNodes                   int
@@ -27,15 +27,16 @@ type NeuralNetworkConfiguration struct {
 	LossFunction                 string // "mean-squared-error"
 	InitWeightsBiasesMethod      string // "file" or "random"
 	InitWeightsBiasesJSONFile    string
-	MinMaxInputMethod            string // "file" or "calculate" from TrainingDatasetCSVFile
-	MinMaxOutputMethod           string // "file" or "calculate" from TrainingDatasetCSVFile
-	MinMaxJSONFile               string //from SaveMinMaxValuesToJSON()
+	MinMaxInputMethod            string // "file" or "calculate" from dataset File
+	MinMaxOutputMethod           string // "file" or "calculate" from dataset File
+	MinMaxJSONFile               string
 	TrainingDatasetCSVFile       string
 	NormalizeInputData           bool
 	NormalizeOutputData          bool
 	NormalizeMethod              string // "zero-to-one" or "minus-one-to-one
-	TrainedWeightsBiasesJSONFile string // from SaveWeightsBiasesToJSON()
+	TrainedWeightsBiasesJSONFile string
 	TestingDatasetCSVFile        string
+	PredictingDatasetCSVFile     string
 }
 
 // Neural network architecture and parameters
@@ -72,6 +73,7 @@ type neuralNetwork struct {
 	statEndLoss                  []float64     // - end Loss
 	trainedWeightsBiasesJSONFile string        // TRAINED WEIGHTS AND BIAS CVS FILE (USER ADDED)
 	testingDatasetCSVFile        string        // TESTING DATASET CSV FILE (USER ADDED)
+	predictingDatasetCSVFile     string        // PREDICTING DATASET CSV FILE (USER ADDED)
 }
 
 // Data structure for training data IO
@@ -159,6 +161,7 @@ func (nnp NeuralNetworkConfiguration) CreateNeuralNetwork() *neuralNetwork {
 		statEndLoss:                  statEndLoss,                      // -created here
 		trainedWeightsBiasesJSONFile: nnp.TrainedWeightsBiasesJSONFile, // USER PROVIDED
 		testingDatasetCSVFile:        nnp.TestingDatasetCSVFile,        // USER PROVIDED
+		predictingDatasetCSVFile:     nnp.PredictingDatasetCSVFile,     // USER PROVIDED
 	}
 
 	return nn
@@ -230,6 +233,7 @@ func (nn *neuralNetwork) PrintNeuralNetwork() {
 	fmt.Println("    End Loss                 ", nn.statEndLoss)
 	fmt.Println("    Trained W & B JSON       ", nn.trainedWeightsBiasesJSONFile)
 	fmt.Println("    Testing Dataset CSV      ", nn.testingDatasetCSVFile)
+	fmt.Println("    Predicting Dataset CSV   ", nn.predictingDatasetCSVFile)
 
 }
 
@@ -410,7 +414,7 @@ func (nn *neuralNetwork) SetMinMaxValues() error {
 		}
 	} else if nn.MinMaxInputMethod == "calculate" {
 		// Use the min and max values from the dataset
-		err := nn.getMinMaxValuesFromCSV("input")
+		err := nn.calculateMinMaxValuesFromCSV("input")
 		if err != nil {
 			return err
 		}
@@ -426,7 +430,7 @@ func (nn *neuralNetwork) SetMinMaxValues() error {
 		}
 	} else if nn.MinMaxOutputMethod == "calculate" {
 		// Use the min and max values from the dataset
-		err := nn.getMinMaxValuesFromCSV("output")
+		err := nn.calculateMinMaxValuesFromCSV("output")
 		if err != nil {
 			return err
 		}
@@ -538,10 +542,21 @@ func (nn *neuralNetwork) SaveMinMaxValuesToJSON() error {
 
 // STEP 2 -  MIN & MAX INPUT VALUES
 // Read csv file and Get the min and max values from the dataset - for normalization function
-func (nn *neuralNetwork) getMinMaxValuesFromCSV(inOut string) error {
+func (nn *neuralNetwork) calculateMinMaxValuesFromCSV(inOut string) error {
+
+	var file *os.File
+	var err error
 
 	// Open the CSV file
-	file, err := os.Open(nn.trainingDatasetCSVFile)
+	if nn.mode == "training" {
+		file, err = os.Open(nn.trainingDatasetCSVFile)
+	} else if nn.mode == "testing" {
+		file, err = os.Open(nn.testingDatasetCSVFile)
+	} else if nn.mode == "predicting" {
+		file, err = os.Open(nn.predictingDatasetCSVFile)
+	} else {
+		return fmt.Errorf("invalid mode: %s", nn.mode)
+	}
 	if err != nil {
 		return err
 	}
@@ -635,16 +650,11 @@ func (nn *neuralNetwork) getMinMaxValuesFromCSV(inOut string) error {
 
 	}
 
-	fmt.Println("---------------------------------Min Input Value:  ", nn.minInput)
-	fmt.Println("---------------------------------Max Input Value:  ", nn.maxInput)
-	fmt.Println("---------------------------------Min Output Value: ", nn.minOutput)
-	fmt.Println("---------------------------------Max Output Value: ", nn.maxOutput)
-
 	return nil
 }
 
 // Print the min and max input values for each input
-func (nn *neuralNetwork) PrintDatasetMinMax() {
+func (nn *neuralNetwork) PrintMinMaxValues() {
 
 	// Print the min and max input values
 	fmt.Println("Min Input Value:  ", nn.minInput)
@@ -1263,18 +1273,9 @@ func (nn *neuralNetwork) backwardPass(x []float64, z []float64, yOutput []float6
 
 }
 
-// RUN NEURAL NETWORK
+// TEST NEURAL NETWORK
 // Provide inputs and get outputs
-func (nn *neuralNetwork) TestingNeuralNetwork(data []float64) error {
-
-	// Provide inputs
-	// data := []float64{70, 98, 87}
-
-	fmt.Println("\nLoad weights and biases from file")
-	err := nn.loadWeightsBiasesFromJSON(nn.trainedWeightsBiasesJSONFile)
-	if err != nil {
-		return err
-	}
+func (nn *neuralNetwork) TestNeuralNetwork(data []float64) error {
 
 	// Normalize inputs
 	x, err := nn.normalizeZeroToOne("input", data)
