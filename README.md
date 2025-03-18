@@ -28,14 +28,6 @@ Documentation and Reference
   _built with
   [concourse](https://github.com/JeffDeCola/my-go-packages/blob/master/ci-README.md)_
 
-## NEURAL NETWORKS
-
-* [mlp](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp)
-
-  _A package to implement a user scalable multi-layer
-  perceptron (MLP) / feed-forward (FF) neural network using a
-  sigmoid non-linear function._
-
 ## GEOMETRY
 
 * [circle](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle)
@@ -51,3 +43,11 @@ Documentation and Reference
 * [prime](https://github.com/JeffDeCola/my-go-packages/tree/master/math/prime)
 
   _A package containing computations related to prime numbers._
+
+## NEURAL NETWORKS
+
+* [mlp](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp)
+
+  _A package to implement a user scalable multi-layer
+  perceptron (MLP) / feed-forward (FF) neural network using a
+  sigmoid non-linear function._
