@@ -10,7 +10,12 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	logger "my-go-packages/golang/logger"
 )
+
+// Initialize the logger
+var log = logger.CreateLogger(logger.LevelInfo)
 
 // Neural Network Configuration Parameters
 type NeuralNetworkConfiguration struct {
@@ -242,7 +247,7 @@ func (nn *neuralNetwork) PrintNeuralNetwork() {
 // Random or from file
 func (nn *neuralNetwork) InitializeNeuralNetwork() error {
 
-	fmt.Println("\nSTEP 1 - INITIALIZATION ------------------------------------")
+	log.Info("\nSTEP 1 - INITIALIZATION ------------------------------------")
 
 	// RANDOM OR FROM FILE
 

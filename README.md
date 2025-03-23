@@ -12,8 +12,8 @@ _A place to keep my go packages._
 
 Table of Contents
 
-* [GOLANG](https://github.com/JeffDeCola/my-go-packages#golang)
 * [GEOMETRY](https://github.com/JeffDeCola/my-go-packages#geometry)
+* [GOLANG](https://github.com/JeffDeCola/my-go-packages#golang)
 * [MATH](https://github.com/JeffDeCola/my-go-packages#math)
 * [NEURAL NETWORKS](https://github.com/JeffDeCola/my-go-packages#neural-networks)
 
@@ -43,10 +43,9 @@ Documentation and Reference
 
 * [logger](https://github.com/JeffDeCola/my-go-packages/tree/master/golang/logger)
 
-  _ A package that uses the standard library
-    [slog](https://pkg.go.dev/log/slog)
-    and enhances it for my liking.
-
+  _A package that uses the standard library
+  [slog](https://pkg.go.dev/log/slog)
+  and enhances it for my liking._
 
 ## MATH
 
@@ -56,7 +55,7 @@ Documentation and Reference
 
 ## NEURAL NETWORKS
 
-* [mlp](https://github.com/JeffDeCola/my-go-packages/tree/master/mlp)
+* [mlp](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp)
 
   _A package to implement a scalable multi-layer
   perceptron (MLP) neural network._

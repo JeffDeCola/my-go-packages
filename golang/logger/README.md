@@ -1,7 +1,7 @@
 # MY LOGGER PACKAGE
 
 _A package that uses the standard library
-[slog](https://pkg.go.dev/log/slog)
+[slog](https://pkg.go.dev/log/slog) NewTextHandler (Not JSON)
 and enhances it for my liking._
 
 Table of Contents
@@ -17,7 +17,14 @@ Documentation and Reference
 ## FUNCTIONS
 
 ```go
-func SetupLogger(level slog.Level) *slog.Logger {
+func CreateLogger(level LogLevel) *theLoggerStruct {
+func (l *theLoggerStruct) ChangeLogLevel(level LogLevel) {
+func (l *theLoggerStruct) Debug(message string, v ...interface{}) {
+func (l *theLoggerStruct) Info(message string, v ...interface{}) {
+func (l *theLoggerStruct) Warning(message string, v ...interface{}) {
+func (l *theLoggerStruct) Error(message string, v ...interface{}) {
+func (l *theLoggerStruct) Fatal(message string, v ...interface{}) {
+
 ```
 
 ## EXAMPLE
@@ -33,12 +40,14 @@ import (
 
 func main() {
 
-    log := logger.SetupLogger(slog.LevelInfo) // slog.LevelDebug, slog.LevelInfo, slog.LevelWarn, slog.LevelError
+    log := logger.CreateLogger(logger.LevelDebug)
+    // slog.LevelDebug, slog.LevelInfo, slog.LevelWarn, slog.LevelError
 
     log.Debug("This is a debug message")
     log.Info("Application started")
     log.Warn("This is a warning")
     log.Error("An error occurred")
+    log.Fatal("Fatal, not good")
 
 }
 ```
