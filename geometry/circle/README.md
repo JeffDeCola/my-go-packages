@@ -57,12 +57,8 @@ func main() {
 }
 ```
 
-Where your go.mod is,
+## ADD TO YOUR GO.MOD
 
 ```text
-module yourModuleName
-
-go 1.24
-
-require github.com/JeffDeCola/my-go-packages/geometry/circle v0.0.0
+require github.com/JeffDeCola/my-go-packages/geometry/circle v1.0.0
 ```
