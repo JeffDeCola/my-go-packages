@@ -62,3 +62,14 @@ Documentation and Reference
 
   _A package to implement a scalable multi-layer
   perceptron (MLP) neural network._
+
+## A NOTE ON TAGS
+
+Every package is tagged individually with it's
+own go.mod file.
+
+Hence you will need to do;
+
+```text
+require github.com/JeffDeCola/my-go-packages/geometry/circle v1.0.0
+```
