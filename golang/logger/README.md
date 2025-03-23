@@ -1,11 +1,13 @@
 # MY LOGGER PACKAGE
 
-_A package that uses the standard library
-[slog](https://pkg.go.dev/log/slog) NewTextHandler (Not JSON)
-and enhances it for my liking._
+_Just a logger wrapper I use for my liking.
+Currently using the standard library
+[slog](https://pkg.go.dev/log/slog)
+ with NewTextHandler (Not JSON)._
 
 Table of Contents
 
+* [OVERVIEW](https://github.com/JeffDeCola/my-go-packages/tree/master/golang/logger#overview)
 * [FUNCTIONS](https://github.com/JeffDeCola/my-go-packages/tree/master/golang/logger#functions)
 * [EXAMPLE](https://github.com/JeffDeCola/my-go-packages/tree/master/golang/logger#example)
 
@@ -13,6 +15,18 @@ Documentation and Reference
 
 * Prime package at
   [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/golang/logger)
+
+## OVERVIEW
+
+* CURRENT FEATURES
+  * A slog wrapper using NewTextHandler
+  * 5 Log Levels
+  * Custom formatting
+  * Custom Color
+* FUTURE ADDITIONS TO CONSIDER
+  * JSON support using New JSON Handler
+  * Key value logging
+  * Log to file
 
 ## FUNCTIONS
 
@@ -45,6 +59,14 @@ func main() {
 
     log.Debug("This is a debug message")
     log.Info("Application started")
+    log.Warn("This is a warning")
+    log.Error("An error occurred")
+    log.Fatal("Fatal, not good")
+
+    log.ChangeLogLevel(logger.LevelWarning)
+
+    log.Debug("This is a debug message") // Won't Print
+    log.Info("Application started")      // Won't print
     log.Warn("This is a warning")
     log.Error("An error occurred")
     log.Fatal("Fatal, not good")
