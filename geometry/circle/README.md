@@ -59,6 +59,15 @@ func main() {
 
 ## ADD TO YOUR GO.MOD
 
+Since I am tagging each package independently,
+
+```text
+git tag geometry/circle/v1.0.1
+git push origin geometry/circle/v1.0.1
+```
+
+Add this you your go.mod file,
+
 ```text
 require github.com/JeffDeCola/my-go-packages/geometry/circle v1.0.0
 ```
