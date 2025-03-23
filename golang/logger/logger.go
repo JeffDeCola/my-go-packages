@@ -8,8 +8,10 @@ import (
 	"time"
 )
 
+// The logLevel is just an integer so I can upgrade loggers later
 type LogLevel int
 
+// My Levels
 const (
 	LevelDebug   LogLevel = 0
 	LevelInfo    LogLevel = 1
@@ -18,6 +20,7 @@ const (
 	LevelFatal   LogLevel = 4
 )
 
+// Slog Mapping
 var sLogLevels = map[LogLevel]slog.Leveler{
 	LevelDebug:   slog.LevelDebug,
 	LevelInfo:    slog.LevelInfo,
@@ -26,6 +29,7 @@ var sLogLevels = map[LogLevel]slog.Leveler{
 	LevelFatal:   slog.LevelError,
 }
 
+// For Formatting
 var logLevelNames = map[LogLevel]string{
 	LevelDebug:   "DEBUG",
 	LevelInfo:    "INFO ",
@@ -34,6 +38,7 @@ var logLevelNames = map[LogLevel]string{
 	LevelFatal:   "FATAL",
 }
 
+// Colors
 var logLevelColors = map[LogLevel]string{
 	LevelDebug:   "cyan",
 	LevelInfo:    "green",
@@ -42,8 +47,9 @@ var logLevelColors = map[LogLevel]string{
 	LevelFatal:   "magenta",
 }
 
+// My logger struct
 type theLoggerStruct struct {
-	theSetLevel LogLevel // Don't really need this
+	theSetLevel LogLevel // Don't really need this, but why not
 	slogLogger  *slog.Logger
 }
 
@@ -51,25 +57,8 @@ func CreateLogger(level LogLevel) *theLoggerStruct {
 
 	var handler slog.Handler
 
-	// Text output with custom formatting
-	handler = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-		Level: sLogLevels[level],
-		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
-			switch a.Key {
-			case "time":
-				a.Value = slog.StringValue(time.Now().Format("2006-01-02 15:04:05"))
-			case "level":
-				levelMap := map[slog.Level]string{
-					slog.LevelDebug: "DEBUG",
-					slog.LevelInfo:  "INFO",
-					slog.LevelWarn:  "WARN",
-					slog.LevelError: "ERROR",
-				}
-				a.Value = slog.StringValue(levelMap[a.Value.Any().(slog.Level)])
-			}
-			return a
-		},
-	})
+	// Get the slog handler struct
+	handler = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: sLogLevels[level]})
 
 	// Create the struct to pass to main
 	l := &theLoggerStruct{

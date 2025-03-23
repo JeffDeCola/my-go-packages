@@ -17,8 +17,6 @@ Documentation and Reference
 
 ## TYPES
 
-The Circle type is,
-
 ```go
 type Circle struct {
     Radius float64
@@ -59,12 +57,12 @@ func main() {
 }
 ```
 
-Where go.mod is,
+Where your go.mod is,
 
 ```text
-module module-with-remote-package
+module yourModuleName
 
-go 1.19
+go 1.24
 
-require github.com/JeffDeCola/my-go-packages v0.2.0
+require github.com/JeffDeCola/my-go-packages/geometry/circle v0.0.0
 ```

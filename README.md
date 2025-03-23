@@ -33,6 +33,8 @@ Documentation and Reference
 
 * [circle](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle)
 
+  [![Tag Latest](https://img.shields.io/github/v/tag/jeffdecola/my-go-packages)](https://github.com/JeffDeCola/my-go-packages/tags)
+
   _A package to calculate the area and circumference of a circle._
 
 * [shapes](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/shapes)
@@ -43,9 +45,10 @@ Documentation and Reference
 
 * [logger](https://github.com/JeffDeCola/my-go-packages/tree/master/golang/logger)
 
-  _A package that uses the standard library
+  _Just a logger wrapper I use for my liking.
+  Currently using the standard library
   [slog](https://pkg.go.dev/log/slog)
-  and enhances it for my liking._
+  with NewTextHandler (Not JSON)._
 
 ## MATH
 
