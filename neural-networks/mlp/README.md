@@ -387,3 +387,18 @@ and propagate backwards.
 ### STEP 5 - UPDATE WEIGHTS & BIASES
 
 ## STEP 6 - SAVE WEIGHTS & BIASES
+
+## ADDED TO YOUR GO.MOD
+
+Since I am tagging each package independently,
+
+```text
+git tag neural-networks/mlp/vX.X.X
+git push origin neural-networks/mlp/vX.X.X
+```
+
+This will be added to your go.mod file,
+
+```text
+require github.com/JeffDeCola/my-go-packages/neural-networks/mlp vX.X.X
+```

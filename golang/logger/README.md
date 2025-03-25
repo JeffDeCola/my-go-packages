@@ -73,3 +73,18 @@ func main() {
 
 }
 ```
+
+## ADDED TO YOUR GO.MOD
+
+Since I am tagging each package independently,
+
+```text
+git tag golang/logger/vX.X.X
+git push origin golang/logger/vX.X.X
+```
+
+This will be added to your go.mod file,
+
+```text
+require github.com/JeffDeCola/my-go-packages/golang/logger vX.X.X
+```

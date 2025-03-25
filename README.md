@@ -12,6 +12,7 @@ _A place to keep my go packages._
 
 Table of Contents
 
+* [OVERVIEW](https://github.com/JeffDeCola/my-go-packages#overview)
 * [GEOMETRY](https://github.com/JeffDeCola/my-go-packages#geometry)
 * [GOLANG](https://github.com/JeffDeCola/my-go-packages#golang)
 * [MATH](https://github.com/JeffDeCola/my-go-packages#math)
@@ -28,6 +29,17 @@ Documentation and Reference
   [github webpage](https://jeffdecola.github.io/my-go-packages/)
   _built with
   [concourse](https://github.com/JeffDeCola/my-go-packages/blob/master/ci-README.md)_
+
+## OVERVIEW
+
+Every package is tagged with it's own version and has it's
+own go.mod file. This is done to prevent downloading the entire repo for
+your dependencies. You only get what you want.
+For example, if you want the circle package, your go.mod would look like,
+
+```text
+require github.com/JeffDeCola/my-go-packages/geometry/circle v1.0.0
+```
 
 ## GEOMETRY
 
@@ -62,14 +74,3 @@ Documentation and Reference
 
   _A package to implement a scalable multi-layer
   perceptron (MLP) neural network._
-
-## A NOTE ON TAGS
-
-Every package is tagged individually with it's
-own go.mod file.
-
-Hence you will need to do;
-
-```text
-require github.com/JeffDeCola/my-go-packages/geometry/circle v1.0.0
-```

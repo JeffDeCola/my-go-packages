@@ -38,12 +38,17 @@ func main() {
 }
 ```
 
-Where go.mod is,
+## ADDED TO YOUR GO.MOD
+
+Since I am tagging each package independently,
 
 ```text
-module your-module-name
+git tag math/prime/vX.X.X
+git push origin math/prime/vX.X.X
+```
 
-go 1.19
+This will be added to your go.mod file,
 
-require github.com/JeffDeCola/my-go-packages v0.2.0
+```text
+require github.com/JeffDeCola/my-go-packages/math/prime vX.X.X
 ```
