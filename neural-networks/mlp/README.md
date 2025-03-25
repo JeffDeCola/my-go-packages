@@ -394,7 +394,7 @@ Since I am tagging each package independently,
 
 ```text
 git tag neural-networks/mlp/vX.X.X
-git push origin neural-networks/mlp/vX.X.X
+git push --tags
 ```
 
 This will be added to your go.mod file,

@@ -68,7 +68,7 @@ Since I am tagging each package independently,
 
 ```text
 git tag geometry/shapes/vX.X.X
-git push origin geometry/shapes/vX.X.X
+git push --tags
 ```
 
 This will be added to your go.mod file,

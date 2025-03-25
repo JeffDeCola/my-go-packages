@@ -45,11 +45,11 @@ require github.com/JeffDeCola/my-go-packages/geometry/circle v1.0.0
 
 * [circle](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle)
 
-  [![Tag Latest](https://img.shields.io/github/v/tag/jeffdecola/my-go-packages)](https://github.com/JeffDeCola/my-go-packages/tags)
-
+  [![Tag Latest](https://img.shields.io/badge/version-v1.0.0-blue)](https://github.com/JeffDeCola/my-go-packages/releases/tag/geometry/circle/v1.0.0)
   _A package to calculate the area and circumference of a circle._
 
 * [shapes](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/shapes)
+  [![Tag Latest](https://img.shields.io/badge/version-v1.0.0-blue)](https://github.com/JeffDeCola/my-go-packages/releases/tag/geometry/shapes/v1.0.0)
 
   _A package to calculate and manipulate simple 2D and 3D geometric shapes._
 

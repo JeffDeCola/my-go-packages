@@ -44,7 +44,7 @@ Since I am tagging each package independently,
 
 ```text
 git tag math/prime/vX.X.X
-git push origin math/prime/vX.X.X
+git push --tags
 ```
 
 This will be added to your go.mod file,
