@@ -2,26 +2,25 @@ package mylogger
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"os"
 	"time"
 )
 
 // The logLevel is just an integer so I can upgrade loggers later
-type LogLevel int
+type myLogLevel int
 
 // My Levels
 const (
-	LevelDebug   LogLevel = 0
-	LevelInfo    LogLevel = 1
-	LevelWarning LogLevel = 2
-	LevelError   LogLevel = 3
-	LevelFatal   LogLevel = 4
+	LevelDebug   myLogLevel = 0
+	LevelInfo    myLogLevel = 1
+	LevelWarning myLogLevel = 2
+	LevelError   myLogLevel = 3
+	LevelFatal   myLogLevel = 4
 )
 
-// Slog Mapping
-var sLogLevels = map[LogLevel]slog.Leveler{
+// Map my log Levels to Slog Levels
+var sLogLevels = map[myLogLevel]slog.Leveler{
 	LevelDebug:   slog.LevelDebug,
 	LevelInfo:    slog.LevelInfo,
 	LevelWarning: slog.LevelWarn,
@@ -29,8 +28,8 @@ var sLogLevels = map[LogLevel]slog.Leveler{
 	LevelFatal:   slog.LevelError,
 }
 
-// For Formatting
-var logLevelNames = map[LogLevel]string{
+// Formatting
+var logLevelNames = map[myLogLevel]string{
 	LevelDebug:   "DEBUG",
 	LevelInfo:    "INFO ",
 	LevelWarning: "WARN ",
@@ -39,7 +38,7 @@ var logLevelNames = map[LogLevel]string{
 }
 
 // Colors
-var logLevelColors = map[LogLevel]string{
+var logLevelColors = map[myLogLevel]string{
 	LevelDebug:   "cyan",
 	LevelInfo:    "green",
 	LevelWarning: "yellow",
@@ -49,11 +48,11 @@ var logLevelColors = map[LogLevel]string{
 
 // My logger struct
 type theLoggerStruct struct {
-	theSetLevel LogLevel // Don't really need this, but why not
-	slogLogger  *slog.Logger
+	theSetLevel myLogLevel // Don't really need this, but why not
+	theLogger   *slog.Logger
 }
 
-func CreateLogger(level LogLevel) *theLoggerStruct {
+func CreateLogger(level myLogLevel) *theLoggerStruct {
 
 	var handler slog.Handler
 
@@ -63,16 +62,17 @@ func CreateLogger(level LogLevel) *theLoggerStruct {
 	// Create the struct to pass to main
 	l := &theLoggerStruct{
 		theSetLevel: level,
-		slogLogger:  slog.New(handler),
+		theLogger:   slog.New(handler),
 	}
 	return l
 }
 
-func (l *theLoggerStruct) ChangeLogLevel(level LogLevel) {
+func (l *theLoggerStruct) ChangeLogLevel(level myLogLevel) {
 	l.theSetLevel = level
 
+	// Must get a new handler
 	handler := slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: sLogLevels[level]})
-	l.slogLogger = slog.New(handler)
+	l.theLogger = slog.New(handler)
 }
 
 func (l *theLoggerStruct) Debug(message string, v ...interface{}) {
@@ -96,29 +96,15 @@ func (l *theLoggerStruct) Fatal(message string, v ...interface{}) {
 }
 
 // log handles the actual slog output
-func (l *theLoggerStruct) logMessage(level LogLevel, msg string, args ...any) {
+func (l *theLoggerStruct) logMessage(level myLogLevel, msg string, args ...any) {
 
 	// Map requested LogLevel to slog.Level
-	var slogLevel slog.Level
-	switch level {
-	case LevelDebug:
-		fmt.Println("D")
-		slogLevel = slog.LevelDebug
-	case LevelInfo:
-		fmt.Println("I")
-		slogLevel = slog.LevelInfo
-	case LevelWarning:
-		fmt.Println("W")
-		slogLevel = slog.LevelWarn
-	case LevelError, LevelFatal:
-		fmt.Println("E")
-		slogLevel = slog.LevelError
-	}
+	slogLevel := sLogLevels[level].Level()
 
 	// Add the current time as a structured attribute
 	currentTime := time.Now().Format("2006-01-02 15:04:05")
 
 	// Log the message using slog with structured arguments
-	l.slogLogger.Log(context.Background(), slogLevel, msg, "time", currentTime, "args", args)
+	l.theLogger.Log(context.Background(), slogLevel, msg, "time", currentTime, "args", args)
 
 }

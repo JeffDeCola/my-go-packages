@@ -28,7 +28,7 @@ Documentation and Reference
   * Key value logging
   * Log to file
 
-## FUNCTIONS
+## METHODS
 
 ```go
 func CreateLogger(level LogLevel) *theLoggerStruct {
@@ -80,7 +80,7 @@ Since I am tagging each package independently,
 
 ```text
 git tag golang/logger/vX.X.X
-git push origin golang/logger/vX.X.X
+git push --tags
 ```
 
 This will be added to your go.mod file,
