@@ -57,17 +57,17 @@ func main() {
 }
 ```
 
-## ADD TO YOUR GO.MOD
+## ADDED TO YOUR GO.MOD
 
 Since I am tagging each package independently,
 
 ```text
-git tag geometry/circle/v1.0.1
-git push origin geometry/circle/v1.0.1
+git tag geometry/circle/vX.X.X
+git push origin geometry/circle/vX.X.X
 ```
 
-Add this you your go.mod file,
+This will be added to your go.mod file,
 
 ```text
-require github.com/JeffDeCola/my-go-packages/geometry/circle v1.0.0
+require github.com/JeffDeCola/my-go-packages/geometry/circle vX.X.X
 ```
