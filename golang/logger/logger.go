@@ -2,6 +2,7 @@ package mylogger
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"os"
 	"time"
@@ -54,10 +55,8 @@ type theLoggerStruct struct {
 
 func CreateLogger(level myLogLevel) *theLoggerStruct {
 
-	var handler slog.Handler
-
 	// Get the slog handler struct
-	handler = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: sLogLevels[level]})
+	handler := slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: sLogLevels[level]})
 
 	// Create the struct to pass to main
 	l := &theLoggerStruct{
@@ -95,16 +94,48 @@ func (l *theLoggerStruct) Fatal(message string, v ...interface{}) {
 	l.logMessage(LevelFatal, message, v...)
 }
 
-// log handles the actual slog output
 func (l *theLoggerStruct) logMessage(level myLogLevel, msg string, args ...any) {
 
 	// Map requested LogLevel to slog.Level
 	slogLevel := sLogLevels[level].Level()
 
-	// Add the current time as a structured attribute
+	// Add the current time as a formatted string
 	currentTime := time.Now().Format("2006-01-02 15:04:05")
 
-	// Log the message using slog with structured arguments
-	l.theLogger.Log(context.Background(), slogLevel, msg, "time", currentTime, "args", args)
+	// Format the log level name
+	levelName := logLevelNames[level]
 
+	// Add color formatting (optional, for terminal output)
+	//color := logLevelColors[level]
+	//formattedLevel := fmt.Sprintf("\033[%sm%s\033[0m", colorCode(color), levelName)
+
+	// Format the log message as a single string
+	formattedMessage := fmt.Sprintf("[%s] %s: %s", currentTime, levelName, msg)
+
+	// Append additional arguments if provided
+	if len(args) > 0 {
+		formattedMessage = fmt.Sprintf("%s | %v", formattedMessage, args)
+	}
+
+	// Output the formatted message using slog
+	l.theLogger.Log(context.Background(), slogLevel, formattedMessage)
+
+}
+
+// Helper function to map color names to ANSI color codes
+func colorCode(color string) string {
+	switch color {
+	case "cyan":
+		return "36"
+	case "green":
+		return "32"
+	case "yellow":
+		return "33"
+	case "red":
+		return "31"
+	case "magenta":
+		return "35"
+	default:
+		return "0" // Default color
+	}
 }
