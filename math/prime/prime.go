@@ -1,10 +1,5 @@
 package prime
 
-// A package containing computations related to prime numbers
-
-//---------------------------------------------------------------
-// Functions
-
 // IsPrime function returns true if n is prime
 func IsPrime(n int) bool {
 	if n < 2 {
