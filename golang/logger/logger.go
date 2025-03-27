@@ -13,129 +13,194 @@ type myLogLevel int
 
 // My Levels
 const (
-	LevelDebug   myLogLevel = 0
-	LevelInfo    myLogLevel = 1
-	LevelWarning myLogLevel = 2
-	LevelError   myLogLevel = 3
-	LevelFatal   myLogLevel = 4
+	Debug   myLogLevel = 0
+	Info    myLogLevel = 1
+	Warning myLogLevel = 2
+	Error   myLogLevel = 3
+	Fatal   myLogLevel = 4
 )
 
 // Map my log Levels to Slog Levels
 var sLogLevels = map[myLogLevel]slog.Leveler{
-	LevelDebug:   slog.LevelDebug,
-	LevelInfo:    slog.LevelInfo,
-	LevelWarning: slog.LevelWarn,
-	LevelError:   slog.LevelError,
-	LevelFatal:   slog.LevelError,
+	Debug:   slog.LevelDebug,
+	Info:    slog.LevelInfo,
+	Warning: slog.LevelWarn,
+	Error:   slog.LevelError,
+	Fatal:   slog.LevelError,
 }
 
-// Formatting
+// Formatting with jeff mode
 var logLevelNames = map[myLogLevel]string{
-	LevelDebug:   "DEBUG",
-	LevelInfo:    "INFO ",
-	LevelWarning: "WARN ",
-	LevelError:   "ERROR",
-	LevelFatal:   "FATAL",
+	Debug:   "DEBUG",
+	Info:    "INFO ",
+	Warning: "WARN ",
+	Error:   "ERROR",
+	Fatal:   "FATAL",
 }
 
-// Colors
+// Colors with jeff mode
 var logLevelColors = map[myLogLevel]string{
-	LevelDebug:   "cyan",
-	LevelInfo:    "green",
-	LevelWarning: "yellow",
-	LevelError:   "red",
-	LevelFatal:   "magenta",
+	Debug:   "cyan",
+	Info:    "green",
+	Warning: "yellow",
+	Error:   "red",
+	Fatal:   "magenta",
 }
 
 // My logger struct
 type theLoggerStruct struct {
-	theSetLevel myLogLevel // Don't really need this, but why not
+	theMode     string // jeffs, text, json
+	theSetLevel myLogLevel
 	theLogger   *slog.Logger
 }
 
-func CreateLogger(level myLogLevel) *theLoggerStruct {
+// CreateTextLogger
+func CreateLogger(myLevel myLogLevel, mode string) *theLoggerStruct {
 
-	// Get the slog handler struct
-	handler := slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: sLogLevels[level]})
+	// Create a handler with a log level
+	var handler slog.Handler
+	switch mode {
+	case "text":
+		handler = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+			Level: sLogLevels[myLevel]})
+	case "json":
+		handler = slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+			Level: sLogLevels[myLevel]})
+	default:
+		// Won't use handler anyway
+		handler = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+			Level: sLogLevels[myLevel],
+		})
+	}
 
-	// Create the struct to pass to main
+	// Create the logger struct or are we changing the myLevel
 	l := &theLoggerStruct{
-		theSetLevel: level,
+		theMode:     mode,
+		theSetLevel: myLevel,
 		theLogger:   slog.New(handler),
 	}
 	return l
 }
 
-func (l *theLoggerStruct) ChangeLogLevel(level myLogLevel) {
-	l.theSetLevel = level
+// Just update struct with never info
+func (l *theLoggerStruct) ChangeLogLevel(myLevel myLogLevel) {
 
-	// Must get a new handler
-	handler := slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: sLogLevels[level]})
-	l.theLogger = slog.New(handler)
-}
+	// Update the log level of the existing logger
+	l.theSetLevel = myLevel
 
-func (l *theLoggerStruct) Debug(message string, v ...interface{}) {
-	l.logMessage(LevelDebug, message, v...)
-}
-
-func (l *theLoggerStruct) Info(message string, v ...interface{}) {
-	l.logMessage(LevelInfo, message, v...)
-}
-
-func (l *theLoggerStruct) Warning(message string, v ...interface{}) {
-	l.logMessage(LevelWarning, message, v...)
-}
-
-func (l *theLoggerStruct) Error(message string, v ...interface{}) {
-	l.logMessage(LevelError, message, v...)
-}
-
-func (l *theLoggerStruct) Fatal(message string, v ...interface{}) {
-	l.logMessage(LevelFatal, message, v...)
-}
-
-func (l *theLoggerStruct) logMessage(level myLogLevel, msg string, args ...any) {
-
-	// Map requested LogLevel to slog.Level
-	slogLevel := sLogLevels[level].Level()
-
-	// Add the current time as a formatted string
-	currentTime := time.Now().Format("2006-01-02 15:04:05")
-
-	// Format the log level name
-	levelName := logLevelNames[level]
-
-	// Add color formatting (optional, for terminal output)
-	//color := logLevelColors[level]
-	//formattedLevel := fmt.Sprintf("\033[%sm%s\033[0m", colorCode(color), levelName)
-
-	// Format the log message as a single string
-	formattedMessage := fmt.Sprintf("[%s] %s: %s", currentTime, levelName, msg)
-
-	// Append additional arguments if provided
-	if len(args) > 0 {
-		formattedMessage = fmt.Sprintf("%s | %v", formattedMessage, args)
+	// Create a new handler with the updated log level
+	var handler slog.Handler
+	switch l.theMode {
+	case "text":
+		handler = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+			Level: sLogLevels[myLevel],
+		})
+	case "json":
+		handler = slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+			Level: sLogLevels[myLevel],
+		})
+	default:
+		// Won't use handler anyway
+		handler = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+			Level: sLogLevels[myLevel],
+		})
 	}
 
-	// Output the formatted message using slog
-	l.theLogger.Log(context.Background(), slogLevel, formattedMessage)
+	// Update the logger with the new handler
+	l.theLogger = slog.New(handler)
 
 }
 
-// Helper function to map color names to ANSI color codes
-func colorCode(color string) string {
+func (l *theLoggerStruct) Debug(msg string, args ...interface{}) {
+	l.logMessage(Debug, msg, args...)
+}
+
+func (l *theLoggerStruct) Info(msg string, args ...interface{}) {
+	l.logMessage(Info, msg, args...)
+}
+
+func (l *theLoggerStruct) Warning(msg string, args ...interface{}) {
+	l.logMessage(Warning, msg, args...)
+}
+
+func (l *theLoggerStruct) Error(msg string, args ...interface{}) {
+	l.logMessage(Error, msg, args...)
+}
+
+func (l *theLoggerStruct) Fatal(msg string, args ...interface{}) {
+	l.logMessage(Fatal, msg, args...)
+	os.Exit(1)
+}
+
+// Print and format the message if needed
+func (l *theLoggerStruct) logMessage(level myLogLevel, msg string, args ...any) {
+
+	switch l.theMode {
+	case "text":
+		// Could add other info in the msg
+		l.theLogger.Log(context.Background(), sLogLevels[level].Level(), msg, args...)
+
+	case "json":
+		// Could add other info in the msg
+		l.theLogger.Log(context.Background(), sLogLevels[level].Level(), msg, args...)
+
+	default:
+		// default to jeffs
+		l.jeffsLogMessage(level, msg, args...)
+	}
+
+}
+
+// jeffs Log Message
+func (l *theLoggerStruct) jeffsLogMessage(level myLogLevel, msg string, args ...any) {
+
+	// only print the current level
+	if level < l.theSetLevel {
+		return
+	}
+
+	// Get the level name
+	levelName := logLevelNames[level]
+
+	// get the time
+	time := time.Now().Format("15:04:05")
+
+	// Get the color
+	color := logLevelColors[level]
+	colorCode := getColorCode(color)
+
+	// get message
+	message := msg
+
+	// Get the args (key value pairs)
+	var theArgs string
+	for i := 0; i < len(args); i += 2 {
+		if i+1 < len(args) { // Ensure there is a value for the key
+			theArgs += fmt.Sprintf("(%v: %v)", args[i], args[i+1])
+			if i+2 < len(args) { // Add a comma only if there are more pairs
+				theArgs += ", "
+			}
+		}
+	}
+	// print the message
+	// fmt.Printf("%s %s %s %s\n", levelName, time, message, theArgs)
+	fmt.Printf("[\033[%sm%s\033[0m] %s %s %s\n", colorCode, levelName, time, message, theArgs)
+
+}
+
+func getColorCode(color string) string {
 	switch color {
 	case "cyan":
-		return "36"
+		return "36" // Cyan
 	case "green":
-		return "32"
+		return "32" // Green
 	case "yellow":
-		return "33"
+		return "33" // Yellow
 	case "red":
-		return "31"
+		return "31" // Red
 	case "magenta":
-		return "35"
+		return "35" // Magenta
 	default:
-		return "0" // Default color
+		return "0" // Default (no color)
 	}
 }

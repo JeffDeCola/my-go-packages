@@ -19,25 +19,50 @@ Documentation and Reference
 ## OVERVIEW
 
 * CURRENT FEATURES
-  * A slog wrapper using NewTextHandler
-  * 5 Log Levels
+  * A slog wrapper using NewTextHandler or JSON
+  * 5 log levels to dynamically change
   * Custom formatting
   * Custom Color
 * FUTURE ADDITIONS TO CONSIDER
-  * JSON support using New JSON Handler
-  * Key value logging
   * Log to file
+
+## CONST
+
+```go
+const (
+    LevelDebug   myLogLevel = 0
+    LevelInfo    myLogLevel = 1
+    LevelWarning myLogLevel = 2
+    LevelError   myLogLevel = 3
+    LevelFatal   myLogLevel = 4
+)
+```
+
+## TYPES
+
+```go
+type theLoggerStruct struct {
+    theMode     string // jeffs, text, json
+    theSetLevel myLogLevel
+    theLogger   *slog.Logger
+}
+```
+
+## FUNCTIONS
+
+```go
+func CreateLogger(myLevel myLogLevel, mode string) *theLoggerStruct {
+```
 
 ## METHODS
 
 ```go
-func CreateLogger(level LogLevel) *theLoggerStruct {
-func (l *theLoggerStruct) ChangeLogLevel(level LogLevel) {
-func (l *theLoggerStruct) Debug(message string, v ...interface{}) {
-func (l *theLoggerStruct) Info(message string, v ...interface{}) {
-func (l *theLoggerStruct) Warning(message string, v ...interface{}) {
-func (l *theLoggerStruct) Error(message string, v ...interface{}) {
-func (l *theLoggerStruct) Fatal(message string, v ...interface{}) {
+func (l *theLoggerStruct) ChangeLogLevel(myLevel myLogLevel) {
+func (l *theLoggerStruct) Debug(msg string, args ...interface{}) {
+func (l *theLoggerStruct) Info(msg string, v ...interface{}) {
+func (l *theLoggerStruct) Warning(msg string, v ...interface{}) {
+func (l *theLoggerStruct) Error(msg string, v ...interface{}) {
+func (l *theLoggerStruct) Fatal(msg string, v ...interface{}) {
 
 ```
 
@@ -48,28 +73,26 @@ package main
 
 import (
     "fmt"
-
-    "github.com/JeffDeCola/my-go-packages/golang/logger"
+    logger "my-go-packages/golang/logger"
 )
 
 func main() {
-
-    log := logger.CreateLogger(logger.LevelDebug)
-    // slog.LevelDebug, slog.LevelInfo, slog.LevelWarn, slog.LevelError
+    log := logger.CreateLogger(logger.Debug, "jeffs")
 
     log.Debug("This is a debug message")
-    log.Info("Application started")
-    log.Warn("This is a warning")
-    log.Error("An error occurred")
-    log.Fatal("Fatal, not good")
+    log.Info("This is a Info Message", "env", "production", "user", "jeff")
+    log.Warning("This is a Warning Message", "user", "jeff")
+    log.Error("This is an Error message")
+    // log.Fatal("Fatal Error")
 
-    log.ChangeLogLevel(logger.LevelWarning)
+    // Dynamically change log level
+    fmt.Printf("\nCHANGE LEVEL\n\n")
+    log.ChangeLogLevel(logger.Warning)
 
-    log.Debug("This is a debug message") // Won't Print
-    log.Info("Application started")      // Won't print
-    log.Warn("This is a warning")
-    log.Error("An error occurred")
-    log.Fatal("Fatal, not good")
+    log.Debug("This is a debug message")
+    log.Info("This is a Info Message", "env", "production", "user", "jeff")
+    log.Warning("This is a Warning Message", "user", "jeff")
+    log.Error("This is an Error message")
 
 }
 ```

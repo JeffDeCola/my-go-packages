@@ -15,7 +15,7 @@ import (
 )
 
 // Initialize the logger
-var log = logger.CreateLogger(logger.LevelInfo)
+var logmlp = logger.CreateTextLogger(logger.LevelInfo)
 
 // Neural Network Configuration Parameters
 type NeuralNetworkConfiguration struct {
@@ -247,7 +247,7 @@ func (nn *neuralNetwork) PrintNeuralNetwork() {
 // Random or from file
 func (nn *neuralNetwork) InitializeNeuralNetwork() error {
 
-	log.Info("\nSTEP 1 - INITIALIZATION ------------------------------------")
+	logmlp.Info("\nSTEP 1 - INITIALIZATION ------------------------------------")
 
 	// RANDOM OR FROM FILE
 
