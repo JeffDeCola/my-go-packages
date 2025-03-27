@@ -54,7 +54,7 @@ require github.com/JeffDeCola/my-go-packages/geometry/circle v1.0.0
 
 ## GOLANG
 
-* [![Tag Latest](https://img.shields.io/badge/v0.0.1-blue)](https://github.com/JeffDeCola/my-go-packages/releases/tag/golang/logger/v0.0.1)
+* [![Tag Latest](https://img.shields.io/badge/v0.0.2-blue)](https://github.com/JeffDeCola/my-go-packages/releases/tag/golang/logger/v0.0.2)
   [logger](https://github.com/JeffDeCola/my-go-packages/tree/master/golang/logger)
 
   _Just a logger wrapper I use for my liking.
