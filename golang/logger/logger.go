@@ -29,7 +29,7 @@ var sLogLevels = map[myLogLevel]slog.Leveler{
 	Fatal:   slog.LevelError,
 }
 
-// Formatting with jeff mode
+// Formatting for jeff mode
 var logLevelNames = map[myLogLevel]string{
 	Debug:   "DEBUG",
 	Info:    "INFO ",
@@ -38,7 +38,7 @@ var logLevelNames = map[myLogLevel]string{
 	Fatal:   "FATAL",
 }
 
-// Colors with jeff mode
+// Colors with for mode
 var logLevelColors = map[myLogLevel]string{
 	Debug:   "cyan",
 	Info:    "green",
@@ -54,7 +54,7 @@ type theLoggerStruct struct {
 	theLogger   *slog.Logger
 }
 
-// CreateTextLogger
+// CreateLogger
 func CreateLogger(myLevel myLogLevel, mode string) *theLoggerStruct {
 
 	// Create a handler with a log level
@@ -82,7 +82,7 @@ func CreateLogger(myLevel myLogLevel, mode string) *theLoggerStruct {
 	return l
 }
 
-// Just update struct with never info
+// ChangeLogLevel changes the log level
 func (l *theLoggerStruct) ChangeLogLevel(myLevel myLogLevel) {
 
 	// Update the log level of the existing logger

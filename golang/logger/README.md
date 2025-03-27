@@ -2,14 +2,17 @@
 
 _Just a logger wrapper I use for my liking.
 Currently using the standard library
-[slog](https://pkg.go.dev/log/slog)
- with NewTextHandler (Not JSON)._
+[slog](https://pkg.go.dev/log/slog)._
 
 Table of Contents
 
 * [OVERVIEW](https://github.com/JeffDeCola/my-go-packages/tree/master/golang/logger#overview)
-* [FUNCTIONS](https://github.com/JeffDeCola/my-go-packages/tree/master/golang/logger#functions)
+  * [CONST](https://github.com/JeffDeCola/my-go-packages/tree/master/golang/logger#const)
+  * [TYPES](https://github.com/JeffDeCola/my-go-packages/tree/master/golang/logger#types)
+  * [FUNCTIONS](https://github.com/JeffDeCola/my-go-packages/tree/master/golang/logger#functions)
+  * [METHODS](https://github.com/JeffDeCola/my-go-packages/tree/master/golang/logger#methods)
 * [EXAMPLE](https://github.com/JeffDeCola/my-go-packages/tree/master/golang/logger#example)
+* [ADDED TO YOUR GO.MOD](https://github.com/JeffDeCola/my-go-packages/tree/master/golang/logger#added-to-your-gomod)
 
 Documentation and Reference
 
@@ -18,15 +21,20 @@ Documentation and Reference
 
 ## OVERVIEW
 
-* CURRENT FEATURES
-  * A slog wrapper using NewTextHandler or JSON
-  * 5 log levels to dynamically change
-  * Custom formatting
-  * Custom Color
+* MODES OF OPERATION
+  * "text" - Uses slog text
+  * "json" - Uses slog json
+  * "jeffs" - My own formatting
+* LOG LEVELS
+  * Debug
+  * Info
+  * Warning
+  * Error
+  * Fatal
 * FUTURE ADDITIONS TO CONSIDER
   * Log to file
 
-## CONST
+### CONST
 
 ```go
 const (
@@ -38,7 +46,7 @@ const (
 )
 ```
 
-## TYPES
+### TYPES
 
 ```go
 type theLoggerStruct struct {
@@ -48,13 +56,13 @@ type theLoggerStruct struct {
 }
 ```
 
-## FUNCTIONS
+### FUNCTIONS
 
 ```go
 func CreateLogger(myLevel myLogLevel, mode string) *theLoggerStruct {
 ```
 
-## METHODS
+### METHODS
 
 ```go
 func (l *theLoggerStruct) ChangeLogLevel(myLevel myLogLevel) {
