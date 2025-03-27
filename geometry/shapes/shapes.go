@@ -66,10 +66,22 @@ func (r Rectangle) Area() float64 {
 	return a
 }
 
+// Perimeter method to calculate the perimeter of a rectangle
+func (r Rectangle) Perimeter() float64 {
+	p := 2 * (r.Width + r.Height)
+	return p
+}
+
 // Area method to calculate the area of a circle
 func (c Circle) Area() float64 {
 	a := math.Pi * math.Pow(c.Radius, 2)
 	return a
+}
+
+// Perimeter method to calculate the perimeter/circumference of a circle
+func (c Circle) Perimeter() float64 {
+	p := 2 * math.Pi * c.Radius
+	return p
 }
 
 // Area method to calculate the area of a triangle
@@ -78,18 +90,6 @@ func (t Triangle) Area() float64 {
 	s := ((t.A + t.B + t.C) / 2)
 	a := math.Sqrt(s * (s - t.A) * (s - t.B) * (s - t.C))
 	return a
-}
-
-// Perimeter method to calculate the perimeter of a rectangle
-func (r Rectangle) Perimeter() float64 {
-	p := 2 * (r.Width + r.Height)
-	return p
-}
-
-// Perimeter method to calculate the perimeter/circumference of a circle
-func (c Circle) Perimeter() float64 {
-	p := 2 * math.Pi * c.Radius
-	return p
 }
 
 // Perimeter method to calculate the perimeter of a triangle
@@ -104,16 +104,16 @@ func (c Cube) Volume() float64 {
 	return v
 }
 
-// Volume method to calculate the volume of a sphere
-func (s Sphere) Volume() float64 {
-	v := (4.0 / 3.0) * math.Pi * math.Pow(s.Radius, 3)
-	return v
-}
-
 // SurfaceArea method to calculate the surface area of a cube
 func (c Cube) SurfaceArea() float64 {
 	sa := 6 * c.Edge * c.Edge
 	return sa
+}
+
+// Volume method to calculate the volume of a sphere
+func (s Sphere) Volume() float64 {
+	v := (4.0 / 3.0) * math.Pi * math.Pow(s.Radius, 3)
+	return v
 }
 
 // SurfaceArea method to calculate the surface area of a sphere

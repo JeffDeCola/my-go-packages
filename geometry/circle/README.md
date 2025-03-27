@@ -4,9 +4,11 @@ _A package to calculate the area and circumference of a circle._
 
 Table of Contents
 
-* [TYPES](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle#types)
-* [METHODS](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle#methods)
+* [OVERVIEW](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle#overview)
+  * [TYPES](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle#types)
+  * [METHODS](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle#methods)
 * [EXAMPLE](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle#example)
+* [ADD TO YOUR GO.MOD](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle#add-to-your-gomod)
 
 Documentation and Reference
 
@@ -15,7 +17,12 @@ Documentation and Reference
 * Refer to my example
   [module-with-remote-package](https://github.com/JeffDeCola/my-go-examples/tree/master/modules-and-packages/module-with-remote-package)
 
-## TYPES
+## OVERVIEW
+
+This package contains a Circle type with two methods to calculate the area
+and circumference of a circle.
+
+### TYPES
 
 ```go
 type Circle struct {
@@ -23,7 +30,7 @@ type Circle struct {
 }
 ```
 
-## METHODS
+### METHODS
 
 ```go
 func (c Circle) Area() float64
@@ -57,16 +64,16 @@ func main() {
 }
 ```
 
-## ADDED TO YOUR GO.MOD
+## ADD TO YOUR GO.MOD
 
-Since I am tagging each package independently,
+Since each package is tagged independently,
 
 ```text
 git tag geometry/circle/vX.X.X
 git push --tags
 ```
 
-This will be added to your go.mod file,
+Add this to your go.mod file,
 
 ```text
 require github.com/JeffDeCola/my-go-packages/geometry/circle vX.X.X

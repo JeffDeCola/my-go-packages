@@ -59,8 +59,7 @@ require github.com/JeffDeCola/my-go-packages/geometry/circle v1.0.0
 
   _Just a logger wrapper I use for my liking.
   Currently using the standard library
-  [slog](https://pkg.go.dev/log/slog)
-  with NewTextHandler (Not JSON)._
+  [slog](https://pkg.go.dev/log/slog)._
 
 ## MATH
 

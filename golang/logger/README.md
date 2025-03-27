@@ -12,7 +12,7 @@ Table of Contents
   * [FUNCTIONS](https://github.com/JeffDeCola/my-go-packages/tree/master/golang/logger#functions)
   * [METHODS](https://github.com/JeffDeCola/my-go-packages/tree/master/golang/logger#methods)
 * [EXAMPLE](https://github.com/JeffDeCola/my-go-packages/tree/master/golang/logger#example)
-* [ADDED TO YOUR GO.MOD](https://github.com/JeffDeCola/my-go-packages/tree/master/golang/logger#added-to-your-gomod)
+* [ADD TO YOUR GO.MOD](https://github.com/JeffDeCola/my-go-packages/tree/master/golang/logger#add-to-your-gomod)
 
 Documentation and Reference
 
@@ -81,7 +81,7 @@ package main
 
 import (
     "fmt"
-    logger "my-go-packages/golang/logger"
+    logger "github.com/JeffDeCola/my-go-packages/golang/logger"
 )
 
 func main() {
@@ -105,16 +105,16 @@ func main() {
 }
 ```
 
-## ADDED TO YOUR GO.MOD
+## ADD TO YOUR GO.MOD
 
-Since I am tagging each package independently,
+Since each package is tagged independently,
 
 ```text
 git tag golang/logger/vX.X.X
 git push --tags
 ```
 
-This will be added to your go.mod file,
+Add this to your go.mod file,
 
 ```text
 require github.com/JeffDeCola/my-go-packages/golang/logger vX.X.X

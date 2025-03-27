@@ -388,16 +388,16 @@ and propagate backwards.
 
 ## STEP 6 - SAVE WEIGHTS & BIASES
 
-## ADDED TO YOUR GO.MOD
+## ADD TO YOUR GO.MOD
 
-Since I am tagging each package independently,
+Since each package is tagged independently,
 
 ```text
 git tag neural-networks/mlp/vX.X.X
 git push --tags
 ```
 
-This will be added to your go.mod file,
+Add this to your go.mod file,
 
 ```text
 require github.com/JeffDeCola/my-go-packages/neural-networks/mlp vX.X.X

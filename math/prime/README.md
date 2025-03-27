@@ -4,15 +4,25 @@ _A package containing computations related to prime numbers._
 
 Table of Contents
 
-* [FUNCTIONS](https://github.com/JeffDeCola/my-go-packages/tree/master/math/prime#functions)
-* [EXAMPLE](https://github.com/JeffDeCola/my-go-packages/tree/master/math/prime#example)
+* [OVERVIEW](https://github.com/JeffDeCola/my-go-packages/tree/master/math/prime#overview)
+  * [FUNCTIONS](https://github.com/JeffDeCola/my-go-packages/tree/master/math/prime#functions)
+* [EXAMPLE](https://github.com/JeffDeCola/my-go-packages/tree/master/math/prime#example)  
+* [ADD TO YOUR GO.MOD](https://github.com/JeffDeCola/my-go-packages/tree/master/math/prime#add-to-your-gomod)
 
 Documentation and Reference
 
 * Prime package at
   [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/math/prime)
 
-## FUNCTIONS
+## OVERVIEW
+
+This package contains a function to check if a number is prime.
+It uses the Sieve of Eratosthenes algorithm to find all prime
+numbers up to a given limit.
+The Sieve of Eratosthenes is an ancient algorithm for finding all
+prime numbers up to a specified integer.
+
+### FUNCTIONS
 
 ```go
 func IsPrime(n int) bool
@@ -38,16 +48,16 @@ func main() {
 }
 ```
 
-## ADDED TO YOUR GO.MOD
+## ADD TO YOUR GO.MOD
 
-Since I am tagging each package independently,
+Since each package is tagged independently,
 
 ```text
 git tag math/prime/vX.X.X
 git push --tags
 ```
 
-This will be added to your go.mod file,
+Add this to your go.mod file,
 
 ```text
 require github.com/JeffDeCola/my-go-packages/math/prime vX.X.X
