@@ -14,8 +14,8 @@ import (
 	logger "my-go-packages/golang/logger"
 )
 
-// Initialize the logger
-var logmlp = logger.CreateTextLogger(logger.LevelInfo)
+// Default logging level
+var logmlp = logger.CreateLogger(logger.Warning, "jeffs_noTime")
 
 // Neural Network Configuration Parameters
 type NeuralNetworkConfiguration struct {
@@ -85,6 +85,16 @@ type neuralNetwork struct {
 type trainingData struct {
 	i []float64
 	z []float64
+}
+
+// ShowDebug - Set logging level for this package
+func ShowDebug() {
+	logmlp.ChangeLogLevel(logger.Debug)
+}
+
+// ShowInfo - Set logging level for this package
+func ShowInfo() {
+	logmlp.ChangeLogLevel(logger.Info)
 }
 
 // Create the MLP neural network
@@ -247,7 +257,7 @@ func (nn *neuralNetwork) PrintNeuralNetwork() {
 // Random or from file
 func (nn *neuralNetwork) InitializeNeuralNetwork() error {
 
-	logmlp.Info("\nSTEP 1 - INITIALIZATION ------------------------------------")
+	logmlp.Info("STEP 1 - INITIALIZATION ------------------------------------")
 
 	// RANDOM OR FROM FILE
 
@@ -373,7 +383,7 @@ func (nn *neuralNetwork) loadWeightsBiasesFromJSON(filename string) error {
 // Save weights and biases to a json file
 func (nn *neuralNetwork) SaveWeightsBiasesToJSON() error {
 
-	fmt.Println("\nSTEP 8 - SAVE WEIGHTS & BIASES TO A FILE -------------------")
+	logmlp.Info("STEP 8 - SAVE WEIGHTS & BIASES TO A FILE -------------------")
 
 	filename := nn.trainedWeightsBiasesJSONFile
 
@@ -409,7 +419,7 @@ func (nn *neuralNetwork) SaveWeightsBiasesToJSON() error {
 // Set the min and max values for the input and output nodes
 func (nn *neuralNetwork) SetMinMaxValues() error {
 
-	fmt.Println("\nSTEP 2 - MIN & MAX INPUT VALUES ----------------------------")
+	logmlp.Info("STEP 2 - MIN & MAX INPUT VALUES ----------------------------")
 
 	if nn.MinMaxInputMethod == "file" {
 		// Load min and max values from a json file
@@ -512,7 +522,7 @@ func (nn *neuralNetwork) loadMinMaxValuesFromJSON(inout string) error {
 // STEP 7 - SAVE MIN & MAX VALUES TO A FILE
 func (nn *neuralNetwork) SaveMinMaxValuesToJSON() error {
 
-	fmt.Println("\nSTEP 7 - SAVE MIN AND MAX VALUES TO A FILE -------------------")
+	logmlp.Info("STEP 7 - SAVE MIN AND MAX VALUES TO A FILE -------------------")
 
 	filename := nn.MinMaxJSONFile
 
@@ -672,7 +682,7 @@ func (nn *neuralNetwork) PrintMinMaxValues() {
 // Train the neural network by reading the dataset from the CSV file
 func (nn *neuralNetwork) TrainNeuralNetwork() error {
 
-	fmt.Println("\nTHE TRAINING LOOP ------------------------------------------")
+	logmlp.Info("THE TRAINING LOOP ------------------------------------------")
 
 	// TRAINING LOOP - EPOCH LOOP
 	// Train the neural network by reading the dataset from the CSV file
@@ -694,8 +704,8 @@ func (nn *neuralNetwork) epochLoop() error {
 	// Train the neural network for the number of epochs
 	for epoch := 0; epoch < nn.epochs; epoch++ {
 
-		// print the epoch number
-		fmt.Println("Epoch", epoch)
+		// The Epoch Number
+		logmlp.Info(fmt.Sprintf("EPOCH NUMBER %d", epoch))
 
 		err := nn.datasetLoop(startToken)
 		if err != nil {
@@ -704,17 +714,6 @@ func (nn *neuralNetwork) epochLoop() error {
 
 		startToken = false
 
-	}
-
-	// Print Summary of start and end loss for each output node
-	fmt.Println("SUMMARY:")
-	for i := 0; i < nn.outputNodes; i++ {
-		fmt.Println("    Node", i)
-		fmt.Println("        Start Loss: ", nn.statStartLoss[i])
-		fmt.Println("        End Loss:   ", nn.statEndLoss[i])
-		// get percentage change and make it positive
-		change := 100 * math.Abs((nn.statEndLoss[i]-nn.statStartLoss[i])/nn.statStartLoss[i])
-		fmt.Printf("        Change:      %.2f%%\n", change)
 	}
 
 	return nil
@@ -759,7 +758,7 @@ func (nn *neuralNetwork) datasetLoop(startToken bool) (err error) {
 
 		// STEP 6 UPDATE WEIGHTS AND BIASES
 		// Copy slice into another slice
-		fmt.Println("\n    STEP 6 - UPDATE WEIGHTS AND BIASES ---------------------")
+		logmlp.Info("    STEP 6 - UPDATE WEIGHTS AND BIASES ---------------------")
 		copy(nn.hiddenWeights, hWNew)
 		copy(nn.hiddenBias, hBNew)
 		copy(nn.outputWeights, oWNew)
@@ -768,7 +767,7 @@ func (nn *neuralNetwork) datasetLoop(startToken bool) (err error) {
 		// Calculate the loss for every output node
 		// yOutput can be from normalized input data
 		// z can be from normalized output data
-		fmt.Println("        Loss")
+		logmlp.Debug("        Loss")
 		for i := 0; i < nn.outputNodes; i++ {
 			if nn.lossFunction == "mean-squared-error" {
 				loss[i] = 1.0 / 2.0 * math.Pow(yOutput[i]-z[i], 2)
@@ -777,7 +776,7 @@ func (nn *neuralNetwork) datasetLoop(startToken bool) (err error) {
 				return fmt.Errorf("invalid loss function: %s", nn.lossFunction)
 			}
 
-			fmt.Printf("            Node %d:  %.5f\n", i, loss[i])
+			logmlp.Debug(fmt.Sprintf("            Node %d:  %.5f", i, loss[i]))
 		}
 
 		// Save the startLoss if startToken is true
@@ -827,7 +826,7 @@ func (nn *neuralNetwork) readCSVFileLineByLine() chan trainingData {
 			// Make sure we're at the beginning of the file
 			_, err := file.Seek(0, 0)
 			if err != nil {
-				fmt.Println("Error:", err)
+				logmlp.Error("Error:", err)
 				return
 			}
 
@@ -837,7 +836,7 @@ func (nn *neuralNetwork) readCSVFileLineByLine() chan trainingData {
 			// Read the header row
 			_, err = reader.Read()
 			if err != nil {
-				fmt.Println("Error:", err)
+				logmlp.Error("Error:", err)
 				return
 			}
 
@@ -863,7 +862,7 @@ func (nn *neuralNetwork) readCSVFileLineByLine() chan trainingData {
 						trimmedValue := strings.TrimSpace(dataLine[i])
 						value, err := strconv.ParseFloat(trimmedValue, 64)
 						if err != nil {
-							fmt.Println("Error:", err)
+							logmlp.Error("Error:", err)
 							return
 						}
 						data.i[i] = value
@@ -876,7 +875,7 @@ func (nn *neuralNetwork) readCSVFileLineByLine() chan trainingData {
 						trimmedValue := strings.TrimSpace(dataLine[nn.inputNodes+i])
 						value, err := strconv.ParseFloat(trimmedValue, 64)
 						if err != nil {
-							fmt.Println("Error:", err)
+							logmlp.Error("Error:", err)
 							return
 						}
 						data.z[i] = value
@@ -898,14 +897,14 @@ func (nn *neuralNetwork) readCSVFileLineByLine() chan trainingData {
 // STEP 3 - NORMALIZATION
 func (nn *neuralNetwork) normalization(data trainingData) ([]float64, []float64, error) {
 
-	fmt.Println("\n    STEP 3 - NORMALIZATION ------------------------------------")
+	logmlp.Info("    STEP 3 - NORMALIZATION ------------------------------------")
 
 	var x, z []float64
 	err := error(nil)
 
 	// STEP 3.1 - NORMALIZE INPUT
 
-	fmt.Println("\n        STEP 3.1 - NORMALIZE INPUT")
+	logmlp.Info("        STEP 3.1 - NORMALIZE INPUT")
 	if nn.normalizeInputData {
 		if nn.normalizeMethod == "zero-to-one" {
 			x, err = nn.normalizeZeroToOne("input", data.i)
@@ -925,11 +924,11 @@ func (nn *neuralNetwork) normalization(data trainingData) ([]float64, []float64,
 		x = data.i
 	}
 
-	fmt.Printf("        Original:    %.5f\n", data.i)
-	fmt.Printf("        Normalized:  %.5f\n", x)
+	logmlp.Debug(fmt.Sprintf("        Original:    %.5f", data.i))
+	logmlp.Debug(fmt.Sprintf("        Normalized:  %.5f", x))
 
 	// STEP 3.2 - NORMALIZE OUTPUT
-	fmt.Println("\n        STEP 3.2 - NORMALIZE OUTPUT")
+	logmlp.Info("        STEP 3.2 - NORMALIZE OUTPUT")
 	if nn.normalizeOutputData {
 		if nn.normalizeMethod == "zero-to-one" {
 			z, err = nn.normalizeZeroToOne("output", data.z)
@@ -948,8 +947,8 @@ func (nn *neuralNetwork) normalization(data trainingData) ([]float64, []float64,
 		z = data.z
 	}
 
-	fmt.Printf("        Original:    %.5f\n", data.z)
-	fmt.Printf("        Normalized:  %.5f\n", z)
+	logmlp.Debug(fmt.Sprintf("        Original:    %.5f", data.z))
+	logmlp.Debug(fmt.Sprintf("        Normalized:  %.5f", z))
 
 	return x, z, nil
 }
@@ -1064,7 +1063,7 @@ func (nn *neuralNetwork) denormalizeMinusOneToOne(inOut string, i []float64) []f
 // ForwardPass calculates the output of the neural network
 func (nn *neuralNetwork) forwardPass(x []float64) (aHidden [][]float64, yOutput []float64) {
 
-	fmt.Println("\n    STEP 4 - FORWARD PASS ----------------------------------")
+	logmlp.Info("    STEP 4 - FORWARD PASS ----------------------------------")
 
 	// Initialize the hidden outputs for each layer
 	aHidden = make([][]float64, nn.hiddenLayers)
@@ -1129,8 +1128,8 @@ func (nn *neuralNetwork) forwardPass(x []float64) (aHidden [][]float64, yOutput 
 	}
 
 	// Print the outputs
-	fmt.Printf("        aHidden:     %.5f\n", aHidden)
-	fmt.Printf("        yOutput:     %.5f\n", yOutput)
+	logmlp.Debug(fmt.Sprintf("        aHidden:     %.5f", aHidden))
+	logmlp.Debug(fmt.Sprintf("        yOutput:     %.5f", yOutput))
 
 	return aHidden, yOutput
 }
@@ -1163,10 +1162,10 @@ func tanhDerivative(x float64) float64 {
 // BackwardPass calculates the deltas for the neural network
 func (nn *neuralNetwork) backwardPass(x []float64, z []float64, yOutput []float64, aHidden [][]float64) ([][][]float64, [][]float64, [][]float64, []float64) {
 
-	fmt.Println("\n    STEP 5 - BACKWARD PASS ---------------------------------")
+	logmlp.Info("    STEP 5 - BACKWARD PASS ---------------------------------")
 
 	// STEP 5.1 - THE ERROR SIGNAL FOR THE OUTPUT LAYER
-	fmt.Println("\n        STEP 5.1 - THE ERROR SIGNAL FOR THE OUTPUT LAYER")
+	logmlp.Info("        STEP 5.1 - THE ERROR SIGNAL FOR THE OUTPUT LAYER")
 	deltaOutput := make([]float64, nn.outputNodes)
 	for o := 0; o < nn.outputNodes; o++ {
 
@@ -1178,10 +1177,10 @@ func (nn *neuralNetwork) backwardPass(x []float64, z []float64, yOutput []float6
 		}
 	}
 
-	fmt.Printf("        delta O:     %.5f\n", deltaOutput)
+	logmlp.Debug(fmt.Sprintf("        delta O:     %.5f", deltaOutput))
 
 	// STEP 5.2 - THE ERROR SIGNAL FOR THE HIDDEN LAYERS
-	fmt.Println("\n        STEP 5.2 - THE ERROR SIGNAL FOR THE HIDDEN LAYERS")
+	logmlp.Info("        STEP 5.2 - THE ERROR SIGNAL FOR THE HIDDEN LAYERS")
 	deltaHidden := make([][]float64, nn.hiddenLayers)
 	// START LAST HIDDEN LAYER FIRST
 	for l := nn.hiddenLayers - 1; l >= 0; l-- {
@@ -1215,10 +1214,10 @@ func (nn *neuralNetwork) backwardPass(x []float64, z []float64, yOutput []float6
 		}
 	}
 
-	fmt.Printf("        delta H:     %.5f\n", deltaHidden)
+	logmlp.Debug(fmt.Sprintf("        delta H:     %.5f", deltaHidden))
 
 	// STEP 5.3 - THE NEW WEIGHTS & BIASES FOR THE OUTPUT LAYER
-	fmt.Println("\n        STEP 5.3 - THE NEW WEIGHTS & BIASES FOR THE OUTPUT LAYER")
+	logmlp.Info("        STEP 5.3 - THE NEW WEIGHTS & BIASES FOR THE OUTPUT LAYER")
 	newOutputWeights := make([][]float64, nn.outputNodes)
 	for i := range newOutputWeights {
 		newOutputWeights[i] = make([]float64, nn.hiddenNodesPerLayer[nn.hiddenLayers-1])
@@ -1232,11 +1231,11 @@ func (nn *neuralNetwork) backwardPass(x []float64, z []float64, yOutput []float6
 		newOutputBiases[o] = nn.outputBias[o] - (nn.learningRate * deltaOutput[o])
 	}
 
-	fmt.Printf("        newOWeights: %.5f\n", newOutputWeights)
-	fmt.Printf("        newOBiases:  %.5f\n", newOutputBiases)
+	logmlp.Debug(fmt.Sprintf("        newOWeights: %.5f", newOutputWeights))
+	logmlp.Debug(fmt.Sprintf("        newOBiases:  %.5f", newOutputBiases))
 
 	// STEP 5.4 - THE NEW WEIGHTS & BIASES FOR THE HIDDEN LAYERS
-	fmt.Println("\n        STEP 5.4 - THE NEW WEIGHTS & BIASES FOR THE HIDDEN LAYERS")
+	logmlp.Info("        STEP 5.4 - THE NEW WEIGHTS & BIASES FOR THE HIDDEN LAYERS")
 	newHiddenWeights := make([][][]float64, nn.hiddenLayers)
 	for i := range newHiddenWeights {
 		newHiddenWeights[i] = make([][]float64, nn.hiddenNodesPerLayer[i])
@@ -1271,10 +1270,26 @@ func (nn *neuralNetwork) backwardPass(x []float64, z []float64, yOutput []float6
 		}
 	}
 
-	fmt.Printf("        newHWeights: %.5f\n", newHiddenWeights)
-	fmt.Printf("        newHBiases:  %.5f\n", newHiddenBiases)
+	logmlp.Debug(fmt.Sprintf("        newHWeights: %.5f", newHiddenWeights))
+	logmlp.Debug(fmt.Sprintf("        newHBiases:  %.5f", newHiddenBiases))
 
 	return newHiddenWeights, newHiddenBiases, newOutputWeights, newOutputBiases
+
+}
+
+// Print the min and max input values for each input
+func (nn *neuralNetwork) PrintTrainingSummary() {
+
+	// Print Summary of start and end loss for each output node
+	fmt.Println("SUMMARY:")
+	for i := 0; i < nn.outputNodes; i++ {
+		fmt.Println("    Node", i)
+		fmt.Println("        Start Loss: ", nn.statStartLoss[i])
+		fmt.Println("        End Loss:   ", nn.statEndLoss[i])
+		// get percentage change and make it positive
+		change := 100 * math.Abs((nn.statEndLoss[i]-nn.statStartLoss[i])/nn.statStartLoss[i])
+		fmt.Printf("        Change:      %.2f%%\n", change)
+	}
 
 }
 
@@ -1289,11 +1304,11 @@ func (nn *neuralNetwork) TestNeuralNetwork(data []float64) error {
 	}
 
 	// Print input and normalized input and min max inputs
-	fmt.Println("\nPrint the inputs")
-	fmt.Printf("    Input:  %.2f\n", data)
-	fmt.Printf("    Normalized Input:  %.2f\n", x)
-	fmt.Printf("    Min Input:  %.2f\n", nn.minInput)
-	fmt.Printf("    Max Input:  %.2f\n", nn.maxInput)
+	logmlp.Debug("Print the inputs")
+	logmlp.Debug(fmt.Sprintf("    Input:  %.2f", data))
+	logmlp.Debug(fmt.Sprintf("    Normalized Input:  %.2f", x))
+	logmlp.Debug(fmt.Sprintf("    Min Input:  %.2f", nn.minInput))
+	logmlp.Debug(fmt.Sprintf("    Max Input:  %.2f", nn.maxInput))
 
 	// Forward pass
 	_, yOutput := nn.forwardPass(x)
@@ -1311,8 +1326,8 @@ func (nn *neuralNetwork) TestNeuralNetwork(data []float64) error {
 	}
 
 	// Print the outputs to .2 decimal places
-	fmt.Println("\nPrint the outputs")
-	fmt.Printf("    Output: Expected %.2f, Got %.2f\n", data[2], y)
+	logmlp.Debug("Print the outputs")
+	logmlp.Debug(fmt.Sprintf("    Output: Expected %.2f, Got %.2f", data[2], y))
 
 	return nil
 
