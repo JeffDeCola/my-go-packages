@@ -1,8 +1,10 @@
 # MY LOGGER PACKAGE
 
-_Just a logger wrapper I use for my liking.
+_Just a logger wrapper formatting a message followed
+by key-value pairs.
 Currently using the standard library
-[slog](https://pkg.go.dev/log/slog)._
+[slog](https://pkg.go.dev/log/slog)
+supporting both text and json._
 
 Table of Contents
 
@@ -25,12 +27,18 @@ Documentation and Reference
   * "text" - Uses slog text
   * "json" - Uses slog json
   * "jeffs" - My own formatting
+  * "jeffs_noTime" - My own formatting without time
 * LOG LEVELS
   * Debug
   * Info
   * Warning
   * Error
   * Fatal
+* THE OUTPUT
+  * Time
+  * Leg Level
+  * Message
+  * Key/Value Pairs
 * FUTURE ADDITIONS TO CONSIDER
   * Log to file
 
@@ -85,10 +93,13 @@ import (
 )
 
 func main() {
+
     log := logger.CreateLogger(logger.Debug, "jeffs")
 
+    a := 4.54534
+
     log.Debug("This is a debug message")
-    log.Info("This is a Info Message", "env", "production", "user", "jeff")
+    log.Info(fmt.Sprintf("Formatted Info Message a=%.2f", a), "a", a, "user", "jeff")
     log.Warning("This is a Warning Message", "user", "jeff")
     log.Error("This is an Error message")
     // log.Fatal("Fatal Error")
@@ -98,7 +109,7 @@ func main() {
     log.ChangeLogLevel(logger.Warning)
 
     log.Debug("This is a debug message")
-    log.Info("This is a Info Message", "env", "production", "user", "jeff")
+    log.Info(fmt.Sprintf("Formatted Info Message a=%.2f", a), "a", a, "user", "jeff")
     log.Warning("This is a Warning Message", "user", "jeff")
     log.Error("This is an Error message")
 

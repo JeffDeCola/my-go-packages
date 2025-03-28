@@ -49,7 +49,7 @@ var logLevelColors = map[myLogLevel]string{
 
 // My logger struct
 type theLoggerStruct struct {
-	theMode     string // jeffs, text, json
+	theMode     string // jeffs, jeffs_noTime, text, json
 	theSetLevel myLogLevel
 	theLogger   *slog.Logger
 }
@@ -162,12 +162,13 @@ func (l *theLoggerStruct) jeffsLogMessage(level myLogLevel, msg string, args ...
 	// Get the level name
 	levelName := logLevelNames[level]
 
-	// get the time
-	time := time.Now().Format("15:04:05")
-
-	// Get the color
+	// Get the color for level name
 	color := logLevelColors[level]
 	colorCode := getColorCode(color)
+	levelName = fmt.Sprintf("\033[%sm%s\033[0m", colorCode, levelName)
+
+	// get the time
+	theTime := time.Now().Format("15:04:05")
 
 	// get message
 	message := msg
@@ -183,8 +184,11 @@ func (l *theLoggerStruct) jeffsLogMessage(level myLogLevel, msg string, args ...
 		}
 	}
 	// print the message
-	// fmt.Printf("%s %s %s %s\n", levelName, time, message, theArgs)
-	fmt.Printf("[\033[%sm%s\033[0m] %s %s %s\n", colorCode, levelName, time, message, theArgs)
+	if l.theMode == "jeffs_noTime" {
+		fmt.Printf("[%s] %s %s\n", levelName, message, theArgs)
+	} else {
+		fmt.Printf("[%s] [%s] %s %s\n", theTime, levelName, message, theArgs)
+	}
 
 }
 
