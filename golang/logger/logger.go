@@ -188,6 +188,7 @@ func (l *theLoggerStruct) jeffsLogMessage(level myLogLevel, msg string, args ...
 		fmt.Println("tssssest")
 		fmt.Printf("[%s] %s %s\n", levelName, message, theArgs)
 	} else {
+		fmt.Println("hi")
 		fmt.Printf("[%s] [%s] %s %s\n", theTime, levelName, message, theArgs)
 	}
 
