@@ -23,34 +23,35 @@ Documentation and Reference
 
 ## OVERVIEW
 
-* MODES OF OPERATION
-  * "text" - Uses slog text
-  * "json" - Uses slog json
-  * "jeffs" - My own formatting
-  * "jeffs_noTime" - My own formatting without time
-* LOG LEVELS
+You have three choices to make when you create a logger
+
+* LEVEL
+  * Trace
   * Debug
   * Info
   * Warning
   * Error
   * Fatal
-* THE OUTPUT
-  * Time
-  * Leg Level
-  * Message
-  * Key/Value Pairs
-* FUTURE ADDITIONS TO CONSIDER
-  * Log to file
+* FORMAT
+  * "text" - Uses slog text
+  * "json" - Uses slog json
+  * "jeffs" - My own formatting
+  * "jeffs_noTime" - My own formatting without time
+* OUTPUT
+  * "Stdout"
+  * "Stderr"
+  * "filename" - default
 
 ### CONST
 
 ```go
 const (
-    LevelDebug   myLogLevel = 0
-    LevelInfo    myLogLevel = 1
-    LevelWarning myLogLevel = 2
-    LevelError   myLogLevel = 3
-    LevelFatal   myLogLevel = 4
+    LevelTrace   myLogLevel = 0
+    LevelDebug   myLogLevel = 1
+    LevelInfo    myLogLevel = 2
+    LevelWarning myLogLevel = 3
+    LevelError   myLogLevel = 4
+    LevelFatal   myLogLevel = 5
 )
 ```
 
@@ -67,13 +68,14 @@ type theLoggerStruct struct {
 ### FUNCTIONS
 
 ```go
-func CreateLogger(myLevel myLogLevel, mode string) *theLoggerStruct {
+func CreateLogger(myLevel myLogLevel, format string) *theLoggerStruct {
 ```
 
 ### METHODS
 
 ```go
 func (l *theLoggerStruct) ChangeLogLevel(myLevel myLogLevel) {
+func (l *theLoggerStruct) Trace(msg string, args ...interface{}) {
 func (l *theLoggerStruct) Debug(msg string, args ...interface{}) {
 func (l *theLoggerStruct) Info(msg string, v ...interface{}) {
 func (l *theLoggerStruct) Warning(msg string, v ...interface{}) {
@@ -94,10 +96,11 @@ import (
 
 func main() {
 
-    log := logger.CreateLogger(logger.Debug, "jeffs")
+    log := logger.CreateLogger(logger.Debug, "app.log", "jeffs")
 
     a := 4.54534
 
+    log.Trace("This is a low level trace message")
     log.Debug("This is a debug message")
     log.Info(fmt.Sprintf("Formatted Info Message a=%.2f", a), "a", a, "user", "jeff")
     log.Warning("This is a Warning Message", "user", "jeff")
@@ -108,6 +111,7 @@ func main() {
     fmt.Printf("\nCHANGE LEVEL\n\n")
     log.ChangeLogLevel(logger.Warning)
 
+    log.Trace("This is a low level trace message")
     log.Debug("This is a debug message")
     log.Info(fmt.Sprintf("Formatted Info Message a=%.2f", a), "a", a, "user", "jeff")
     log.Warning("This is a Warning Message", "user", "jeff")

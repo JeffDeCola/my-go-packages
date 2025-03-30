@@ -13,15 +13,17 @@ type myLogLevel int
 
 // My Levels
 const (
-	Debug   myLogLevel = 0
-	Info    myLogLevel = 1
-	Warning myLogLevel = 2
-	Error   myLogLevel = 3
-	Fatal   myLogLevel = 4
+	Trace   myLogLevel = 0
+	Debug   myLogLevel = 1
+	Info    myLogLevel = 2
+	Warning myLogLevel = 3
+	Error   myLogLevel = 4
+	Fatal   myLogLevel = 5
 )
 
 // Map my log Levels to Slog Levels
 var sLogLevels = map[myLogLevel]slog.Leveler{
+	Trace:   slog.LevelDebug,
 	Debug:   slog.LevelDebug,
 	Info:    slog.LevelInfo,
 	Warning: slog.LevelWarn,
@@ -29,8 +31,9 @@ var sLogLevels = map[myLogLevel]slog.Leveler{
 	Fatal:   slog.LevelError,
 }
 
-// Formatting for jeff mode
+// Formatting for jeffs format
 var logLevelNames = map[myLogLevel]string{
+	Trace:   "TRACE",
 	Debug:   "DEBUG",
 	Info:    "INFO ",
 	Warning: "WARN ",
@@ -38,8 +41,9 @@ var logLevelNames = map[myLogLevel]string{
 	Fatal:   "FATAL",
 }
 
-// Colors with for mode
+// Colors with for jeffs format
 var logLevelColors = map[myLogLevel]string{
+	Trace:   "grey",
 	Debug:   "cyan",
 	Info:    "green",
 	Warning: "yellow",
@@ -55,11 +59,11 @@ type theLoggerStruct struct {
 }
 
 // CreateLogger
-func CreateLogger(myLevel myLogLevel, mode string) *theLoggerStruct {
+func CreateLogger(myLevel myLogLevel, format string) *theLoggerStruct {
 
 	// Create a handler with a log level
 	var handler slog.Handler
-	switch mode {
+	switch format {
 	case "text":
 		handler = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
 			Level: sLogLevels[myLevel]})
@@ -75,7 +79,7 @@ func CreateLogger(myLevel myLogLevel, mode string) *theLoggerStruct {
 
 	// Create the logger struct or are we changing the myLevel
 	l := &theLoggerStruct{
-		theMode:     mode,
+		theMode:     format,
 		theSetLevel: myLevel,
 		theLogger:   slog.New(handler),
 	}
@@ -109,6 +113,10 @@ func (l *theLoggerStruct) ChangeLogLevel(myLevel myLogLevel) {
 	// Update the logger with the new handler
 	l.theLogger = slog.New(handler)
 
+}
+
+func (l *theLoggerStruct) Trace(msg string, args ...interface{}) {
+	l.logMessage(Trace, msg, args...)
 }
 
 func (l *theLoggerStruct) Debug(msg string, args ...interface{}) {
@@ -194,6 +202,8 @@ func (l *theLoggerStruct) jeffsLogMessage(level myLogLevel, msg string, args ...
 
 func getColorCode(color string) string {
 	switch color {
+	case "grey":
+		return "90" // Grey
 	case "cyan":
 		return "36" // Cyan
 	case "green":
