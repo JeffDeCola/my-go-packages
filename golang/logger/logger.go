@@ -53,33 +53,56 @@ var logLevelColors = map[myLogLevel]string{
 
 // My logger struct
 type theLoggerStruct struct {
-	theMode     string // jeffs, jeffs_noTime, text, json
 	theSetLevel myLogLevel
+	theFormat   string   // jeffs, jeffs_noTime, text, json
+	theOutput   *os.File // stdout, stderr, filename
 	theLogger   *slog.Logger
 }
 
 // CreateLogger
-func CreateLogger(myLevel myLogLevel, format string) *theLoggerStruct {
+func CreateLogger(myLevel myLogLevel, format string, output string) *theLoggerStruct {
+
+	// If myLevel is not 0,1,2,3,4,5, then default to 2 (info)
+	if myLevel < Trace || myLevel > Fatal {
+		myLevel = Info
+	}
+
+	// The output is stdout, stderr or filename
+	var theoutput *os.File
+	var err error
+	switch output {
+	case "stdout":
+		theoutput = os.Stdout
+	case "stderr":
+		theoutput = os.Stderr
+	default:
+		// Open or create the log file, output is filename
+		theoutput, err = os.OpenFile(output, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			panic("Failed to open/create log file" + err.Error())
+		}
+	}
 
 	// Create a handler with a log level
 	var handler slog.Handler
 	switch format {
 	case "text":
-		handler = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+		handler = slog.NewTextHandler(theoutput, &slog.HandlerOptions{
 			Level: sLogLevels[myLevel]})
 	case "json":
-		handler = slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		handler = slog.NewJSONHandler(theoutput, &slog.HandlerOptions{
 			Level: sLogLevels[myLevel]})
 	default:
-		// Won't use handler anyway
-		handler = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+		// Won't use handler, but i create it to put in struct
+		handler = slog.NewTextHandler(theoutput, &slog.HandlerOptions{
 			Level: sLogLevels[myLevel],
 		})
 	}
 
 	// Create the logger struct or are we changing the myLevel
 	l := &theLoggerStruct{
-		theMode:     format,
+		theFormat:   format,
+		theOutput:   theoutput,
 		theSetLevel: myLevel,
 		theLogger:   slog.New(handler),
 	}
@@ -89,23 +112,28 @@ func CreateLogger(myLevel myLogLevel, format string) *theLoggerStruct {
 // ChangeLogLevel changes the log level
 func (l *theLoggerStruct) ChangeLogLevel(myLevel myLogLevel) {
 
+	// If myLevel is not 0,1,2,3,4,5, then default to 2 (info)
+	if myLevel < Trace || myLevel > Fatal {
+		myLevel = Info
+	}
+
 	// Update the log level of the existing logger
 	l.theSetLevel = myLevel
 
 	// Create a new handler with the updated log level
 	var handler slog.Handler
-	switch l.theMode {
+	switch l.theFormat {
 	case "text":
-		handler = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+		handler = slog.NewTextHandler(l.theOutput, &slog.HandlerOptions{
 			Level: sLogLevels[myLevel],
 		})
 	case "json":
-		handler = slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		handler = slog.NewJSONHandler(l.theOutput, &slog.HandlerOptions{
 			Level: sLogLevels[myLevel],
 		})
 	default:
-		// Won't use handler anyway
-		handler = slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+		// Won't use handler, but create to put in struct
+		handler = slog.NewTextHandler(l.theOutput, &slog.HandlerOptions{
 			Level: sLogLevels[myLevel],
 		})
 	}
@@ -143,7 +171,7 @@ func (l *theLoggerStruct) Fatal(msg string, args ...interface{}) {
 // Print and format the message if needed
 func (l *theLoggerStruct) logMessage(level myLogLevel, msg string, args ...any) {
 
-	switch l.theMode {
+	switch l.theFormat {
 	case "text":
 		// Could add other info in the msg
 		l.theLogger.Log(context.Background(), sLogLevels[level].Level(), msg, args...)
@@ -191,11 +219,11 @@ func (l *theLoggerStruct) jeffsLogMessage(level myLogLevel, msg string, args ...
 			}
 		}
 	}
-	// print the message
-	if l.theMode == "jeffs_noTime" {
-		fmt.Printf("[%s] %s %s\n", levelName, message, theArgs)
+	// Print the message to l.theOutput (stderr or stdout)
+	if l.theFormat == "jeffs_noTime" {
+		fmt.Fprintf(l.theOutput, "[%s] %s %s\n", levelName, message, theArgs)
 	} else {
-		fmt.Printf("[%s] [%s] %s %s\n", theTime, levelName, message, theArgs)
+		fmt.Fprintf(l.theOutput, "[%s] [%s] %s %s\n", theTime, levelName, message, theArgs)
 	}
 
 }
