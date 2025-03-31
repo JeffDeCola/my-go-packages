@@ -31,7 +31,7 @@ var (
 )
 
 // Default logging level
-var logmlp = logger.CreateLogger(logger.Warning, "jeffs_noTime")
+var logmlp = logger.CreateLogger(logger.Warning, "jeffs_noTime", os.Stdout)
 
 // Neural Network Configuration Parameters
 type NeuralNetworkConfiguration struct {
