@@ -23,24 +23,30 @@ Documentation and Reference
 
 ## OVERVIEW
 
-You have three choices to make when you create a logger
+You have three choices when you create a logger,
 
-* LEVEL
+* myLevel (int)
   * Trace
   * Debug
   * Info **(default)**
   * Warning
   * Error
   * Fatal
-* FORMAT
+* format (string)
   * "text" - Uses slog text
   * "json" - Uses slog json
   * "jeffs" - My own formatting **(default)**
   * "jeffs_noTime" - My own formatting without time stamp
-* OUTPUT
-  * "stdout"
-  * "stderr"
-  * "filename" **(default)**
+* output (*os.File)
+  * os.Stdout
+  * os.Stderr
+  * file handler
+
+For example,
+
+```go
+    log := logger.CreateLogger(logger.Debug, "json", os.Stdout)
+```
 
 ### CONST
 
@@ -59,8 +65,9 @@ const (
 
 ```go
 type theLoggerStruct struct {
-    theMode     string // jeffs, text, json
     theSetLevel myLogLevel
+    theFormat   string   // jeffs, jeffs_noTime, text, json
+    theOutput   *os.File // stdout, stderr, filename
     theLogger   *slog.Logger
 }
 ```
@@ -68,7 +75,7 @@ type theLoggerStruct struct {
 ### FUNCTIONS
 
 ```go
-func CreateLogger(myLevel myLogLevel, format string, output string) *theLoggerStruct {
+func CreateLogger(myLevel myLogLevel, format string, output *os.File) *theLoggerStruct {
 ```
 
 ### METHODS
@@ -96,7 +103,7 @@ import (
 
 func main() {
 
-    log := logger.CreateLogger(logger.Debug, "json", "stdout")
+    log := logger.CreateLogger(logger.Debug, "json", os.Stdout)
 
     a := 4.54534
 
