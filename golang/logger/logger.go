@@ -60,41 +60,25 @@ type theLoggerStruct struct {
 }
 
 // CreateLogger
-func CreateLogger(myLevel myLogLevel, format string, output string) *theLoggerStruct {
+func CreateLogger(myLevel myLogLevel, format string, output *os.File) *theLoggerStruct {
 
 	// If myLevel is not 0,1,2,3,4,5, then default to 2 (info)
 	if myLevel < Trace || myLevel > Fatal {
 		myLevel = Info
 	}
 
-	// The output is stdout, stderr or filename
-	var theoutput *os.File
-	var err error
-	switch output {
-	case "stdout":
-		theoutput = os.Stdout
-	case "stderr":
-		theoutput = os.Stderr
-	default:
-		// Open or create the log file, output is filename
-		theoutput, err = os.OpenFile(output, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-		if err != nil {
-			panic("Failed to open/create log file" + err.Error())
-		}
-	}
-
 	// Create a handler with a log level
 	var handler slog.Handler
 	switch format {
 	case "text":
-		handler = slog.NewTextHandler(theoutput, &slog.HandlerOptions{
+		handler = slog.NewTextHandler(output, &slog.HandlerOptions{
 			Level: sLogLevels[myLevel]})
 	case "json":
-		handler = slog.NewJSONHandler(theoutput, &slog.HandlerOptions{
+		handler = slog.NewJSONHandler(output, &slog.HandlerOptions{
 			Level: sLogLevels[myLevel]})
 	default:
 		// Won't use handler, but i create it to put in struct
-		handler = slog.NewTextHandler(theoutput, &slog.HandlerOptions{
+		handler = slog.NewTextHandler(output, &slog.HandlerOptions{
 			Level: sLogLevels[myLevel],
 		})
 	}
@@ -102,7 +86,7 @@ func CreateLogger(myLevel myLogLevel, format string, output string) *theLoggerSt
 	// Create the logger struct or are we changing the myLevel
 	l := &theLoggerStruct{
 		theFormat:   format,
-		theOutput:   theoutput,
+		theOutput:   output,
 		theSetLevel: myLevel,
 		theLogger:   slog.New(handler),
 	}
