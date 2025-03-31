@@ -20,6 +20,8 @@ Documentation and Reference
 
 * Prime package at
   [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/golang/logger)
+* Example using this logger in
+  [my-go-examples](https://github.com/JeffDeCola/my-go-examples/tree/master/common-go/logging/jeffs-logger)
 
 ## OVERVIEW
 
