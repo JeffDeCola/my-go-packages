@@ -13,44 +13,54 @@ import (
 type MyLogLevel string
 type myLogLevelInt int
 
-// My Levels
+// My Levels as string
 const (
-	Trace   myLogLevelInt = 0
-	Debug   myLogLevelInt = 1
-	Info    myLogLevelInt = 2
-	Warning myLogLevelInt = 3
-	Error   myLogLevelInt = 4
-	Fatal   myLogLevelInt = 5
+	Trace   MyLogLevel = "trace"
+	Debug   MyLogLevel = "debug"
+	Info    MyLogLevel = "info"
+	Warning MyLogLevel = "warning"
+	Error   MyLogLevel = "error"
+	Fatal   MyLogLevel = "fatal"
+)
+
+// My Levels as int
+const (
+	trace   myLogLevelInt = 0
+	debug   myLogLevelInt = 1
+	info    myLogLevelInt = 2
+	warning myLogLevelInt = 3
+	error   myLogLevelInt = 4
+	fatal   myLogLevelInt = 5
 )
 
 // Map my log Levels to Slog Levels
 var sLogLevels = map[myLogLevelInt]slog.Leveler{
-	Trace:   slog.LevelDebug,
-	Debug:   slog.LevelDebug,
-	Info:    slog.LevelInfo,
-	Warning: slog.LevelWarn,
-	Error:   slog.LevelError,
-	Fatal:   slog.LevelError,
+	trace:   slog.LevelDebug,
+	debug:   slog.LevelDebug,
+	info:    slog.LevelInfo,
+	warning: slog.LevelWarn,
+	error:   slog.LevelError,
+	fatal:   slog.LevelError,
 }
 
 // Formatting for jeffs format
 var logLevelNames = map[myLogLevelInt]string{
-	Trace:   "TRACE",
-	Debug:   "DEBUG",
-	Info:    "INFO ",
-	Warning: "WARN ",
-	Error:   "ERROR",
-	Fatal:   "FATAL",
+	trace:   "TRACE",
+	debug:   "DEBUG",
+	info:    "INFO ",
+	warning: "WARN ",
+	error:   "ERROR",
+	fatal:   "FATAL",
 }
 
 // Colors with for jeffs format
 var logLevelColors = map[myLogLevelInt]string{
-	Trace:   "grey",
-	Debug:   "cyan",
-	Info:    "green",
-	Warning: "yellow",
-	Error:   "red",
-	Fatal:   "magenta",
+	trace:   "grey",
+	debug:   "cyan",
+	info:    "green",
+	warning: "yellow",
+	error:   "red",
+	fatal:   "magenta",
 }
 
 // My logger struct
@@ -69,8 +79,8 @@ func CreateLogger(myLevel MyLogLevel, format string, output *os.File) *theLogger
 	myLevelInt := ConvertStringToLogLevel(myLevel)
 
 	// If myLevel is not 0,1,2,3,4,5, then default to 2 (info)
-	if myLevelInt < Trace || myLevelInt > Fatal {
-		myLevelInt = Info
+	if myLevelInt < trace || myLevelInt > fatal {
+		myLevelInt = info
 	}
 
 	// Create a handler with a log level
@@ -105,8 +115,8 @@ func (l *theLoggerStruct) ChangeLogLevel(myLevel MyLogLevel) {
 	myLevelInt := ConvertStringToLogLevel(myLevel)
 
 	// If myLevel is not 0,1,2,3,4,5, then default to 2 (info)
-	if myLevelInt < Trace || myLevelInt > Fatal {
-		myLevelInt = Info
+	if myLevelInt < trace || myLevelInt > fatal {
+		myLevelInt = info
 	}
 
 	// Update the log level of the existing logger
@@ -142,42 +152,42 @@ func ConvertStringToLogLevel(levelStr MyLogLevel) myLogLevelInt {
 
 	switch levelStr {
 	case "Trace":
-		levelInt = Trace
+		levelInt = trace
 	case "Debug":
-		levelInt = Debug
+		levelInt = debug
 	case "Info":
-		levelInt = Info
+		levelInt = info
 	case "Warning":
-		levelInt = Warning
+		levelInt = warning
 	case "Error":
-		levelInt = Error
+		levelInt = error
 	case "Fatal":
-		levelInt = Fatal
+		levelInt = fatal
 	default:
-		levelInt = Info // Default to Info if invalid
+		levelInt = info // Default to Info if invalid
 	}
 
 	return levelInt
 }
 
 func (l *theLoggerStruct) Trace(msg string, args ...interface{}) {
-	l.logMessage(Trace, msg, args...)
+	l.logMessage(trace, msg, args...)
 }
 
 func (l *theLoggerStruct) Debug(msg string, args ...interface{}) {
-	l.logMessage(Debug, msg, args...)
+	l.logMessage(debug, msg, args...)
 }
 
 func (l *theLoggerStruct) Info(msg string, args ...interface{}) {
-	l.logMessage(Info, msg, args...)
+	l.logMessage(info, msg, args...)
 }
 
 func (l *theLoggerStruct) Warning(msg string, args ...interface{}) {
-	l.logMessage(Warning, msg, args...)
+	l.logMessage(warning, msg, args...)
 }
 
 func (l *theLoggerStruct) Error(msg string, args ...interface{}) {
-	l.logMessage(Error, msg, args...)
+	l.logMessage(error, msg, args...)
 }
 
 func (l *theLoggerStruct) Fatal(msg string, args ...interface{}) {
