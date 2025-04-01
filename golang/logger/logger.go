@@ -8,64 +8,52 @@ import (
 	"time"
 )
 
-// The logLevel is passed as a string but I convert to int
-// so I can upgrade the logger i use and it's just easier
-type MyLogLevel string
-type myLogLevelInt int
+// The logLevel is just an integer so I can upgrade loggers later
+type MyLogLevel int
 
-// My Levels as string
+// My Levels
 const (
-	Trace   MyLogLevel = "trace"
-	Debug   MyLogLevel = "debug"
-	Info    MyLogLevel = "info"
-	Warning MyLogLevel = "warning"
-	Error   MyLogLevel = "error"
-	Fatal   MyLogLevel = "fatal"
-)
-
-// My Levels as int
-const (
-	trace   myLogLevelInt = 0
-	debug   myLogLevelInt = 1
-	info    myLogLevelInt = 2
-	warning myLogLevelInt = 3
-	error   myLogLevelInt = 4
-	fatal   myLogLevelInt = 5
+	Trace   MyLogLevel = 0
+	Debug   MyLogLevel = 1
+	Info    MyLogLevel = 2
+	Warning MyLogLevel = 3
+	Error   MyLogLevel = 4
+	Fatal   MyLogLevel = 5
 )
 
 // Map my log Levels to Slog Levels
-var sLogLevels = map[myLogLevelInt]slog.Leveler{
-	trace:   slog.LevelDebug,
-	debug:   slog.LevelDebug,
-	info:    slog.LevelInfo,
-	warning: slog.LevelWarn,
-	error:   slog.LevelError,
-	fatal:   slog.LevelError,
+var sLogLevels = map[MyLogLevel]slog.Leveler{
+	Trace:   slog.LevelDebug,
+	Debug:   slog.LevelDebug,
+	Info:    slog.LevelInfo,
+	Warning: slog.LevelWarn,
+	Error:   slog.LevelError,
+	Fatal:   slog.LevelError,
 }
 
 // Formatting for jeffs format
-var logLevelNames = map[myLogLevelInt]string{
-	trace:   "TRACE",
-	debug:   "DEBUG",
-	info:    "INFO ",
-	warning: "WARN ",
-	error:   "ERROR",
-	fatal:   "FATAL",
+var logLevelNames = map[MyLogLevel]string{
+	Trace:   "TRACE",
+	Debug:   "DEBUG",
+	Info:    "INFO ",
+	Warning: "WARN ",
+	Error:   "ERROR",
+	Fatal:   "FATAL",
 }
 
 // Colors with for jeffs format
-var logLevelColors = map[myLogLevelInt]string{
-	trace:   "grey",
-	debug:   "cyan",
-	info:    "green",
-	warning: "yellow",
-	error:   "red",
-	fatal:   "magenta",
+var logLevelColors = map[MyLogLevel]string{
+	Trace:   "grey",
+	Debug:   "cyan",
+	Info:    "green",
+	Warning: "yellow",
+	Error:   "red",
+	Fatal:   "magenta",
 }
 
 // My logger struct
 type theLoggerStruct struct {
-	theSetLevel myLogLevelInt
+	theSetLevel MyLogLevel
 	theFormat   string   // jeffs, jeffs_noTime, text, json
 	theOutput   *os.File // stdout, stderr, filename
 	theLogger   *slog.Logger
@@ -74,13 +62,9 @@ type theLoggerStruct struct {
 // CreateLogger
 func CreateLogger(myLevel MyLogLevel, format string, output *os.File) *theLoggerStruct {
 
-	// Convert string MyLogLevel to myLogLevelInt
-	// Just easier dealing with  a number for the arrays
-	myLevelInt := ConvertStringToLogLevel(myLevel)
-
 	// If myLevel is not 0,1,2,3,4,5, then default to 2 (info)
-	if myLevelInt < trace || myLevelInt > fatal {
-		myLevelInt = info
+	if myLevel < Trace || myLevel > Fatal {
+		myLevel = Info
 	}
 
 	// Create a handler with a log level
@@ -88,22 +72,22 @@ func CreateLogger(myLevel MyLogLevel, format string, output *os.File) *theLogger
 	switch format {
 	case "text":
 		handler = slog.NewTextHandler(output, &slog.HandlerOptions{
-			Level: sLogLevels[myLevelInt]})
+			Level: sLogLevels[myLevel]})
 	case "json":
 		handler = slog.NewJSONHandler(output, &slog.HandlerOptions{
-			Level: sLogLevels[myLevelInt]})
+			Level: sLogLevels[myLevel]})
 	default:
 		// Won't use handler, but i create it to put in struct
 		handler = slog.NewTextHandler(output, &slog.HandlerOptions{
-			Level: sLogLevels[myLevelInt],
+			Level: sLogLevels[myLevel],
 		})
 	}
 
-	// Create the logger struct or are we changing the myLevelInt
+	// Create the logger struct or are we changing the myLevel
 	l := &theLoggerStruct{
 		theFormat:   format,
 		theOutput:   output,
-		theSetLevel: myLevelInt,
+		theSetLevel: myLevel,
 		theLogger:   slog.New(handler),
 	}
 	return l
@@ -112,31 +96,29 @@ func CreateLogger(myLevel MyLogLevel, format string, output *os.File) *theLogger
 // ChangeLogLevel changes the log level
 func (l *theLoggerStruct) ChangeLogLevel(myLevel MyLogLevel) {
 
-	myLevelInt := ConvertStringToLogLevel(myLevel)
-
 	// If myLevel is not 0,1,2,3,4,5, then default to 2 (info)
-	if myLevelInt < trace || myLevelInt > fatal {
-		myLevelInt = info
+	if myLevel < Trace || myLevel > Fatal {
+		myLevel = Info
 	}
 
 	// Update the log level of the existing logger
-	l.theSetLevel = myLevelInt
+	l.theSetLevel = myLevel
 
 	// Create a new handler with the updated log level
 	var handler slog.Handler
 	switch l.theFormat {
 	case "text":
 		handler = slog.NewTextHandler(l.theOutput, &slog.HandlerOptions{
-			Level: sLogLevels[myLevelInt],
+			Level: sLogLevels[myLevel],
 		})
 	case "json":
 		handler = slog.NewJSONHandler(l.theOutput, &slog.HandlerOptions{
-			Level: sLogLevels[myLevelInt],
+			Level: sLogLevels[myLevel],
 		})
 	default:
 		// Won't use handler, but create to put in struct
 		handler = slog.NewTextHandler(l.theOutput, &slog.HandlerOptions{
-			Level: sLogLevels[myLevelInt],
+			Level: sLogLevels[myLevel],
 		})
 	}
 
@@ -145,49 +127,24 @@ func (l *theLoggerStruct) ChangeLogLevel(myLevel MyLogLevel) {
 
 }
 
-// ConvertStringToLogLevel converts a string log level to its corresponding myLogLevelInt value.
-// It returns Info level as default for unrecognized values.
-func ConvertStringToLogLevel(levelStr MyLogLevel) myLogLevelInt {
-	var levelInt myLogLevelInt
-
-	switch levelStr {
-	case "Trace":
-		levelInt = trace
-	case "Debug":
-		levelInt = debug
-	case "Info":
-		levelInt = info
-	case "Warning":
-		levelInt = warning
-	case "Error":
-		levelInt = error
-	case "Fatal":
-		levelInt = fatal
-	default:
-		levelInt = info // Default to Info if invalid
-	}
-
-	return levelInt
-}
-
 func (l *theLoggerStruct) Trace(msg string, args ...interface{}) {
-	l.logMessage(trace, msg, args...)
+	l.logMessage(Trace, msg, args...)
 }
 
 func (l *theLoggerStruct) Debug(msg string, args ...interface{}) {
-	l.logMessage(debug, msg, args...)
+	l.logMessage(Debug, msg, args...)
 }
 
 func (l *theLoggerStruct) Info(msg string, args ...interface{}) {
-	l.logMessage(info, msg, args...)
+	l.logMessage(Info, msg, args...)
 }
 
 func (l *theLoggerStruct) Warning(msg string, args ...interface{}) {
-	l.logMessage(warning, msg, args...)
+	l.logMessage(Warning, msg, args...)
 }
 
 func (l *theLoggerStruct) Error(msg string, args ...interface{}) {
-	l.logMessage(error, msg, args...)
+	l.logMessage(Error, msg, args...)
 }
 
 func (l *theLoggerStruct) Fatal(msg string, args ...interface{}) {
@@ -196,7 +153,7 @@ func (l *theLoggerStruct) Fatal(msg string, args ...interface{}) {
 }
 
 // Print and format the message if needed
-func (l *theLoggerStruct) logMessage(level myLogLevelInt, msg string, args ...any) {
+func (l *theLoggerStruct) logMessage(level MyLogLevel, msg string, args ...any) {
 
 	switch l.theFormat {
 	case "text":
@@ -215,7 +172,7 @@ func (l *theLoggerStruct) logMessage(level myLogLevelInt, msg string, args ...an
 }
 
 // jeffs Log Message
-func (l *theLoggerStruct) jeffsLogMessage(level myLogLevelInt, msg string, args ...any) {
+func (l *theLoggerStruct) jeffsLogMessage(level MyLogLevel, msg string, args ...any) {
 
 	// only print the current level
 	if level < l.theSetLevel {
