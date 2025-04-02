@@ -60,11 +60,25 @@ type theLoggerStruct struct {
 }
 
 // CreateLogger
-func CreateLogger(myLevel MyLogLevel, format string, output *os.File) *theLoggerStruct {
+func CreateLogger(myLevel LogLevel, format string, output *os.File) *theLoggerStruct {
 
-	// If myLevel is not 0,1,2,3,4,5, then default to 2 (info)
-	if myLevel < Trace || myLevel > Fatal {
-		myLevel = Info
+	// Convert LogLevel to MyLogLevel
+	var myLogLevel MyLogLevel
+	switch myLevel {
+	case dTrace:
+		myLogLevel = Trace
+	case dDebug:
+		myLogLevel = Debug
+	case dInfo:
+		myLogLevel = Info
+	case dWarning:
+		myLogLevel = Warning
+	case dError:
+		myLogLevel = Error
+	case dFatal:
+		myLogLevel = Fatal
+	default:
+		myLogLevel = Info // Default to Info if invalid
 	}
 
 	// Create a handler with a log level
