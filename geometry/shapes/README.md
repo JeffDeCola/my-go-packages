@@ -1,5 +1,8 @@
 # MY SHAPES PACKAGE
 
+[![jeffdecola.com](https://img.shields.io/badge/website-jeffdecola.com-blue)](https://jeffdecola.com)
+[![MIT License](https://img.shields.io/:license-mit-blue.svg)](https://jeffdecola.mit-license.org)
+
 _A package to calculate and manipulate simple 2D and 3D geometric shapes._
 
 Table of Contents

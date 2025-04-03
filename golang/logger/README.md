@@ -1,5 +1,8 @@
 # MY LOGGER PACKAGE
 
+[![jeffdecola.com](https://img.shields.io/badge/website-jeffdecola.com-blue)](https://jeffdecola.com)
+[![MIT License](https://img.shields.io/:license-mit-blue.svg)](https://jeffdecola.mit-license.org)
+
 _Just a logger wrapper formatting a message followed
 by key-value pairs.
 Currently using the standard library
@@ -18,7 +21,7 @@ Table of Contents
 
 Documentation and Reference
 
-* Prime package at
+* Logger package at
   [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/golang/logger)
 * Example using this logger in
   [my-go-examples](https://github.com/JeffDeCola/my-go-examples/tree/master/common-go/logging/jeffs-logger)
