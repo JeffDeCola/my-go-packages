@@ -1,17 +1,17 @@
 # my-go-packages pipeline.yml
 
-#------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
 jobs:
 
-#**********************************************
+# **********************************************
 - name: job-readme-github-pages
-#**********************************************
+# **********************************************
   plan:
 
     # GET REPO FROM GITHUB
     - get: my-go-packages
       trigger: true
-    # SEND SLACK ALERT  
+    # SEND SLACK ALERT
     - put: resource-slack-alert
       params:
         channel: '#jeff-builds'
@@ -19,19 +19,19 @@ jobs:
     # SEND GITHUB STATUS
     - put: resource-repo-status
       params: { state: "pending", description: "STARTED job-readme-github-pages in concourse ci.", commit: "my-go-packages" }    
-    
+
     # RUN TASK IN REPO USING ALPINE DOCKER IMAGE
     - task: task-readme-github-pages
       file: my-go-packages/ci/tasks/task-readme-github-pages.yml
-      
+
       # TASK SUCCESS
       on_success:
         do:
           # PUSH NEW REPO TO GITHUB
           - put: my-go-packages
             params:
-              repository: my-go-packages-updated  
-          # SEND SLACK ALERT  
+              repository: my-go-packages-updated
+          # SEND SLACK ALERT
           - put: resource-slack-alert
             params:
               channel: '#jeff-builds'
@@ -39,11 +39,11 @@ jobs:
           # SEND GITHUB STATUS
           - put: resource-repo-status
             params: { state: "success", description: "PASSED job-readme-github-pages in concourse ci", commit: "my-go-packages" }
-      
-      # TASK FAILURE   
+
+      # TASK FAILURE
       on_failure:
         do:
-          # SEND SLACK ALERT  
+          # SEND SLACK ALERT
           - put: resource-slack-alert
             params:
               channel: '#jeff-builds'
@@ -52,7 +52,7 @@ jobs:
           - put: resource-repo-status
             params: { state: "failure", description: "FAILED job-readme-github-pages in concourse ci", commit: "my-go-packages" }
 
-#------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
 resource_types:
 
   - name: slack-notification
@@ -67,14 +67,14 @@ resource_types:
       repository: jeffdecola/github-status-resource-clone
       tag: v0.0.2
 
-#------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------
 resources:
 
   - name: my-go-packages
     type: git
     icon: github
     source:
-      #uri: https://github.com/jeffdecola/my-go-packages
+      # uri: https://github.com/jeffdecola/my-go-packages
       uri: git@github.com:jeffdecola/my-go-packages.git
       branch: master
       private_key: ((concourse_git_private_key))
