@@ -3,7 +3,7 @@
 [![jeffdecola.com](https://img.shields.io/badge/website-jeffdecola.com-blue)](https://jeffdecola.com)
 [![MIT License](https://img.shields.io/:license-mit-blue.svg)](https://jeffdecola.mit-license.org)
 [![Go Reference](https://pkg.go.dev/badge/github.com/JeffDeCola/my-go-packages.svg)](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages)
-[![Maintainability](https://qlty.sh/badges/5e889972-393c-429c-923f-4523ce73885f/maintainability.svg)](https://qlty.sh/gh/JeffDeCola/projects/my-go-packages)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/81d46645ebab4477a8de9ef18b0c0ee2)](https://app.codacy.com/gh/JeffDeCola/my-go-packages/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 _A place to keep my go packages._
 
@@ -35,7 +35,7 @@ your dependencies. You only get what you want.
 For example, if you want the circle package, your go.mod would look like,
 
 ```text
-require github.com/JeffDeCola/my-go-packages/geometry/circle v1.0.0
+require github.com/JeffDeCola/my-go-packages/geometry/circle v0.0.1
 ```
 
 ## GEOMETRY

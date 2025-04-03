@@ -1,5 +1,8 @@
 # MULTI-LAYER PERCEPTRON (MLP) PACKAGE
 
+[![jeffdecola.com](https://img.shields.io/badge/website-jeffdecola.com-blue)](https://jeffdecola.com)
+[![MIT License](https://img.shields.io/:license-mit-blue.svg)](https://jeffdecola.mit-license.org)
+
 _A package to implement a scalable multi-layer
 perceptron (MLP) neural network._
 
@@ -101,7 +104,6 @@ The structure of the neural network is defined by the following parameters,
 * `OutputNodes` - The number of output nodes
 * `OutputNodeLabels` - The labels of the output nodes
 
-
 ## CREATE YOUR NEURAL NETWORK
 
 To create a neural network, you setup a
@@ -112,9 +114,6 @@ method which will return a
 ```go
 nn := nnp.CreateNeuralNetwork()
 ```
-
-
-
 
 ## INITIALIZE YOUR NEURAL NETWORK
 
@@ -232,9 +231,6 @@ nnp := mlp.NeuralNetworkConfiguration{
   LearningRate:            0.1,
 }
 ```
-
-
-
 
 ## GET INPUT MID MAX VALUES OF YOUR DATASET
 
