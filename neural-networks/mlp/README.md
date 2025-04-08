@@ -3,10 +3,14 @@
 [![jeffdecola.com](https://img.shields.io/badge/website-jeffdecola.com-blue)](https://jeffdecola.com)
 [![MIT License](https://img.shields.io/:license-mit-blue.svg)](https://jeffdecola.mit-license.org)
 
+```text
+*** THIS IS UNDER CONSTRUCTION - CHECK BACK SOON ***
+```
+
 _A package to implement a scalable multi-layer
 perceptron (MLP) neural network._
 
-TL;DR,
+tl;dr
 
 ```go
 nn := nnp.CreateNeuralNetwork()
@@ -27,6 +31,28 @@ err := nn.TrainNeuralNetwork()
 ```
 
 Table of Contents
+
+* [OVERVIEW](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp#overview)
+* [CONFIGURATION STRUCT](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp#configuration-struct)
+* [CREATE YOUR NEURAL NETWORK](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp#create-your-neural-network)
+* [INITIALIZE YOUR NEURAL NETWORK](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp#initialize-your-neural-network)
+* [TRAINING-MODE](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp#training-mode)
+  * [CONFIGURE FOR TRAINING](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp#configure-for-training)
+  * [CREATE YOUR TRAINING DATASET FILE](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp#create-your-training-dataset-file)
+* [TESTING-MODE](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp#testing-mode)
+  * [CONFIGURE FOR TESTING](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp#configure-for-testing)
+* [PREDICTING MODE](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp#predicting-mode)
+  * [CONFIGURE FOR PREDICTING](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp#configure-for-predicting)
+* [GET INPUT MID MAX VALUES OF YOUR DATASET](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp#get-input-mid-max-values-of-your-dataset)
+* [STEP 1 - INITIALIZATION](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp#step-1---initialization)
+* [THE TRAINING LOOP](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp#the-training-loop)
+  * [READING THE CVS DATASET FILE](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp#reading-the-cvs-dataset-file)
+  * [STEP 2 - NORMALIZATION](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp#step-2---normalization)
+  * [STEP 3 - FORWARD PASS](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp#step-3---forward-pass)
+  * [STEP 4 - BACKWARD PASS](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp#step-4---backward-pass)
+  * [STEP 5 - UPDATE WEIGHTS & BIASES](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp#step-5---update-weights--biases)
+* [STEP 6 - SAVE WEIGHTS & BIASES](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp#step-6---save-weights--biases)
+* [ADD TO YOUR GO.MOD](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp#add-to-your-gomod)
 
 Documentation and Reference
 
@@ -132,10 +158,12 @@ You can also print out the neural network structure if you would like,
 nn.PrintNeuralNetwork()
 ```
 
-## TRAINING
+## TRAINING MODE
 
 The goal of training is to adjust the weights and biases of the network
 in order to minimize the loss in the output from the network.
+
+![IMAGE mlp-training-mode-flow IMAGE](../../docs/pics/mlp-training-mode-flow.svg)
 
 ### CONFIGURE FOR TRAINING
 
@@ -174,10 +202,12 @@ X1, x2, x3, y1, y2
 ...
 ```
 
-## TESTING
+## TESTING MODE
 
 The goal of testing is to evaluate the performance of the network by
 using a separate dataset that was not used during training.
+
+![IMAGE mlp-testing-mode-flow IMAGE](../../docs/pics/mlp-testing-mode-flow.svg)
 
 ### CONFIGURE FOR TESTING
 
@@ -203,10 +233,12 @@ nnp := mlp.NeuralNetworkConfiguration{
 }
 ```
 
-## PREDICTING
+## PREDICTING MODE
 
 The goal of predicting is to use the trained network to predict the output
 for new input data.
+
+![IMAGE mlp-predicting-mode-flow IMAGE](../../docs/pics/mlp-predicting-mode-flow.svg)
 
 ### CONFIGURE FOR PREDICTING
 

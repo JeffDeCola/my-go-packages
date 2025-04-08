@@ -17,9 +17,9 @@ Table of Contents
 
 Documentation and Reference
 
-* Shapes package at
+* shapes package at
   [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/geometry/shapes)
-* Refer to my example
+* refer to my example
   [shapes-package](https://github.com/JeffDeCola/my-go-examples/tree/master/functions-methods-interfaces/interfaces/shapes-package)
 
 ## OVERVIEW
