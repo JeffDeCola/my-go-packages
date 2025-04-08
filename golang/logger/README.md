@@ -5,9 +5,9 @@
 
 _Just a logger wrapper formatting a message followed
 by key-value pairs.
-Currently using the standard library
-[slog](https://pkg.go.dev/log/slog)
-supporting both text and json._
+Currently using the
+[log/slog](https://pkg.go.dev/log/slog)
+standard package supporting both text and json._
 
 Table of Contents
 
@@ -21,10 +21,10 @@ Table of Contents
 
 Documentation and Reference
 
-* Logger package at
+* logger package at
   [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/golang/logger)
-* Example using this logger in
-  [my-go-examples](https://github.com/JeffDeCola/my-go-examples/tree/master/common-go/logging/jeffs-logger)
+* example using this logger in
+  [jeffs-logger](https://github.com/JeffDeCola/my-go-examples/tree/master/common-go/logging/jeffs-logger)
 
 ## OVERVIEW
 

@@ -57,9 +57,9 @@ require github.com/JeffDeCola/my-go-packages/geometry/circle v0.0.1
 
   _Just a logger wrapper formatting a message followed
   by key-value pairs.
-  Currently using the standard library
-  [slog](https://pkg.go.dev/log/slog)
-  supporting both text and json._
+  Currently using the
+  [log/slog](https://pkg.go.dev/log/slog)
+  standard package supporting both text and json._
 
 ## MATH
 

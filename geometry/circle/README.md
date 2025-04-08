@@ -15,10 +15,10 @@ Table of Contents
 
 Documentation and Reference
 
-* Circle package at
+* circle package at
   [pkg.go.dev](https://pkg.go.dev/github.com/JeffDeCola/my-go-packages/geometry/circle)
-* Refer to my example
-  [module-with-remote-package](https://github.com/JeffDeCola/my-go-examples/tree/master/modules-and-packages/module-with-remote-package)
+* refer to my example
+  [module-with-remote-package](https://github.com/JeffDeCola/my-go-examples/tree/master/modules-and-packages/remote-packages/module-with-remote-package)
 
 ## OVERVIEW
 
