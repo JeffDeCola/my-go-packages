@@ -1,13 +1,13 @@
-# MY LOGGER PACKAGE
+# MY LOGGER GO PACKAGE
 
 [![jeffdecola.com](https://img.shields.io/badge/website-jeffdecola.com-blue)](https://jeffdecola.com)
 [![MIT License](https://img.shields.io/:license-mit-blue.svg)](https://jeffdecola.mit-license.org)
 
-_Just a logger wrapper formatting a message followed
-by key-value pairs.
-Currently using the
-[log/slog](https://pkg.go.dev/log/slog)
-standard package supporting both text and json._
+  _A go package of a logger wrapper formatting a message followed
+  by key-value pairs.
+  Currently using the
+  [log/slog](https://pkg.go.dev/log/slog)
+  standard package supporting both text and json._
 
 Table of Contents
 

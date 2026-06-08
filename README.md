@@ -43,19 +43,19 @@ require github.com/JeffDeCola/my-go-packages/geometry/circle v0.0.1
 * [![Tag Latest](https://img.shields.io/badge/v0.0.1-blue)](https://github.com/JeffDeCola/my-go-packages/releases/tag/geometry/circle/v0.0.1)
   [circle](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/circle)
 
-  _A package to calculate the area and circumference of a circle._
+  _A go package to calculate the area and circumference of a circle._
 
 * [![Tag Latest](https://img.shields.io/badge/v0.0.1-blue)](https://github.com/JeffDeCola/my-go-packages/releases/tag/geometry/shapes/v0.0.1)
   [shapes](https://github.com/JeffDeCola/my-go-packages/tree/master/geometry/shapes)
 
-  _A package to calculate and manipulate simple 2D and 3D geometric shapes._
+  _A go package to calculate and manipulate simple 2D and 3D geometric shapes._
 
 ## GOLANG
 
 * [![Tag Latest](https://img.shields.io/badge/v0.1.5-blue)](https://github.com/JeffDeCola/my-go-packages/releases/tag/golang/logger/v0.1.5)
   [logger](https://github.com/JeffDeCola/my-go-packages/tree/master/golang/logger)
 
-  _Just a logger wrapper formatting a message followed
+  _A go package of a logger wrapper formatting a message followed
   by key-value pairs.
   Currently using the
   [log/slog](https://pkg.go.dev/log/slog)
@@ -66,12 +66,12 @@ require github.com/JeffDeCola/my-go-packages/geometry/circle v0.0.1
 * [![Tag Latest](https://img.shields.io/badge/v0.0.1-blue)](https://github.com/JeffDeCola/my-go-packages/releases/tag/math/prime/v0.0.1)
   [prime](https://github.com/JeffDeCola/my-go-packages/tree/master/math/prime)
 
-  _A package containing computations related to prime numbers._
+  _A go package containing computations related to prime numbers._
 
 ## NEURAL NETWORKS
 
 * [![Tag Latest](https://img.shields.io/badge/v0.0.1-blue)](https://github.com/JeffDeCola/my-go-packages/releases/tag/neural-networks/mlp/v0.0.1)
   [mlp](https://github.com/JeffDeCola/my-go-packages/tree/master/neural-networks/mlp)
 
-  _A package to implement a scalable multi-layer
+  _A go package to implement a scalable multi-layer
   perceptron (MLP) neural network._
